@@ -1,0 +1,445 @@
+﻿
+        public IndicatorPair CurrentBestStrategy(string security, List<Candle> candles, int maxIndicatorLength, int nrOfTestValues, bool isSellEnabled, bool isBuyEnabled, int minOrders, int maxOrders, decimal minProfitPct, decimal loseLimitConstant)
+        {
+            if (candles.Count < (maxIndicatorLength + nrOfTestValues * this.RecursiveTests))
+            {
+                return null;
+            }
+
+            List<Candle> initialCandles = candles.GetRange(candles.Count - (1 + maxIndicatorLength + nrOfTestValues * this.RecursiveTests), maxIndicatorLength);
+            List<IndicatorPair> indicatorPairs = InitializeIndicatorPairs(initialCandles, 4, maxIndicatorLength, 4);
+
+            #region Unused
+            //List<IndicatorPair> topIndicatorPairs = null;
+            // FAST 1 Sec Or Something
+            //List<Candle> initialCandles = candles.GetRange(candles.Count - (1 + maxIndicatorLength + nrOfTestValues * 3), maxIndicatorLength);
+            //List<Candle> firstTest = candles.GetRange(candles.Count - (1 + nrOfTestValues * 3), nrOfTestValues);
+            //List<Candle> secondTest = candles.GetRange(candles.Count - (1 + nrOfTestValues * 2), nrOfTestValues);
+
+            //List<Candle> thirdInitialCandlest = candles.GetRange(candles.Count - (1 + maxIndicatorLength + nrOfTestValues * 1), maxIndicatorLength);
+            //List<Candle> thirdTest = candles.GetRange(candles.Count - (1 + nrOfTestValues * 1), nrOfTestValues);
+
+            //GoThroughCandles(ref indicatorPairs, ref initialCandles);
+            //GoThroughCandles(ref indicatorPairs, ref thirdInitialCandlest);
+
+            /*
+             * * * FIND COMMON PAIR * * *
+            topIndicatorPairs = GetTopIndicatorPairs(security, indicatorPairs, firstTest, firstTest.Count / 10);
+            topIndicatorPairs = GetTopIndicatorPairs(security, indicatorPairs, secondTest, firstTest.Count / 10);
+            topIndicatorPairs = GetTopIndicatorPairs(security, indicatorPairs, thirdTest, firstTest.Count / 10);
+            */
+
+            //Find Latest TOP
+            //Longest 10-20 Sec Or Something
+            //topIndicatorPairs = GetTopIndicatorPairs(security, indicatorPairs, firstTest, firstTest.Count / 10, marginSell, marginBuy, isSellEnabled, isBuyEnabled, minOrders, minProfitPct);
+            //topIndicatorPairs = GetTopIndicatorPairs(security, topIndicatorPairs, secondTest, firstTest.Count / 10, marginSell, marginBuy, isSellEnabled, isBuyEnabled, minOrders, minProfitPct);
+            //IndicatorPair topIndicatorPair = GetTopIndicatorPair(security, topIndicatorPairs, thirdTest, marginSell, marginBuy, isSellEnabled, isBuyEnabled, minOrders, minProfitPct);
+            #endregion
+
+            int topValues = indicatorPairs.Count;
+            for (int i = 0; i < this.RecursiveTests; i++)
+            {
+                topValues = indicatorPairs.Count / this.DivideValue;
+                List<Candle> simulationCandles = candles.GetRange(candles.Count - (1 + nrOfTestValues * (this.RecursiveTests - i)), nrOfTestValues);
+                indicatorPairs = GetTopIndicatorPairs(security, indicatorPairs, simulationCandles, topValues, isSellEnabled, isBuyEnabled, minOrders, maxOrders, minProfitPct, loseLimitConstant);
+            }
+
+            return indicatorPairs.Count > 0 ? indicatorPairs[0] : null;
+        }
+
+        public List<IndicatorPair> GetTopIndicatorPairs(string securityID, List<IndicatorPair> indicatorPairs, List<Candle> candles, int top, bool isSellEnabled, bool isBuyEnabled, int minOrders, int maxOrders, decimal minProfitPct, decimal loseLimitConstant)
+        {
+            int initialMoney = 100000;
+            int orderLimit = initialMoney / 10;
+            decimal minProfit = orderLimit * minProfitPct / 100;
+            int leverage = 1;
+            int maxInvestedPct = 80;
+
+            Dictionary<StrategyGeneric, IndicatorPair> strategiesAndIndicators = new Dictionary<StrategyGeneric, IndicatorPair>();
+
+            bool raceCondition = false;
+            Parallel.ForEach(indicatorPairs, new ParallelOptions { MaxDegreeOfParallelism = 16 }, indicatorPair =>
+            //foreach (IndicatorPair indicatorPair in indicatorPairs)
+            {
+                EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, leverage, maxInvestedPct);
+                StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityID, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
+
+                strategyGeneric.Start();
+
+                for (int i = 0; i < candles.Count; i++)
+                {
+                    strategyGeneric.ProcessCandle(candles[i]);
+                }
+
+                strategyGeneric.Stop();
+
+                while (raceCondition) { Thread.Sleep(5); }
+                raceCondition = true;
+                while (!strategiesAndIndicators.ContainsKey(strategyGeneric))
+                {
+                    try
+                    {
+                        indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
+                        strategiesAndIndicators[strategyGeneric] = indicatorPair;
+                    }
+                    catch { Thread.Sleep(5); }
+                }
+                raceCondition = false;
+            }
+            );
+
+            List<IndicatorPair> topIndicatorPairs = new List<IndicatorPair>();
+            IList<StrategyGeneric> strategies = new List<StrategyGeneric>((strategiesAndIndicators.Keys).Where(strategy => strategy != null).Where(strategy => strategy.OrderCount >= minOrders && strategy.OrderCount <= maxOrders && strategy.ConnectionSecurityIDProfit() > minProfit).AsEnumerable<StrategyGeneric>());
+            if (strategies.Count > 0)
+            {
+                strategies = SortingAlgorithm.MergeSort(strategies);
+                for (int i = 0; i < top && i < strategies.Count; i++)
+                {
+                    if (strategiesAndIndicators.ContainsKey(strategies[i]))
+                    {
+                        topIndicatorPairs.Add(strategiesAndIndicators[strategies[i]]);
+                    }
+                }
+            }
+
+            return topIndicatorPairs;
+        }
+
+
+        public OptimizerOptions FindBestOptimizerOptions(List<Candle> testCandles, TickPeriod tickPeriod)
+        {
+            OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(tickPeriod);
+            Optimizer optimizer = new Optimizer()
+            {
+                RecursiveTests = optimizerOptions.RecursiveTests,
+            };
+
+            FindBestOptimizerOptions_BestLoseLimitConstant(ref optimizer, ref optimizerOptions, ref testCandles);
+            #region Optimization
+            /*
+            #region 1
+            FindBestOptimizerOptions_BestMinOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMaxOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestLoseLimitConstant(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMinProfitPct(ref optimizer, ref optimizerOptions, ref testCandles);
+            #endregion
+            #region 2
+            FindBestOptimizerOptions_BestMaxOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMinOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestLoseLimitConstant(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMinProfitPct(ref optimizer, ref optimizerOptions, ref testCandles);
+            #endregion
+            #region 3
+            FindBestOptimizerOptions_BestLoseLimitConstant(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMinProfitPct(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMinOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMaxOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            #endregion
+            #region 4
+            FindBestOptimizerOptions_BestMinProfitPct(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestLoseLimitConstant(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMinOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            FindBestOptimizerOptions_BestMaxOrders(ref optimizer, ref optimizerOptions, ref testCandles);
+            #endregion
+            */
+            #endregion
+            #region Close
+            /*
+            for (int runs = 0; runs < 1; runs++)
+            {
+                //Min Orders Traverse
+                optimizerOptions.BestIndicatorPair = null;
+                for (int i = optimizerOptions.MinOrders.Min; i < optimizerOptions.MinOrders.Max; i += optimizerOptions.MinOrders.IncrementIncrease / 2)
+                {
+                    IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, 0, 0, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, i, optimizerOptions.MaxOrders.Max, optimizerOptions.MinProfitPct.Min, optimizerOptions.LoseLimitConstant.Best);
+                    if (optimizerOptions.BestIndicatorPair != null)
+                    {
+                        if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.MinOrders.Best = i;
+                        }
+                    }
+                    else
+                    {
+                        if (indicatorPair != null)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.MinOrders.Best = i;
+                        }
+                    }
+                }
+
+                //Max Orders Traverse
+                optimizerOptions.BestIndicatorPair = null;
+                for (int i = optimizerOptions.MaxOrders.Min; i < optimizerOptions.MaxOrders.Max; i += optimizerOptions.MaxOrders.IncrementIncrease / 2)
+                {
+                    IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, 0, 0, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.MinOrders.Best, i, optimizerOptions.MinProfitPct.Min, optimizerOptions.LoseLimitConstant.Best);
+                    if (optimizerOptions.BestIndicatorPair != null)
+                    {
+                        if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.MaxOrders.Best = i;
+                        }
+                    }
+                    else
+                    {
+                        if (indicatorPair != null)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.MaxOrders.Best = i;
+                        }
+                    }
+                }
+
+                //Lose Limit Constant Traverse
+                optimizerOptions.BestIndicatorPair = null;
+                for (decimal i = optimizerOptions.LoseLimitConstant.Min; i < optimizerOptions.LoseLimitConstant.Max; i += optimizerOptions.LoseLimitConstant.IncrementIncrease / 2)
+                {
+                    IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, 0, 0, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.MinOrders.Best, optimizerOptions.MaxOrders.Best, optimizerOptions.MinProfitPct.Min, i);
+                    if (optimizerOptions.BestIndicatorPair != null)
+                    {
+                        if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.LoseLimitConstant.Best = i;
+                        }
+                    }
+                    else
+                    {
+                        if (indicatorPair != null)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.LoseLimitConstant.Best = i;
+                        }
+                    }
+                }
+
+                //Min Profit Pct Traverse
+                optimizerOptions.BestIndicatorPair = null;
+                for (int i = optimizerOptions.MinProfitPct.Min; i < optimizerOptions.MinProfitPct.Max; i += optimizerOptions.MinProfitPct.IncrementIncrease / 3)
+                {
+                    IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, 0, 0, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.MinOrders.Best, optimizerOptions.MaxOrders.Best, i, optimizerOptions.LoseLimitConstant.Best);
+                    if (optimizerOptions.BestIndicatorPair != null)
+                    {
+                        if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.MinProfitPct.Best = i;
+                        }
+                    }
+                    else
+                    {
+                        if (indicatorPair != null)
+                        {
+                            optimizerOptions.BestIndicatorPair = indicatorPair;
+                            optimizerOptions.MinProfitPct.Best = i;
+                        }
+                    }
+                }
+            }
+            */
+            #endregion
+            #region OLD
+            /*
+            //Final Selection
+            int minOrders_Min = optimizerOptions.MinOrders.Best - (2 * optimizerOptions.MinOrders.IncrementIncrease / 2);
+            minOrders_Min = (minOrders_Min < 0 ? 0 : minOrders_Min);
+            int minOrders_Max = optimizerOptions.MinOrders.Best + (2 * optimizerOptions.MinOrders.IncrementIncrease / 2);
+            for (int minOrders = minOrders_Min; minOrders <= minOrders_Max; minOrders += optimizerOptions.MinOrders.IncrementIncrease / 2)
+            {
+                minOrders_Max = (minOrders_Max <= minOrders ? minOrders : minOrders_Max);
+                int maxOrders_Min = optimizerOptions.MaxOrders.Best - (2 * optimizerOptions.MaxOrders.IncrementIncrease / 2);
+                int maxOrders_Max = optimizerOptions.MaxOrders.Best + (2 * optimizerOptions.MaxOrders.IncrementIncrease / 2);
+                for (int maxOrders = maxOrders_Min; maxOrders <= maxOrders_Max; maxOrders += optimizerOptions.MaxOrders.IncrementIncrease / 2)
+                {
+                    int minProfitPct_Min = optimizerOptions.MinProfitPct.Best - (2 * optimizerOptions.MinProfitPct.IncrementIncrease / 2);
+                    minProfitPct_Min = (minProfitPct_Min < 0 ? 0 : minProfitPct_Min);
+                    int minProfitPct_Max = optimizerOptions.MinProfitPct.Best + (2 * optimizerOptions.MinProfitPct.IncrementIncrease / 2);
+                    for (int minProfitPct = minProfitPct_Min; minProfitPct <= minProfitPct_Max; minProfitPct += optimizerOptions.MinProfitPct.IncrementIncrease / 3)
+                    {
+                        decimal loseLimitConstant_Min = optimizerOptions.LoseLimitConstant.Best - (2 * optimizerOptions.LoseLimitConstant.IncrementIncrease / 2);
+                        decimal loseLimitConstant_Max = optimizerOptions.LoseLimitConstant.Best + (2 * optimizerOptions.LoseLimitConstant.IncrementIncrease / 2);
+                        loseLimitConstant_Max = (loseLimitConstant_Max >= 0 ? 0 : optimizerOptions.LoseLimitConstant.Max);
+                        for (decimal loseLimitConstant = loseLimitConstant_Min; loseLimitConstant < loseLimitConstant_Max; loseLimitConstant += optimizerOptions.LoseLimitConstant.IncrementIncrease / 2)
+                        {
+                            //ÆNDRE VÆRDIER
+                            IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, 0, 0, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, minOrders, maxOrders, minProfitPct, loseLimitConstant);
+
+                            if (optimizerOptions.BestIndicatorPair != null)
+                            {
+                                if (indicatorPair != null && indicatorPair.LastResult > currentBestIndicatorPair.LastResult)
+                                {
+                                    currentBestIndicatorPair = indicatorPair;
+                                    OptimizerOptionsDictionary[indicatorPair] =
+                                        new OptimizerOptions(
+                                        optimizerOptions.RecursiveTests,
+                                        optimizerOptions.MaxIndicatorLength,
+                                        optimizerOptions.NrOfTestValues,
+                                        optimizerOptions.IsBuyEnabled,
+                                        optimizerOptions.IsBuyEnabled,
+                                        new OptimizerOption<int>(minOrders),
+                                        new OptimizerOption<int>(maxOrders),
+                                        new OptimizerOption<int>(minProfitPct),
+                                        optimizerOptions.LoseLimitConstant,
+                                        indicatorPair
+                                        );
+                                }
+                            }
+                            else
+                            {
+                                if (indicatorPair != null)
+                                {
+                                    currentBestIndicatorPair = indicatorPair;
+                                    OptimizerOptionsDictionary[indicatorPair] =
+                                        new OptimizerOptions(
+                                        optimizerOptions.RecursiveTests,
+                                        optimizerOptions.MaxIndicatorLength,
+                                        optimizerOptions.NrOfTestValues,
+                                        optimizerOptions.IsBuyEnabled,
+                                        optimizerOptions.IsBuyEnabled,
+                                        new OptimizerOption<int>(minOrders),
+                                        new OptimizerOption<int>(maxOrders),
+                                        new OptimizerOption<int>(minProfitPct),
+                                        optimizerOptions.LoseLimitConstant,
+                                        indicatorPair
+                                        );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            */
+            #endregion
+
+            return optimizerOptions;
+        }
+
+        private void FindBestOptimizerOptions_BestMinOrders(ref Optimizer optimizer, ref OptimizerOptions optimizerOptions, ref List<Candle> testCandles)
+        {
+            //Min Orders Traverse
+            optimizerOptions.BestIndicatorPair = null;
+            for (int i = optimizerOptions.MinOrders.Min; i <= optimizerOptions.MinOrders.Max; i += optimizerOptions.MinOrders.IncrementIncrease)
+            {
+                IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, i, optimizerOptions.MaxOrders.Best, optimizerOptions.MinProfitPct.Best, optimizerOptions.LoseLimitConstant.Best);
+                if (optimizerOptions.BestIndicatorPair != null)
+                {
+                    if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.MinOrders.Best = i;
+                    }
+                }
+                else
+                {
+                    if (indicatorPair != null)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.MinOrders.Best = i;
+                    }
+                }
+            }
+        }
+        private void FindBestOptimizerOptions_BestMaxOrders(ref Optimizer optimizer, ref OptimizerOptions optimizerOptions, ref List<Candle> testCandles)
+        {
+            //Max Orders Traverse
+            optimizerOptions.BestIndicatorPair = null;
+            for (int i = optimizerOptions.MaxOrders.Min; i <= optimizerOptions.MaxOrders.Max; i += optimizerOptions.MaxOrders.IncrementIncrease)
+            {
+                IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.MinOrders.Best, i, optimizerOptions.MinProfitPct.Best, optimizerOptions.LoseLimitConstant.Best);
+                if (optimizerOptions.BestIndicatorPair != null)
+                {
+                    if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.MaxOrders.Best = i;
+                    }
+                }
+                else
+                {
+                    if (indicatorPair != null)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.MaxOrders.Best = i;
+                    }
+                }
+            }
+
+        }
+        private void FindBestOptimizerOptions_BestLoseLimitConstant(ref Optimizer optimizer, ref OptimizerOptions optimizerOptions, ref List<Candle> testCandles)
+        {
+            //Lose Limit Constant Traverse
+            optimizerOptions.BestIndicatorPair = null;
+            for (decimal i = optimizerOptions.LoseLimitConstant.Min; i <= optimizerOptions.LoseLimitConstant.Max; i += optimizerOptions.LoseLimitConstant.IncrementIncrease)
+            {
+                IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.MinOrders.Best, optimizerOptions.MaxOrders.Best, optimizerOptions.MinProfitPct.Best, i);
+                if (optimizerOptions.BestIndicatorPair != null)
+                {
+                    if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.LoseLimitConstant.Best = i;
+                    }
+                }
+                else
+                {
+                    if (indicatorPair != null)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.LoseLimitConstant.Best = i;
+                    }
+                }
+            }
+        }
+        private void FindBestOptimizerOptions_BestMinProfitPct(ref Optimizer optimizer, ref OptimizerOptions optimizerOptions, ref List<Candle> testCandles)
+        {
+            //Min Profit Pct Traverse
+            optimizerOptions.BestIndicatorPair = null;
+            for (int i = optimizerOptions.MinProfitPct.Min; i <= optimizerOptions.MinProfitPct.Max; i += optimizerOptions.MinProfitPct.IncrementIncrease)
+            {
+                IndicatorPair indicatorPair = optimizer.CurrentBestStrategy("TestId", testCandles, optimizerOptions.MaxIndicatorLength, optimizerOptions.NrOfTestValues, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.MinOrders.Best, optimizerOptions.MaxOrders.Best, i, optimizerOptions.LoseLimitConstant.Best);
+                if (optimizerOptions.BestIndicatorPair != null)
+                {
+                    if (indicatorPair != null && indicatorPair.LastResult > optimizerOptions.BestIndicatorPair.LastResult)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.MinProfitPct.Best = i;
+                    }
+                }
+                else
+                {
+                    if (indicatorPair != null)
+                    {
+                        optimizerOptions.BestIndicatorPair = indicatorPair;
+                        optimizerOptions.MinProfitPct.Best = i;
+                    }
+                }
+            }
+
+        }
+
+
+        /*
+        public StrategyGeneric Simulate(List<Candle> candles, LengthIndicator<decimal> shortIndicator, LengthIndicator<decimal> longIndicator)
+        {
+            StrategyGeneric strategy = new StrategyGeneric();
+
+            return null;
+        }
+        */
+
+        /*
+        public void GoThroughCandles(ref List<IndicatorPair> indicatorPairs, ref List<Candle> candles)
+        {
+            foreach (Candle candle in candles)
+            {
+                foreach (IndicatorPair indicatorPair in indicatorPairs)
+                {
+                    indicatorPair.ShortIndicator.Process(candle.ClosePrice);
+                    indicatorPair.LongIndicator.Process(candle.ClosePrice);
+                }
+            }
+        }
+        */

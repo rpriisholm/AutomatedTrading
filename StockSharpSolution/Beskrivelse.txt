@@ -1,0 +1,7 @@
+﻿Connection til site
+1. Portfolie
+2. Indicator - SMA strategi
+3. Loader - Emuleringsdata 
+4. Find Best Strategi - Udvælg
+5. Connector
+6. Trader

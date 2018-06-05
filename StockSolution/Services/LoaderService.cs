@@ -22,14 +22,14 @@ namespace StockSolution.Services
         {
             Dictionary<string, IList<Candle>> candles = new Dictionary<string, IList<Candle>>();
             List<string> failedSecurities = new List<string>();
-            
+
             foreach (string securityID in GetSecurityIDs(storagePath))
             {
                 try
                 {
                     candles[securityID] = LoadLocalCandles(timeFrame, storagePath, securityID, startTime, stopTime);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     failedSecurities.Add(securityID);
                     System.Console.WriteLine(e.ToString());
@@ -60,7 +60,19 @@ namespace StockSolution.Services
             // Generate Candles
             while (csvReader.ReadNextRecord())
             {
-                DateTime openTime = DateTime.Parse(csvReader["timestamp"]);
+                DateTime openTime = new DateTime();
+
+                if (csvReader.HasHeader("timestamp"))
+                {
+                    openTime = DateTime.Parse(csvReader["timestamp"]);
+                }
+                else
+                {
+                    if (csvReader.HasHeader("date"))
+                    {
+                        openTime = DateTime.Parse(csvReader["date"]);
+                    }
+                }
 
                 Candle candle = new Candle
                 {

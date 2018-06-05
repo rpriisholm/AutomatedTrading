@@ -68,169 +68,176 @@ namespace StockSolution
             int initialMoney = 100000;
             int orderLimit = initialMoney / 10;
 
-            Dictionary<string, decimal[]> skipSecurityIDs = new Dictionary<string, decimal[]>();
-
-            for (decimal loseLimitConstant = -0.075m; loseLimitConstant <= -0.06m; loseLimitConstant += 0.015m)
+            //Dictionary<string, decimal[]> skipSecurityIDs = new Dictionary<string, decimal[]>();
+            /*
+            for (decimal loseLimitConstant = -0.105m; loseLimitConstant <= -0.105m; loseLimitConstant += 0.015m)
             {
-                int minOrdersMax = 25;
+                int minOrdersMax = 10;
                 for (int minOrders = 10; minOrders <= minOrdersMax; minOrders += 5)
                 {
                     int positiveOrderPctMax = 84;
-                    for (int positiveOrderPct = 36; positiveOrderPct <= positiveOrderPctMax; positiveOrderPct += 12)
+                    for (int positiveOrderPct = 84; positiveOrderPct <= positiveOrderPctMax; positiveOrderPct += 12)
                     {
-                        int minProfitPctMax = 50;
-                        for (int minProfitPct = 15; minProfitPct <= minProfitPctMax; minProfitPct += 5)
+                        int minProfitPctMax = 20;
+                        for (int minProfitPct = 20; minProfitPct <= minProfitPctMax; minProfitPct += 5)
                         {
-                            Optimizer optimizer = new Optimizer();
-                            List<decimal> emulationConnections = new List<decimal>();
+                        */
+            Optimizer optimizer = new Optimizer();
+            List<decimal> emulationConnections = new List<decimal>();
 
-                            #region CSV Headers
-                            //StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\Optimizer\Test Result MP_PCT " + minProfitPct + " - M_Order " + minOrders + " - P_OrderPct " + positiveOrderPct + ".csv");
+            #region CSV Headers
+            //StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\Optimizer\Test Result MP_PCT " + minProfitPct + " - M_Order " + minOrders + " - P_OrderPct " + positiveOrderPct + ".csv");
 
-                            //CsvWriter csvWriter = new CsvWriter(streamWriter);
-                            csvWriter.WriteField("Security ID");
-                            csvWriter.WriteField("Short Indicator");
-                            csvWriter.WriteField("Long Indicator");
-                            csvWriter.WriteField("Recursive Tests");
-                            csvWriter.WriteField("Is Sell Enabled");
-                            csvWriter.WriteField("Is Buy Enabled");
-                            csvWriter.WriteField("Min Orders");
-                            csvWriter.WriteField("Positive Order Pct");
-                            csvWriter.WriteField("Test Positive Order Pct");
-                            csvWriter.WriteField("Min Profit Pct");
-                            csvWriter.WriteField("Lose Limit Constant");
-                            csvWriter.WriteField("Test Result PCT");
-                            csvWriter.WriteField("Profit PCT");
-                            csvWriter.NextRecord();
-                            #endregion
+            //CsvWriter csvWriter = new CsvWriter(streamWriter);
+            csvWriter.WriteField("Security ID");
+            csvWriter.WriteField("Short Indicator");
+            csvWriter.WriteField("Long Indicator");
+            csvWriter.WriteField("Recursive Tests");
+            csvWriter.WriteField("Is Sell Enabled");
+            csvWriter.WriteField("Is Buy Enabled");
+            csvWriter.WriteField("Min Orders");
+            csvWriter.WriteField("Positive Order Pct");
+            csvWriter.WriteField("Test Positive Order Pct");
+            csvWriter.WriteField("Min Profit Pct");
+            csvWriter.WriteField("Lose Limit Constant");
+            csvWriter.WriteField("Test Result PCT");
+            csvWriter.WriteField("Profit PCT");
+            csvWriter.NextRecord();
+            #endregion
 
-                            bool raceCondition = false;
-                            foreach (string securityID in candlesDictionary.Keys)
-                            {
-                                if (!IsSkipped(skipSecurityIDs, securityID, loseLimitConstant, minOrders, positiveOrderPct, minProfitPct))
-                                {
+            bool raceCondition = false;
+            foreach (string securityID in candlesDictionary.Keys)
+            {
+                decimal loseLimitConstant = -0.105m;
+                int minOrders = 10;
+                int positiveOrderPct = 84;
+                int minProfitPct = 20;
 
-                                    //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 8 }, securityID =>{
-                                    //Alternativ til FindBestOptimizerOptions brug overordnet sortering mere end en gang (benyt best)
-                                    //Lav vægtning så slut værdier betyder mere end startværdier - Brug test result som indicator på godt og skidt
-                                    startTime = DateTime.Now;
+                /*
+                if (!IsSkipped(skipSecurityIDs, securityID, loseLimitConstant, minOrders, positiveOrderPct, minProfitPct))
+                {
+                */
+                //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 8 }, securityID =>{
+                //Alternativ til FindBestOptimizerOptions brug overordnet sortering mere end en gang (benyt best)
+                //Lav vægtning så slut værdier betyder mere end startværdier - Brug test result som indicator på godt og skidt
+                startTime = DateTime.Now;
 
-                                    System.Console.WriteLine();
+                System.Console.WriteLine();
 
-                                    //int sellPositiveOrdersPct;
-                                    //Find Best securityIDs
-                                    //Split indicators One of buy one for sell
-                                    //Stop Ordering if lose to high (find another strategy)
+                //int sellPositiveOrdersPct;
+                //Find Best securityIDs
+                //Split indicators One of buy one for sell
+                //Stop Ordering if lose to high (find another strategy)
 
-                                    List<Candle> candles = candlesDictionary[securityID].ToList();
-                                    List<Candle> testCandles = candles.GetRange(0, candles.Count - realValues);
-                                    List<Candle> realCandles = candles.GetRange(candles.Count - realValues - 1, realValues);
+                List<Candle> candles = candlesDictionary[securityID].ToList();
+                List<Candle> testCandles = candles.GetRange(0, candles.Count - realValues);
+                List<Candle> realCandles = candles.GetRange(candles.Count - realValues - 1, realValues);
 
-                                    try
-                                    {
-                                        OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
-                                        optimizerOptions.MinProfitPct = minProfitPct;
-                                        optimizerOptions.MinOrders = minOrders;
-                                        optimizerOptions.PositiveOrderPct = positiveOrderPct;
-                                        optimizerOptions.LoseLimitConstant = loseLimitConstant;
-                                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 90, 1);
-                                        EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
-                                        decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
-                                        StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
-                                        strategy.Start();
-                                        //Candle Simulation Still Fake
-                                        for (int i = 0; i < realCandles.Count; i++)
-                                        {
-                                            strategy.ProcessCandle(realCandles[i]);
-                                        }
-                                        strategy.Stop();
+                try
+                {
+                    OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+                    optimizerOptions.MinProfitPct = minProfitPct;
+                    optimizerOptions.MinOrders = minOrders;
+                    optimizerOptions.PositiveOrderPct = positiveOrderPct;
+                    optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                    optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 90, 1);
+                    EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
+                    decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
+                    StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
+                    strategy.Start();
+                    //Candle Simulation Still Fake
+                    for (int i = 0; i < realCandles.Count; i++)
+                    {
+                        strategy.ProcessCandle(realCandles[i]);
+                    }
+                    strategy.Stop();
 
-                                        /*   
-                                        StrategyBasic strategySell = new StrategyGeneric(emulationConnection, securityID, indicatorPairSell.LongIndicator, indicatorPairSell.ShortIndicator, marginSellPct, marginBuyPct, true, false);
-                                        StrategyBasic strategyBuy = new StrategyGeneric(emulationConnection, securityID, indicatorPairBuy.LongIndicator, indicatorPairBuy.ShortIndicator, marginSellPct, marginBuyPct, false, true);
-                                        strategySell.Start();
-                                        strategyBuy.Start();
-                                        //Candle Simulation Still Fake
-                                        foreach (var candle in realCandles)
-                                        {
-                                            strategySell.ProcessCandle(candle);
-                                            strategyBuy.ProcessCandle(candle);
-                                        }
-                                        strategySell.Stop();
-                                        strategyBuy.Stop();
-                                        */
+                    /*   
+                    StrategyBasic strategySell = new StrategyGeneric(emulationConnection, securityID, indicatorPairSell.LongIndicator, indicatorPairSell.ShortIndicator, marginSellPct, marginBuyPct, true, false);
+                    StrategyBasic strategyBuy = new StrategyGeneric(emulationConnection, securityID, indicatorPairBuy.LongIndicator, indicatorPairBuy.ShortIndicator, marginSellPct, marginBuyPct, false, true);
+                    strategySell.Start();
+                    strategyBuy.Start();
+                    //Candle Simulation Still Fake
+                    foreach (var candle in realCandles)
+                    {
+                        strategySell.ProcessCandle(candle);
+                        strategyBuy.ProcessCandle(candle);
+                    }
+                    strategySell.Stop();
+                    strategyBuy.Stop();
+                    */
 
-                                        decimal profit = emulationConnection.GetTotalValue() - initialMoney;
+                    decimal profit = emulationConnection.GetTotalValue() - initialMoney;
 
-                                        decimal profitPct = (profit / orderLimit * 100);
-                                        System.Console.WriteLine("Portfolie End Value PCT: " + profitPct.ToString() + " - " + securityID + " - " + strategy.Connection.GetPortfolio().TotalValue);
-                                        //System.Console.WriteLine(strategy.Connection.GetPortfolio().MaxLoseValue);
+                    decimal profitPct = (profit / orderLimit * 100);
+                    System.Console.WriteLine("Portfolie End Value PCT: " + profitPct.ToString() + " - " + securityID + " - " + strategy.Connection.GetPortfolio().TotalValue);
+                    //System.Console.WriteLine(strategy.Connection.GetPortfolio().MaxLoseValue);
 
-                                        /*
-                                        var sorted = SortingAlgorithm.MergeSort(emulationConnections);
+                    /*
+                    var sorted = SortingAlgorithm.MergeSort(emulationConnections);
 
 
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[0] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[1] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[2] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[3] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[4] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[5] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[0] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[1] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[2] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[3] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[4] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[5] / initialMoney * 100).ToString());
 
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 5] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 4] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 3] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 2] / initialMoney * 100).ToString());
-                                        Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 1] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 5] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 4] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 3] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 2] / initialMoney * 100).ToString());
+                    Console.WriteLine("Portfolie End Value: " + (sorted[sorted.Count - 1] / initialMoney * 100).ToString());
 
-                                        Console.WriteLine();
-                                         */
+                    Console.WriteLine();
+                     */
 
-                                        while (raceCondition)
-                                        {
-                                            Thread.Sleep(5);
-                                        }
+                    while (raceCondition)
+                    {
+                        Thread.Sleep(5);
+                    }
 
-                                        raceCondition = true;
-                                        endTime = DateTime.Now;
-                                        System.Console.WriteLine("Start: " + startTime + " - End: " + endTime);
-                                        csvWriter.WriteField(securityID);
-                                        csvWriter.WriteField(optimizerOptions.BestIndicatorPair.ShortIndicator.ToString());
-                                        csvWriter.WriteField(optimizerOptions.BestIndicatorPair.LongIndicator.ToString());
-                                        csvWriter.WriteField((optimizerOptions.RecursiveTests));
-                                        csvWriter.WriteField(optimizerOptions.IsSellEnabled);
-                                        csvWriter.WriteField(optimizerOptions.IsBuyEnabled);
-                                        csvWriter.WriteField(optimizerOptions.MinOrders);
-                                        csvWriter.WriteField(optimizerOptions.PositiveOrderPct);
-                                        csvWriter.WriteField(optimizerOptions.BestIndicatorPair.PositiveOrderPct);
-                                        csvWriter.WriteField(optimizerOptions.MinProfitPct);
-                                        csvWriter.WriteField(optimizerOptions.LoseLimitConstant);
-                                        csvWriter.WriteField(lastResultPct);
-                                        csvWriter.WriteField(profitPct);
-                                        csvWriter.NextRecord();
-                                    }
-                                    catch (System.NullReferenceException)
-                                    {
-                                        Console.WriteLine("NullReferenceException - No Strategy Found - " + securityID);
-                                        skipSecurityIDs[securityID] = new decimal[]
-                                        {
+                    raceCondition = true;
+                    endTime = DateTime.Now;
+                    System.Console.WriteLine("Start: " + startTime + " - End: " + endTime);
+                    csvWriter.WriteField(securityID);
+                    csvWriter.WriteField(optimizerOptions.BestIndicatorPair.ShortIndicator.ToString());
+                    csvWriter.WriteField(optimizerOptions.BestIndicatorPair.LongIndicator.ToString());
+                    csvWriter.WriteField((optimizerOptions.RecursiveTests));
+                    csvWriter.WriteField(optimizerOptions.IsSellEnabled);
+                    csvWriter.WriteField(optimizerOptions.IsBuyEnabled);
+                    csvWriter.WriteField(optimizerOptions.MinOrders);
+                    csvWriter.WriteField(optimizerOptions.PositiveOrderPct);
+                    csvWriter.WriteField(optimizerOptions.BestIndicatorPair.PositiveOrderPct);
+                    csvWriter.WriteField(optimizerOptions.MinProfitPct);
+                    csvWriter.WriteField(optimizerOptions.LoseLimitConstant);
+                    csvWriter.WriteField(lastResultPct);
+                    csvWriter.WriteField(profitPct);
+                    csvWriter.NextRecord();
+                }
+                catch (System.NullReferenceException)
+                {
+                    Console.WriteLine("NullReferenceException - No Strategy Found - " + securityID);
+                    /*
+                    skipSecurityIDs[securityID] = new decimal[]
+                    {
                                             loseLimitConstant,
                                             minOrders,
                                             positiveOrderPct,
                                             minProfitPct
-                                        };
-                                    }
-
-                                    raceCondition = false;
-                                    csvWriter.Flush();
-                                    streamWriter.Flush();
-                                    //});
-                                }
-                            }
-                        }
-                    }
+                    };
+                    */
                 }
+
+                raceCondition = false;
+                csvWriter.Flush();
+                streamWriter.Flush();
+                //});
+
+                //}
             }
+
             streamWriter.Close();
         }
 
@@ -238,7 +245,7 @@ namespace StockSolution
         {
             bool isSkipped = false;
 
-            if(skipSecurityIDs.ContainsKey(securityId) && loseLimitConstant >= skipSecurityIDs[securityId][0]  && minOrders >= skipSecurityIDs[securityId][1] && positiveOrderPct >= skipSecurityIDs[securityId][2] && minProfitPct >= skipSecurityIDs[securityId][3])
+            if (skipSecurityIDs.ContainsKey(securityId) && loseLimitConstant >= skipSecurityIDs[securityId][0] && minOrders >= skipSecurityIDs[securityId][1] && positiveOrderPct >= skipSecurityIDs[securityId][2] && minProfitPct >= skipSecurityIDs[securityId][3])
             {
                 isSkipped = true;
             }

@@ -69,9 +69,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StockSolution\StockSolution.csproj">
+    <ProjectReference Include="..\StockSolution\AutomatedTrading.csproj">
       <Project>{173C308A-F28A-4740-BB5F-B8E516B2E53F}</Project>
-      <Name>StockSolution</Name>
+      <Name>AutomatedTrading</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

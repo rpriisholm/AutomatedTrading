@@ -2,6 +2,7 @@
 using StockSharp.Algo.Indicators;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -67,7 +68,7 @@ namespace StockSolution.Model
                     //Set LastResult
                     indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
                     //SET ORDERS OG POSITIVE ORDER PCT
-                    indicatorPair.PositiveOrderPct = (int) strategyGeneric.AllPositiveOrdersPct();
+                    indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
                     indicatorPair.Orders = strategyGeneric.OrderCount;
                 }
                 );
@@ -149,9 +150,13 @@ namespace StockSolution.Model
                     {
                         if (shortIndicator != longIndicator)
                         {
-                            LengthIndicator<decimal> shortIndicatorClone = indicators[shortIndicator].Clone() as LengthIndicator<decimal>;
-                            LengthIndicator<decimal> longIndicatorClone = indicators[longIndicator].Clone() as LengthIndicator<decimal>;
-                            indicatorPairs.Add(new IndicatorPair(shortIndicatorClone, longIndicatorClone));
+                            if (!IsIndicatorPairDisabled(indicators[shortIndicator], indicators[longIndicator]))
+                            {
+                                LengthIndicator<decimal> shortIndicatorClone = indicators[shortIndicator].Clone() as LengthIndicator<decimal>;
+                                LengthIndicator<decimal> longIndicatorClone = indicators[longIndicator].Clone() as LengthIndicator<decimal>;
+                                indicatorPairs.Add(new IndicatorPair(shortIndicatorClone, longIndicatorClone));
+                            }
+
                         }
                         longIndicator++;
                     }
@@ -189,6 +194,215 @@ namespace StockSolution.Model
 
             return indicatorPairs;
         }
+
+        private bool IsIndicatorPairDisabled(LengthIndicator<decimal> shortIndicator, LengthIndicator<decimal> longIndicator)
+        {
+            StringReader strReader = new StringReader(this._DisabledPairs);
+            string indicatorPair = shortIndicator.ToString().Split(' ')[0] + " - " + longIndicator.ToString().Split(' ')[0];
+
+            bool isDisabled = false;
+            while (strReader.Peek() >= 0)
+            {
+                string disabledIndicatorPair = strReader.ReadLine();
+                if (indicatorPair.Equals(disabledIndicatorPair))
+                {
+                    isDisabled = true;
+                    break;
+                }
+            }
+
+            return isDisabled;
+        }
+
+        private readonly string _DisabledPairs = @"Highest - LinearReg
+MeanDeviation - Momentum
+EMA - HMA
+HMA - JMA
+Momentum - Momentum
+SMMA - JMA
+KAMA - EMA
+LinearReg - JMA
+KAMA - SMA
+KAMA - HMA
+SMMA - SMA
+EMA - SMA
+Highest - HMA
+HMA - LinearReg
+LinearReg - HMA
+HMA - HMA
+Highest - Highest
+KAMA - Lowest
+KAMA - Highest
+MeanDeviation - MeanDeviation
+SMA - JMA
+EMA - JMA
+SMA - LinearReg
+HMA - Lowest
+SMMA - KAMA
+SMA - HMA
+LinearReg - Highest
+JMA - HMA
+EMA - LinearReg
+Lowest - LinearReg
+Highest - LinearReg
+JMA - HMA
+MeanDeviation - Momentum
+EMA - HMA
+HMA - JMA
+Highest - HMA
+Momentum - Momentum
+KAMA - EMA
+LinearReg - JMA
+JMA - LinearReg
+KAMA - LinearReg
+SMA - EMA
+KAMA - SMA
+KAMA - HMA
+SMMA - SMA
+HMA - HMA
+SMMA - Lowest
+HMA - LinearReg
+Highest - Highest
+EMA - SMA
+KAMA - Highest
+MeanDeviation - MeanDeviation
+SMA - JMA
+EMA - JMA
+HMA - Lowest
+Lowest - LinearReg
+SMA - HMA
+LinearReg - Highest
+EMA - LinearReg
+Highest - LinearReg
+JMA - HMA
+MeanDeviation - Momentum
+EMA - HMA
+HMA - JMA
+Highest - HMA
+MeanDeviation - MeanDeviation
+KAMA - EMA
+Momentum - Momentum
+LinearReg - JMA
+JMA - LinearReg
+KAMA - LinearReg
+Highest - KAMA
+SMA - EMA
+KAMA - SMA
+Lowest - JMA
+SMMA - SMA
+HMA - HMA
+SMMA - Lowest
+LinearReg - Lowest
+Lowest - HMA
+Highest - Highest
+EMA - SMA
+KAMA - HMA
+SMA - JMA
+EMA - JMA
+SMA - LinearReg
+Lowest - LinearReg
+SMA - HMA
+JMA - EMA
+LinearReg - Highest
+Highest - SMA
+SMMA - HMA
+Highest - LinearReg
+JMA - HMA
+MeanDeviation - Momentum
+EMA - HMA
+HMA - JMA
+Highest - HMA
+MeanDeviation - MeanDeviation
+SMMA - JMA
+KAMA - EMA
+Momentum - Momentum
+LinearReg - LinearReg
+LinearReg - JMA
+JMA - LinearReg
+KAMA - LinearReg
+Highest - KAMA
+SMA - EMA
+KAMA - SMA
+SMMA - SMA
+HMA - HMA
+Lowest - HMA
+LinearReg - SMA
+Highest - SMA
+Highest - Highest
+EMA - SMA
+Lowest - LinearReg
+KAMA - HMA
+SMA - JMA
+EMA - JMA
+SMA - LinearReg
+HMA - Lowest
+LinearReg - Lowest
+SMA - HMA
+Lowest - SMA
+LinearReg - Highest
+Highest - LinearReg
+JMA - HMA
+MeanDeviation - Momentum
+EMA - HMA
+HMA - JMA
+Highest - HMA
+MeanDeviation - MeanDeviation
+SMMA - JMA
+Momentum - Momentum
+LinearReg - JMA
+JMA - LinearReg
+KAMA - LinearReg
+SMA - EMA
+KAMA - SMA
+Lowest - LinearReg
+SMMA - SMA
+LinearReg - Lowest
+HMA - HMA
+Lowest - HMA
+LinearReg - SMA
+Highest - SMA
+EMA - SMA
+SMA - JMA
+SMA - LinearReg
+HMA - Lowest
+SMMA - HMA
+SMA - HMA
+Lowest - SMA
+Momentum - MeanDeviation
+EMA - JMA
+KAMA - HMA
+EMA - LinearReg
+Highest - LinearReg
+EMA - HMA
+HMA - JMA
+Highest - HMA
+MeanDeviation - MeanDeviation
+SMMA - JMA
+Momentum - Momentum
+LinearReg - JMA
+JMA - LinearReg
+KAMA - LinearReg
+SMA - EMA
+KAMA - SMA
+Lowest - LinearReg
+SMMA - SMA
+LinearReg - Lowest
+HMA - LinearReg
+Lowest - HMA
+LinearReg - SMA
+Highest - SMA
+EMA - SMA
+SMA - JMA
+SMA - LinearReg
+HMA - Lowest
+SMMA - HMA
+SMA - HMA
+Lowest - SMA
+Momentum - MeanDeviation
+EMA - JMA
+KAMA - HMA
+HMA - EMA
+";
 
     }
 }

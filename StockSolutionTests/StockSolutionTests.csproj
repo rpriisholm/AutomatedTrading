@@ -68,12 +68,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\StockSolution\AutomatedTrading.csproj">
-      <Project>{173C308A-F28A-4740-BB5F-B8E516B2E53F}</Project>
-      <Name>AutomatedTrading</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

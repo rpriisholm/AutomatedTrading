@@ -35,12 +35,13 @@ namespace StockSolution.Model
 
         public OptimizerOptions FindBestOptions(OptimizerOptions optimizerOptions, List<Candle> candles, int nrOfTestValues, int leverage)
         {
-            if (candles.Count < (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests))
+            int minCandles = (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests);
+            if (candles.Count < minCandles)
             {
-                return null;
+                throw new InvalidDataException();
             }
-
-            List<Candle> initialCandles = candles.GetRange(candles.Count - (1 + optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests), optimizerOptions.IndicatorLength.Max);
+            int initIndex = candles.Count - (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests);
+            List<Candle> initialCandles = candles.GetRange(initIndex, optimizerOptions.IndicatorLength.Max);
             List<IndicatorPair> indicatorPairs = InitializeIndicatorPairs(initialCandles, optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
 
             for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
@@ -198,7 +199,7 @@ namespace StockSolution.Model
         private bool IsIndicatorPairDisabled(LengthIndicator<decimal> shortIndicator, LengthIndicator<decimal> longIndicator)
         {
             StringReader strReader = new StringReader(this._DisabledPairs);
-            string indicatorPair = shortIndicator.ToString().Split(' ')[0] + " - " + longIndicator.ToString().Split(' ')[0];
+            string indicatorPair = shortIndicator.ToString() + " - " + longIndicator.ToString();
 
             bool isDisabled = false;
             while (strReader.Peek() >= 0)
@@ -214,194 +215,375 @@ namespace StockSolution.Model
             return isDisabled;
         }
 
-        private readonly string _DisabledPairs = @"Highest - LinearReg
-MeanDeviation - Momentum
-EMA - HMA
-HMA - JMA
-Momentum - Momentum
-SMMA - JMA
-KAMA - EMA
-LinearReg - JMA
-KAMA - SMA
-KAMA - HMA
-SMMA - SMA
-EMA - SMA
-Highest - HMA
-HMA - LinearReg
-LinearReg - HMA
-HMA - HMA
-Highest - Highest
-KAMA - Lowest
-KAMA - Highest
-MeanDeviation - MeanDeviation
-SMA - JMA
-EMA - JMA
-SMA - LinearReg
-HMA - Lowest
-SMMA - KAMA
-SMA - HMA
-LinearReg - Highest
-JMA - HMA
-EMA - LinearReg
-Lowest - LinearReg
-Highest - LinearReg
-JMA - HMA
-MeanDeviation - Momentum
-EMA - HMA
-HMA - JMA
-Highest - HMA
-Momentum - Momentum
-KAMA - EMA
-LinearReg - JMA
-JMA - LinearReg
-KAMA - LinearReg
-SMA - EMA
-KAMA - SMA
-KAMA - HMA
-SMMA - SMA
-HMA - HMA
-SMMA - Lowest
-HMA - LinearReg
-Highest - Highest
-EMA - SMA
-KAMA - Highest
-MeanDeviation - MeanDeviation
-SMA - JMA
-EMA - JMA
-HMA - Lowest
-Lowest - LinearReg
-SMA - HMA
-LinearReg - Highest
-EMA - LinearReg
-Highest - LinearReg
-JMA - HMA
-MeanDeviation - Momentum
-EMA - HMA
-HMA - JMA
-Highest - HMA
-MeanDeviation - MeanDeviation
-KAMA - EMA
-Momentum - Momentum
-LinearReg - JMA
-JMA - LinearReg
-KAMA - LinearReg
-Highest - KAMA
-SMA - EMA
-KAMA - SMA
-Lowest - JMA
-SMMA - SMA
-HMA - HMA
-SMMA - Lowest
-LinearReg - Lowest
-Lowest - HMA
-Highest - Highest
-EMA - SMA
-KAMA - HMA
-SMA - JMA
-EMA - JMA
-SMA - LinearReg
-Lowest - LinearReg
-SMA - HMA
-JMA - EMA
-LinearReg - Highest
-Highest - SMA
-SMMA - HMA
-Highest - LinearReg
-JMA - HMA
-MeanDeviation - Momentum
-EMA - HMA
-HMA - JMA
-Highest - HMA
-MeanDeviation - MeanDeviation
-SMMA - JMA
-KAMA - EMA
-Momentum - Momentum
-LinearReg - LinearReg
-LinearReg - JMA
-JMA - LinearReg
-KAMA - LinearReg
-Highest - KAMA
-SMA - EMA
-KAMA - SMA
-SMMA - SMA
-HMA - HMA
-Lowest - HMA
-LinearReg - SMA
-Highest - SMA
-Highest - Highest
-EMA - SMA
-Lowest - LinearReg
-KAMA - HMA
-SMA - JMA
-EMA - JMA
-SMA - LinearReg
-HMA - Lowest
-LinearReg - Lowest
-SMA - HMA
-Lowest - SMA
-LinearReg - Highest
-Highest - LinearReg
-JMA - HMA
-MeanDeviation - Momentum
-EMA - HMA
-HMA - JMA
-Highest - HMA
-MeanDeviation - MeanDeviation
-SMMA - JMA
-Momentum - Momentum
-LinearReg - JMA
-JMA - LinearReg
-KAMA - LinearReg
-SMA - EMA
-KAMA - SMA
-Lowest - LinearReg
-SMMA - SMA
-LinearReg - Lowest
-HMA - HMA
-Lowest - HMA
-LinearReg - SMA
-Highest - SMA
-EMA - SMA
-SMA - JMA
-SMA - LinearReg
-HMA - Lowest
-SMMA - HMA
-SMA - HMA
-Lowest - SMA
-Momentum - MeanDeviation
-EMA - JMA
-KAMA - HMA
-EMA - LinearReg
-Highest - LinearReg
-EMA - HMA
-HMA - JMA
-Highest - HMA
-MeanDeviation - MeanDeviation
-SMMA - JMA
-Momentum - Momentum
-LinearReg - JMA
-JMA - LinearReg
-KAMA - LinearReg
-SMA - EMA
-KAMA - SMA
-Lowest - LinearReg
-SMMA - SMA
-LinearReg - Lowest
-HMA - LinearReg
-Lowest - HMA
-LinearReg - SMA
-Highest - SMA
-EMA - SMA
-SMA - JMA
-SMA - LinearReg
-HMA - Lowest
-SMMA - HMA
-SMA - HMA
-Lowest - SMA
-Momentum - MeanDeviation
-EMA - JMA
-KAMA - HMA
-HMA - EMA
+        private readonly string _DisabledPairs = @"
+Momentum 28 - Momentum 36
+SMA 8 - JMA 28
+MeanDeviation 40 - Momentum 40
+Lowest 4 - LinearReg 20
+HMA 8 - LinearReg 8
+Momentum 24 - Momentum 28
+SMA 4 - HMA 12
+JMA 16 - LinearReg 16
+JMA 4 - LinearReg 12
+LinearReg 12 - JMA 12
+MeanDeviation 12 - Momentum 16
+MeanDeviation 4 - Momentum 20
+MeanDeviation 20 - Momentum 48
+SMMA 4 - EMA 4
+JMA 12 - HMA 16
+SMA 12 - JMA 16
+HMA 8 - JMA 20
+SMA 4 - EMA 4
+MeanDeviation 20 - Momentum 40
+MeanDeviation 12 - Momentum 40
+Highest 8 - LinearReg 8
+JMA 12 - LinearReg 12
+HMA 12 - LinearReg 16
+MeanDeviation 16 - Momentum 32
+KAMA 4 - JMA 16
+SMMA 4 - LinearReg 8
+Momentum 20 - Momentum 24
+Momentum 4 - Momentum 16
+SMA 4 - SMA 8
+Momentum 36 - Momentum 40
+Momentum 4 - MeanDeviation 20
+SMMA 4 - JMA 12
+JMA 12 - LinearReg 16
+MeanDeviation 20 - Momentum 20
+KAMA 4 - JMA 4
+LinearReg 20 - JMA 20
+Highest 8 - HMA 8
+MeanDeviation 4 - Momentum 12
+MeanDeviation 16 - Momentum 48
+MeanDeviation 8 - Momentum 56
+JMA 8 - SMA 8
+LinearReg 4 - HMA 20
+MeanDeviation 16 - Momentum 52
+LinearReg 12 - HMA 12
+MeanDeviation 8 - Momentum 16
+JMA 8 - HMA 8
+SMA 4 - HMA 16
+LinearReg 8 - Lowest 8
+Highest 4 - SMA 8
+SMMA 4 - Lowest 4
+JMA 4 - LinearReg 4
+MeanDeviation 16 - Momentum 16
+EMA 4 - JMA 20
+MeanDeviation 4 - Momentum 36
+Lowest 4 - KAMA 28
+EMA 8 - LinearReg 8
+Momentum 4 - Momentum 8
+Lowest 4 - JMA 20
+SMA 8 - LinearReg 8
+KAMA 4 - JMA 8
+Momentum 4 - MeanDeviation 8
+HMA 12 - JMA 12
+HMA 4 - HMA 8
+KAMA 4 - HMA 4
+HMA 16 - LinearReg 16
+Momentum 4 - Momentum 24
+MeanDeviation 24 - Momentum 32
+SMA 12 - LinearReg 12
+MeanDeviation 12 - Momentum 20
+MeanDeviation 4 - Momentum 4
+EMA 4 - JMA 4
+SMA 4 - HMA 4
+LinearReg 16 - HMA 16
+JMA 8 - LinearReg 12
+HMA 8 - Highest 16
+Momentum 4 - Momentum 56
+SMMA 4 - SMA 8
+MeanDeviation 24 - Momentum 24
+HMA 8 - JMA 8
+KAMA 4 - EMA 4
+KAMA 4 - LinearReg 12
+SMA 12 - EMA 12
+MeanDeviation 8 - Momentum 12
+LinearReg 4 - HMA 12
+SMA 4 - LinearReg 12
+Highest 4 - LinearReg 16
+Momentum 4 - Momentum 12
+HMA 16 - JMA 16
+MeanDeviation 48 - Momentum 60
+Lowest 8 - JMA 16
+HMA 4 - Lowest 4
+HMA 4 - LinearReg 16
+MeanDeviation 24 - Momentum 56
+SMMA 4 - HMA 4
+SMA 12 - HMA 16
+KAMA 8 - EMA 8
+Highest 4 - LinearReg 12
+Highest 4 - HMA 4
+KAMA 4 - Highest 4
+MeanDeviation 28 - Momentum 52
+SMA 12 - LinearReg 16
+MeanDeviation 8 - MeanDeviation 12
+SMMA 8 - HMA 8
+KAMA 4 - LinearReg 4
+MeanDeviation 36 - Momentum 36
+Momentum 12 - Momentum 24
+MeanDeviation 28 - Momentum 44
+LinearReg 8 - HMA 8
+Momentum 20 - Momentum 36
+Highest 4 - LinearReg 8
+MeanDeviation 56 - Momentum 56
+LinearReg 12 - LinearReg 16
+Highest 4 - LinearReg 4
+MeanDeviation 4 - Momentum 24
+Momentum 8 - Momentum 16
+MeanDeviation 8 - Momentum 20
+JMA 12 - HMA 12
+SMA 8 - HMA 8
+Highest 4 - HMA 16
+MeanDeviation 36 - Momentum 44
+EMA 4 - HMA 12
+MeanDeviation 8 - Momentum 8
+Momentum 8 - Momentum 32
+SMA 4 - LinearReg 4
+MeanDeviation 4 - Momentum 8
+Momentum 48 - Momentum 56
+EMA 8 - JMA 12
+Momentum 8 - MeanDeviation 20
+MeanDeviation 20 - Momentum 36
+Lowest 4 - JMA 24
+Momentum 28 - Momentum 32
+MeanDeviation 8 - Momentum 32
+JMA 4 - HMA 4
+Lowest 4 - JMA 12
+SMA 4 - HMA 8
+MeanDeviation 16 - Momentum 28
+MeanDeviation 28 - Momentum 60
+EMA 4 - LinearReg 8
+SMMA 4 - JMA 4
+MeanDeviation 8 - Momentum 36
+Lowest 4 - KAMA 20
+Momentum 4 - Momentum 60
+SMMA 4 - KAMA 4
+MeanDeviation 44 - Momentum 60
+SMA 4 - JMA 8
+HMA 8 - LinearReg 16
+MeanDeviation 4 - Momentum 56
+MeanDeviation 32 - Momentum 36
+Highest 4 - HMA 12
+MeanDeviation 20 - Momentum 60
+EMA 4 - HMA 4
+LinearReg 4 - Lowest 4
+MeanDeviation 48 - Momentum 56
+KAMA 4 - SMMA 4
+MeanDeviation 4 - Momentum 16
+Momentum 4 - Momentum 28
+MeanDeviation 32 - Momentum 60
+HMA 4 - LinearReg 4
+Momentum 44 - Momentum 48
+LinearReg 8 - LinearReg 12
+HMA 8 - LinearReg 12
+MeanDeviation 36 - Momentum 52
+SMA 4 - KAMA 4
+MeanDeviation 24 - Momentum 40
+MeanDeviation 4 - Momentum 32
+JMA 8 - LinearReg 8
+MeanDeviation 12 - Momentum 36
+EMA 8 - SMA 8
+MeanDeviation 4 - Momentum 40
+MeanDeviation 4 - MeanDeviation 12
+SMA 8 - JMA 20
+MeanDeviation 8 - Momentum 52
+Momentum 4 - Momentum 32
+Lowest 4 - HMA 40
+SMMA 8 - JMA 8
+Momentum 32 - Momentum 36
+Lowest 4 - LinearReg 4
+MeanDeviation 24 - Momentum 52
+MeanDeviation 32 - Momentum 48
+Momentum 32 - Momentum 40
+MeanDeviation 4 - Momentum 60
+SMA 4 - JMA 16
+MeanDeviation 12 - Momentum 32
+MeanDeviation 16 - MeanDeviation 20
+Momentum 16 - Momentum 32
+MeanDeviation 4 - MeanDeviation 8
+MeanDeviation 12 - Momentum 44
+Momentum 56 - Momentum 60
+Momentum 40 - Momentum 44
+MeanDeviation 12 - MeanDeviation 16
+MeanDeviation 40 - Momentum 60
+SMMA 4 - Highest 4
+MeanDeviation 8 - Momentum 48
+KAMA 4 - JMA 32
+SMA 4 - LinearReg 8
+MeanDeviation 16 - Momentum 60
+SMA 8 - EMA 8
+MeanDeviation 28 - Momentum 32
+LinearReg 20 - HMA 24
+JMA 24 - LinearReg 24
+MeanDeviation 12 - Momentum 12
+Momentum 20 - Momentum 28
+SMMA 4 - HMA 12
+MeanDeviation 12 - Momentum 28
+JMA 16 - LinearReg 20
+MeanDeviation 12 - Momentum 52
+LinearReg 16 - HMA 20
+EMA 4 - JMA 12
+SMMA 4 - JMA 16
+HMA 24 - LinearReg 24
+Lowest 8 - JMA 20
+MeanDeviation 44 - Momentum 52
+Momentum 24 - Momentum 36
+Momentum 8 - MeanDeviation 8
+EMA 8 - LinearReg 12
+LinearReg 20 - JMA 24
+JMA 4 - HMA 16
+SMMA 4 - JMA 8
+MeanDeviation 52 - Momentum 56
+Lowest 4 - JMA 16
+KAMA 4 - SMA 4
+Momentum 8 - Momentum 56
+EMA 8 - HMA 8
+Lowest 4 - HMA 8
+Momentum 24 - Momentum 32
+MeanDeviation 12 - Momentum 56
+Lowest 4 - JMA 28
+Momentum 8 - Momentum 36
+EMA 8 - JMA 8
+JMA 8 - HMA 16
+Momentum 16 - Momentum 20
+Momentum 48 - Momentum 52
+MeanDeviation 8 - Momentum 44
+SMA 16 - EMA 16
+Lowest 8 - JMA 36
+HMA 8 - JMA 36
+Momentum 44 - Momentum 60
+Momentum 16 - Momentum 44
+Lowest 4 - JMA 32
+Momentum 40 - Momentum 48
+Momentum 16 - Momentum 52
+HMA 8 - HMA 16
+Momentum 48 - Momentum 60
+Momentum 32 - Momentum 52
+Momentum 8 - Momentum 12
+EMA 4 - HMA 16
+Lowest 4 - JMA 40
+LinearReg 12 - JMA 24
+LinearReg 12 - JMA 20
+MeanDeviation 40 - Momentum 52
+MeanDeviation 4 - Momentum 52
+Momentum 36 - Momentum 48
+MeanDeviation 24 - Momentum 60
+Momentum 36 - Momentum 44
+KAMA 8 - SMA 12
+Momentum 16 - Momentum 24
+Lowest 12 - JMA 56
+Momentum 32 - Momentum 44
+JMA 12 - LinearReg 20
+HMA 8 - JMA 16
+Lowest 8 - JMA 48
+KAMA 8 - LinearReg 8
+EMA 8 - JMA 20
+MeanDeviation 8 - Momentum 60
+Highest 4 - JMA 12
+HMA 4 - HMA 12
+Lowest 8 - JMA 32
+HMA 8 - HMA 12
+MeanDeviation 28 - Momentum 40
+Lowest 4 - HMA 20
+EMA 4 - SMA 4
+HMA 4 - JMA 12
+Momentum 12 - Momentum 20
+Lowest 4 - EMA 8
+Momentum 52 - Momentum 56
+SMA 8 - HMA 12
+SMMA 4 - SMA 4
+MeanDeviation 48 - Momentum 52
+KAMA 8 - LinearReg 12
+LinearReg 4 - Highest 4
+LinearReg 16 - JMA 16
+Momentum 24 - Momentum 44
+LinearReg 4 - LinearReg 8
+MeanDeviation 56 - Momentum 60
+MeanDeviation 36 - Momentum 56
+Momentum 8 - Momentum 28
+KAMA 8 - HMA 8
+KAMA 4 - LinearReg 16
+Momentum 8 - Momentum 24
+Momentum 24 - Momentum 40
+Lowest 4 - JMA 52
+Momentum 8 - Momentum 52
+SMA 8 - JMA 36
+Highest 8 - Highest 12
+Lowest 4 - KAMA 8
+KAMA 8 - JMA 20
+SMA 4 - EMA 8
+MeanDeviation 16 - Momentum 44
+MeanDeviation 28 - Momentum 36
+Lowest 4 - SMA 12
+KAMA 8 - JMA 8
+SMMA 8 - LinearReg 8
+MeanDeviation 32 - Momentum 52
+LinearReg 4 - HMA 16
+SMA 4 - SMMA 4
+Momentum 12 - Momentum 36
+MeanDeviation 28 - Momentum 48
+Momentum 4 - MeanDeviation 4
+SMMA 4 - HMA 8
+HMA 8 - SMA 8
+EMA 8 - HMA 12
+Lowest 4 - LinearReg 8
+Lowest 4 - LinearReg 24
+MeanDeviation 8 - MeanDeviation 16
+HMA 16 - JMA 20
+Momentum 52 - Momentum 60
+HMA 12 - LinearReg 20
+Lowest 8 - JMA 40
+MeanDeviation 48 - Momentum 48
+MeanDeviation 24 - Momentum 28
+Momentum 4 - Momentum 20
+HMA 4 - Lowest 8
+LinearReg 20 - JMA 28
+HMA 4 - LinearReg 8
+HMA 4 - JMA 20
+HMA 20 - JMA 20
+JMA 8 - EMA 8
+HMA 4 - EMA 4
+Lowest 4 - LinearReg 32
+Momentum 8 - Momentum 20
+Highest 4 - LinearReg 24
+Lowest 8 - HMA 8
+Highest 4 - SMA 12
+KAMA 4 - HMA 12
+HMA 20 - LinearReg 24
+Highest 4 - Highest 8
+LinearReg 16 - JMA 20
+Lowest 8 - LinearReg 12
+Lowest 4 - SMA 8
+KAMA 8 - EMA 12
+MeanDeviation 20 - MeanDeviation 24
+MeanDeviation 24 - Momentum 48
+KAMA 4 - EMA 8
+Lowest 4 - JMA 56
+Momentum 16 - Momentum 36
+MeanDeviation 8 - Momentum 40
+Momentum 4 - Momentum 36
+SMMA 4 - JMA 20
+MeanDeviation 20 - Momentum 24
+SMA 8 - LinearReg 20
+LinearReg 24 - JMA 24
+JMA 4 - LinearReg 16
+MeanDeviation 40 - Momentum 48
+SMMA 4 - HMA 16
+KAMA 4 - JMA 12
+MeanDeviation 32 - Momentum 40
+Momentum 8 - MeanDeviation 16
+Momentum 8 - Momentum 48
+KAMA 4 - HMA 8
+Highest 4 - EMA 12
+Momentum 40 - Momentum 52
+EMA 4 - JMA 16
+LinearReg 12 - JMA 16
+Lowest 4 - KAMA 4
+MeanDeviation 40 - Momentum 56
+Lowest 8 - LinearReg 8
+MeanDeviation 12 - Momentum 48
+Momentum 40 - Momentum 60
 ";
 
     }

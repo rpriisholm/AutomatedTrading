@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StockSolutionTests</RootNamespace>
     <AssemblyName>StockSolutionTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -67,6 +67,32 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AutomatedTrading\AutomatedTrading.csproj">
+      <Project>{173c308a-f28a-4740-bb5f-b8e516b2e53f}</Project>
+      <Name>AutomatedTrading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Calculator\Calculator.csproj">
+      <Project>{9828509f-0885-42c8-bc4b-b6a3d6d2d085}</Project>
+      <Name>Calculator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GenericTypes\GenericTypes.csproj">
+      <Project>{3d2f41ee-5e65-457a-b92d-bc5ffbc540e9}</Project>
+      <Name>GenericTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JSonTester\JSonTester.csproj">
+      <Project>{d32909f9-b9a9-4e72-b695-caa480a5908d}</Project>
+      <Name>JSonTester</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StocksImportAndExport\StocksImportAndExport.csproj">
+      <Project>{aa75356b-7482-4fa9-86ce-cb503407cf36}</Project>
+      <Name>StocksImportAndExport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SymbolExtractorEtoro_Test\SymbolExtractorEtoro_Test.csproj">
+      <Project>{a04fc428-b988-41a6-9973-8d445adf865b}</Project>
+      <Name>SymbolExtractorEtoro_Test</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

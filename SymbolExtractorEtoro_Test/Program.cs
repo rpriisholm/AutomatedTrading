@@ -27,7 +27,7 @@ namespace SymbolExtractorEtoro_Test
 
             WebBrowser wb = new WebBrowser();
             wb.AllowNavigation = true;
-            wb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(wb_DocumentCompleted);
+            wb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(WB_DocumentCompleted);
             wb.Navigate(url);
             do
             {
@@ -42,7 +42,7 @@ namespace SymbolExtractorEtoro_Test
             string s = null;
         }
 
-        private static void wb_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private static void WB_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             IsReady = true;
         }

@@ -47,7 +47,7 @@ namespace StockSolution.Model
             for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
             {
                 //bool raceCondition = false;
-                Parallel.ForEach(indicatorPairs, new ParallelOptions { MaxDegreeOfParallelism = 16 }, indicatorPair =>
+                Parallel.ForEach(indicatorPairs, indicatorPair =>
                 //foreach (IndicatorPair indicatorPair in indicatorPairs)
                 {
                     int initialMoney = 100000;

@@ -14,14 +14,37 @@ namespace StockSolution
 {
     class Program
     {
-        private static StreamWriter errorWriter = null;
+        private static StreamWriter ErrorWriter = null;
+        private static bool RaceCondition = false;
 
         static void Main(string[] args)
         {
-            errorWriter = new StreamWriter(@"C:\StockHistory\Optimizer\ErrorLog.txt");
+            bool completed = false;
+            int count = 1;
+
+            while (!completed)
+            {
+                try
+                {
+                    ErrorWriter = new StreamWriter(@"C:\StockHistory\Optimizer\ErrorLog" + count + ".txt");
+                    completed = true;
+                }
+                catch
+                {
+                    count += 1;
+                }
+            }
+
+
+            Console.SetOut(TextWriter.Null);
+            Console.SetError(TextWriter.Null);
+
+
+            /* TODO - Next Step - Use Dates And Include An TimeLag - Should Still Relay On A Number Of Candles But Also Between A Start And End Date (Could Be Dynamic, Now Till -x Days)
 
             //Should Amount To A Little More Than Two Years (Only Weekend Removed)
             int minNrOfTestValues = 766;
+            //int minNrOfTestValues = 274;
 
             //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 55 - LLC: -0.12
             int minOrders = 15;
@@ -43,7 +66,7 @@ namespace StockSolution
             minProfitPct = 60;
             loseLimitConstant = -0.12m;
             TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
-
+           
             //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
             minOrders = 20;
             positiveOrderPct = 65;
@@ -124,8 +147,8 @@ namespace StockSolution
             //SingleTest();
             //BIGTest();
 
-            errorWriter.Flush();
-            errorWriter.Close();
+            ErrorWriter.Flush();
+            ErrorWriter.Close();
         }
 
         private static bool IsSkipped(Dictionary<string, decimal[]> skipSecurityIDs, string securityId, decimal loseLimitConstant, int minOrders, int positiveOrderPct, int minProfitPct)
@@ -147,204 +170,256 @@ namespace StockSolution
 
         public static void TestSelectedValuesAllData(int minNrOfTestValues, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant)
         {
-            Console.SetOut(TextWriter.Null);
-            Console.SetError(TextWriter.Null);
-
-            //Init candlesDictionary, minRows And maxRows
-            int minRows = int.MaxValue;
-            int maxRows = int.MinValue;
-            IDictionary<string, IList<Candle>> candlesDictionary = null;
-
-            #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
-            var startTime = DateTime.Now;
-            System.Console.WriteLine(startTime);
-            candlesDictionary = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), @"C:\StockHistory\TEST", new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
-            ICollection<string> keys = candlesDictionary.Keys;
-
-            //Remove Test Values If To Few
-            foreach (string key in keys)
-            {
-                if (candlesDictionary.Count < minNrOfTestValues)
-                {
-                    candlesDictionary.Remove(key);
-                }
-            }
-
-
-            foreach (string symbol in candlesDictionary.Keys)
-            {
-                if (candlesDictionary[symbol].Count < minRows)
-                {
-                    minRows = candlesDictionary[symbol].Count;
-                }
-
-                if (candlesDictionary[symbol].Count > maxRows)
-                {
-                    maxRows = candlesDictionary[symbol].Count;
-                }
-            }
-            #endregion
-
-
-            StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\Optimizer\Result_" + $"Min Orders {minOrders}_Positive Order Pct {positiveOrderPct}_Min Profit Pct {minProfitPct}_Lose Limit Constant {loseLimitConstant}" + ".csv");
-            CsvWriter csvWriter = new CsvWriter(streamWriter);
-
+            bool testCandleDates = false;
             int nrOfTestValues = 90;
             int realValues = 30;
             int initialMoney = 100000;
             int orderLimit = initialMoney / 10;
 
-            Optimizer optimizer = new Optimizer();
-            List<decimal> emulationConnections = new List<decimal>();
-
-            #region CSV Headers
-            //StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\Optimizer\Test Result MP_PCT " + minProfitPct + " - M_Order " + minOrders + " - P_OrderPct " + positiveOrderPct + ".csv");
-
-            //CsvWriter csvWriter = new CsvWriter(streamWriter);
-            csvWriter.WriteField("Avg Increase Pr. Security ID");
-            csvWriter.WriteField("Total");
-            csvWriter.WriteField("Securities");
-            csvWriter.WriteField("Start DateTime");
-            csvWriter.WriteField("End DateTime");
-            csvWriter.NextRecord();
-            #endregion
-
-            bool raceCondition = false;
-
-
-            #region Optimizer Options - Temp Calcs
-            OptimizerOptions optimizerOptionsTemp = OptimizerOptions.GetInstance(TickPeriod.Daily);
-            optimizerOptionsTemp.MinProfitPct = minProfitPct;
-            optimizerOptionsTemp.MinOrders = minOrders;
-            optimizerOptionsTemp.PositiveOrderPct = positiveOrderPct;
-            optimizerOptionsTemp.LoseLimitConstant = loseLimitConstant;
-            int nrOfIndicators = optimizerOptionsTemp.IndicatorLength.Max;
-
-            int count = 0;
-            while ((nrOfTestValues * count) < nrOfIndicators)
+            try
             {
-                count += 1;
-            }
-
-            int nrOfTests = minRows / realValues;
-            int lessTests = nrOfTestValues / realValues - (count + optimizer.RecursiveTests - 1);
-            int extraValues = (nrOfTestValues * count) - nrOfTestValues;
-            #endregion
-
-            for (int currentTestNr = 0; currentTestNr < (nrOfTests - lessTests); currentTestNr++)
-            {
-                int successfulSecurityIDs = 0;
-                decimal profitPctTotal = 0m;
-                DateTimeOffset? start = null;
-                DateTimeOffset? end = null;
-
-                //Calc Average
-                //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 4 }, securityID =>
-                foreach (string securityID in candlesDictionary.Keys)
+                StreamWriter streamWriter = null;
+                CsvWriter csvWriter = null;
+                string path = @"C:\StockHistory\Optimizer\Result_" + $"Min Orders {minOrders}_Positive Order Pct {positiveOrderPct}_Min Profit Pct {minProfitPct}_Lose Limit Constant {loseLimitConstant}" + ".csv";
+                if (File.Exists(path))
                 {
-                    try
+                    throw new IOException("File Allready Exist");
+                }
+                streamWriter = new StreamWriter(path);
+                csvWriter = new CsvWriter(streamWriter);
+                RaceCondition = false;
+
+                //Init candlesDictionary, minRows And maxRows
+                IDictionary<string, IList<Candle>> candlesDictionary = null;
+
+                #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
+                var startTime = DateTime.Now;
+                System.Console.WriteLine(startTime);
+                candlesDictionary = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), @"C:\StockHistory\TEST", new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
+
+
+                #region Remove Candle Values If To Few
+                String[] keys = candlesDictionary.Keys.ToArray();
+
+
+                //Remove Candle Values If To Few
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (candlesDictionary[keys[i]].Count < minNrOfTestValues)
                     {
-                        #region Optimizer Options
-                        OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
-                        optimizerOptions.MinProfitPct = minProfitPct;
-                        optimizerOptions.MinOrders = minOrders;
-                        optimizerOptions.PositiveOrderPct = positiveOrderPct;
-                        optimizerOptions.LoseLimitConstant = loseLimitConstant;
-                        #endregion
-
-                        #region Set Candles
-                        //Get Test Candles
-                        List<Candle> candles = candlesDictionary[securityID].ToList();
-
-                        int nrOfMissingValues = extraValues + realValues * (nrOfTests - currentTestNr);
-                        int beginIndexTest = (candles.Count - 1) - nrOfMissingValues;
-                        int beginIndexReal = beginIndexTest + nrOfTestValues;
-
-                        List<Candle> testCandles = candles.GetRange(beginIndexTest, (optimizer.RecursiveTests * nrOfTestValues + nrOfIndicators));
-                        List<Candle> realCandles = candles.GetRange(beginIndexReal, realValues);
-
-                        if (start != null && end != null) { }
-                        else
-                        {
-                            start = realCandles[0].CloseTime;
-                            end = realCandles[realCandles.Count - 1].CloseTime;
-                        }
-                        #endregion
-
-                        try
-                        {
-                            #region Find Strategy
-
-                            optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
-                            #endregion
-
-                            #region Simulate Real Values
-                            EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
-                            decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
-                            StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
-                            strategy.Start();
-                            //Candle Simulation Still Fake
-                            for (int i = 0; i < realCandles.Count; i++)
-                            {
-                                strategy.ProcessCandle(realCandles[i]);
-                            }
-                            strategy.Stop();
-                            #endregion
-
-                            while (raceCondition) { Thread.Sleep(5); }
-                            raceCondition = true;
-
-                            //Calc Result
-                            decimal profit = emulationConnection.GetTotalValue() - initialMoney;
-                            profitPctTotal += (profit / orderLimit * 100);
-                            successfulSecurityIDs += 1;
-                        }
-                        catch (System.NullReferenceException)
-                        {
-                            Console.WriteLine("NullReferenceException - No Strategy Found - " + securityID);
-                        }
-
-                        raceCondition = false;
-                    }
-                    catch (Exception e)
-                    {
-                        while (raceCondition) { Thread.Sleep(5); }
-                        raceCondition = true;
-                        try
-                        {
-                            errorWriter.WriteLine(e.ToString());
-                            errorWriter.WriteLine(e.Message);
-                            errorWriter.WriteLine(e.Data);
-                            errorWriter.Flush();
-                        }
-                        catch { }
-                        finally { raceCondition = false; }
+                        candlesDictionary.Remove(keys[i]);
                     }
                 }
-                //);
+                #endregion
 
+                #endregion
 
-                if (successfulSecurityIDs == 0)
+                if (candlesDictionary.Count != 0)
                 {
-                    csvWriter.WriteField("No Security IDs");
+                    #region Normalize Candle Size
+                    keys = candlesDictionary.Keys.ToArray();
+
+                    for (int i = 0; i < keys.Length; i++)
+                    {
+                        List<Candle> candles = new List<Candle>();
+                        IList<Candle> keyCandles = candlesDictionary[keys[i]];
+
+                        for (int j = keyCandles.Count - minNrOfTestValues; j < keyCandles.Count; j++)
+                        {
+                            candles.Add(keyCandles[j]);
+                        }
+
+                        candlesDictionary[keys[i]] = candles;
+                    }
+                    #endregion
+
+
+                    Optimizer optimizer = new Optimizer();
+                    List<decimal> emulationConnections = new List<decimal>();
+
+                    #region CSV Headers
+                    //StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\Optimizer\Test Result MP_PCT " + minProfitPct + " - M_Order " + minOrders + " - P_OrderPct " + positiveOrderPct + ".csv");
+
+                    //CsvWriter csvWriter = new CsvWriter(streamWriter);
+                    csvWriter.WriteField("Avg Increase Pr. Security ID");
+                    csvWriter.WriteField("Total");
+                    csvWriter.WriteField("Securities");
+                    csvWriter.WriteField("Start DateTime");
+                    csvWriter.WriteField("End DateTime");
+                    csvWriter.NextRecord();
+                    #endregion
+
+                    #region Optimizer Options - Temp Calcs
+                    OptimizerOptions optimizerOptionsTemp = OptimizerOptions.GetInstance(TickPeriod.Daily);
+                    optimizerOptionsTemp.MinProfitPct = minProfitPct;
+                    optimizerOptionsTemp.MinOrders = minOrders;
+                    optimizerOptionsTemp.PositiveOrderPct = positiveOrderPct;
+                    optimizerOptionsTemp.LoseLimitConstant = loseLimitConstant;
+                    int indicatorLength = optimizerOptionsTemp.IndicatorLength.Max;
+
+                    int nrOfTests = (minNrOfTestValues - (indicatorLength + (optimizer.RecursiveTests * nrOfTestValues))) / realValues;
+                    #endregion
+
+                    for (int currentTestNr = 0; currentTestNr < nrOfTests; currentTestNr++)
+                    {
+                        int successfulSecurityIDs = 0;
+                        decimal profitPctTotal = 0m;
+                        DateTimeOffset? start = DateTimeOffset.MaxValue;
+                        DateTimeOffset? end = DateTimeOffset.MinValue;
+
+                        //Calc Average
+                        //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 4 }, securityID =>
+                        foreach (string securityID in candlesDictionary.Keys)
+                        {
+                            try
+                            {
+                                #region Optimizer Options
+                                OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+                                optimizerOptions.MinProfitPct = minProfitPct;
+                                optimizerOptions.MinOrders = minOrders;
+                                optimizerOptions.PositiveOrderPct = positiveOrderPct;
+                                optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                                #endregion
+
+
+                                #region Set Candles
+                                //Get Test Candles
+                                List<Candle> candles = candlesDictionary[securityID].ToList();
+                                int keyCount = candles.Count;
+                                int beginIndexTest = keyCount - (optimizer.RecursiveTests * nrOfTestValues + realValues * (nrOfTests - currentTestNr) + indicatorLength);
+                                int testCount = indicatorLength + optimizer.RecursiveTests * nrOfTestValues;
+                                int beginIndexReal = beginIndexTest + testCount;
+
+                                List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
+                                List<Candle> realCandles = candles.GetRange(beginIndexReal, realValues);
+
+                                //if (start != null && end != null) { }
+                                if ((start < realCandles[0].CloseTime && end > realCandles[realCandles.Count - 1].CloseTime)) { }
+                                else
+                                {
+                                    start = realCandles[0].CloseTime;
+                                    end = realCandles[realCandles.Count - 1].CloseTime;
+                                }
+                                #endregion
+
+                                try
+                                {
+                                    if (!testCandleDates)
+                                    {
+                                        #region Find Strategy
+
+                                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
+                                        #endregion
+
+                                        #region Simulate Real Values
+                                        EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
+                                        decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
+                                        StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
+                                        strategy.Start();
+                                        //Candle Simulation Still Fake
+                                        for (int i = 0; i < realCandles.Count; i++)
+                                        {
+                                            strategy.ProcessCandle(realCandles[i]);
+                                        }
+                                        strategy.Stop();
+                                        #endregion
+
+                                        while (RaceCondition) { Thread.Sleep(5); }
+                                        RaceCondition = true;
+
+                                        //Calc Result
+                                        decimal profit = emulationConnection.GetTotalValue() - initialMoney;
+                                        profitPctTotal += (profit / orderLimit * 100);
+                                        successfulSecurityIDs += 1;
+                                    }
+                                }
+                                catch (System.NullReferenceException)
+                                {
+                                    Console.WriteLine("NullReferenceException - No Strategy Found - " + securityID);
+                                }
+
+                                RaceCondition = false;
+                            }
+                            catch (Exception e)
+                            {
+                                while (RaceCondition) { Thread.Sleep(5); }
+                                RaceCondition = true;
+                                try
+                                {
+                                    ErrorWriter.WriteLine(e.ToString());
+                                    ErrorWriter.WriteLine(e.Message);
+                                    ErrorWriter.WriteLine(e.Data);
+                                    ErrorWriter.Flush();
+                                }
+                                catch { }
+                                finally { RaceCondition = false; }
+                            }
+                        }
+                        //);
+
+
+                        if (successfulSecurityIDs == 0)
+                        {
+                            csvWriter.WriteField("No Security IDs");
+                        }
+                        else
+                        {
+                            csvWriter.WriteField(profitPctTotal / successfulSecurityIDs);
+                        }
+
+
+                        csvWriter.WriteField(profitPctTotal);
+                        csvWriter.WriteField(successfulSecurityIDs);
+                        csvWriter.WriteField(((DateTimeOffset)start).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
+                        csvWriter.WriteField(((DateTimeOffset)end).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
+                        csvWriter.NextRecord();
+                        csvWriter.Flush();
+                        streamWriter.Flush();
+                    }
                 }
                 else
                 {
-                    csvWriter.WriteField(profitPctTotal / successfulSecurityIDs);
+                    csvWriter.WriteField("No Enough Candles");
+                    csvWriter.Flush();
+                    streamWriter.Flush();
                 }
 
 
-                csvWriter.WriteField(profitPctTotal);
-                csvWriter.WriteField(successfulSecurityIDs);
-                csvWriter.WriteField(((DateTimeOffset)start).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
-                csvWriter.WriteField(((DateTimeOffset)end).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
-                csvWriter.NextRecord();
-                csvWriter.Flush();
-                streamWriter.Flush();
+                streamWriter.Close();
             }
-
-            streamWriter.Close();
+            catch (Exception e)
+            {
+                while (RaceCondition) { Thread.Sleep(5); }
+                RaceCondition = true;
+                try
+                {
+                    ErrorWriter.WriteLine(e.ToString());
+                    ErrorWriter.WriteLine(e.Message);
+                    ErrorWriter.WriteLine(e.Data);
+                    ErrorWriter.Flush();
+                }
+                catch { }
+                finally { RaceCondition = false; }
+            }
         }
+
+
+        private static void ExtractCandles(int minNrOfTestValues)
+        {
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
         public static List<List<T>> BreakIntoChunks<T>(List<T> list, int chunkSize)
         {

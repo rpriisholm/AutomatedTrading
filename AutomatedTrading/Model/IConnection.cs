@@ -12,6 +12,7 @@ namespace StockSolution.Model
         decimal GetInvestedValue();
         decimal GetTotalValue();
         Dictionary<string, decimal> RealizedProfits();
+        Dictionary<string, decimal> AlltimeRealizedProfits();
         decimal Profit(string securityID);
         Dictionary<string, Order> LoadOrders();
         Order MakeOrder(string securityCode, Sides direction, int leverage, decimal piecePrice);

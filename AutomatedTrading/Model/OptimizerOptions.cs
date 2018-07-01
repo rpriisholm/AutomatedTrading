@@ -55,20 +55,33 @@ namespace StockSolution.Model
 
         public static OptimizerOptions GetInstance(TickPeriod tickPeriod)
         {
-            OptimizerOptions optimizerOptions = new OptimizerOptions()
-            {
-                RecursiveTests = 2,
-                NrOfTestValues = 90,
-                IsSellEnabled = true,
-                IsBuyEnabled = true,
-                MinOrders = 10,
-                //MaxOrders = maxOrders,
-                MinProfitPct = 20,
-                LoseLimitConstant = -0.045m,
-                IndicatorLength = new OptimizerOption<int>(4, 4, 64)
-            };
+            OptimizerOptions optimizerOptions = null;
 
+            switch (tickPeriod)
+            {
+                case TickPeriod.Daily:
+                    optimizerOptions = new OptimizerOptions()
+                    {
+                        RecursiveTests = 2,
+                        NrOfTestValues = 90,
+                        IsSellEnabled = true,
+                        IsBuyEnabled = true,
+                        MinOrders = 15,
+                        //MaxOrders = maxOrders,
+                        PositiveOrderPct = 75,
+                        MinProfitPct = 55,
+                        LoseLimitConstant = -0.12m,
+                        IndicatorLength = GetIndicatorLength(tickPeriod)
+                    };
+                    break;
+            }
+            
             return optimizerOptions;
+        }
+
+        public static OptimizerOption<int> GetIndicatorLength(TickPeriod tickPeriod)
+        {
+            return new OptimizerOption<int>(4, 4, 64);
         }
 
         public class OptimizerOption<T>

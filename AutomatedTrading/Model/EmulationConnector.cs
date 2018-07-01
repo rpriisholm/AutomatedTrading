@@ -11,6 +11,7 @@ namespace StockSolution.Model
         private static int GeneratedId { get { return _GeneratedId++; } }
         private Dictionary<string, Order> Orders { get; set; }
         private Dictionary<string, decimal> Profits { get; set; }
+        private Dictionary<string, decimal> AlltimeProfits = new Dictionary<string, decimal>();
         private decimal RemainingValue { get; set; }
         public decimal GetTotalValue() { return GetRemainingValue() + GetInvestedValue(); }
         private Portfolio Portfolio;
@@ -22,6 +23,7 @@ namespace StockSolution.Model
             this.Orders = new Dictionary<string, Order>();
             this.Portfolio = new Portfolio(this, orderLimitType, orderLimit, leverageLimit, maxInvestedPct);
             this.Profits = new Dictionary<string, decimal>();
+            this.AlltimeProfits = new Dictionary<string, decimal>();
         }
 
         public decimal GetRemainingValue()
@@ -82,6 +84,7 @@ namespace StockSolution.Model
                         this.RemainingValue += this.Orders[securityCode].NewestValue;
                         order = Orders[securityCode];
                         RealizedProfits()[securityCode] += order.Profit;
+                        AlltimeRealizedProfits()[securityCode] += order.Profit;
                         this.Orders.Remove(securityCode);
                     }
                 }
@@ -90,6 +93,11 @@ namespace StockSolution.Model
         }
 
         public Dictionary<string, decimal> RealizedProfits()
+        {
+            return Profits;
+        }
+
+        public Dictionary<string, decimal> AlltimeRealizedProfits()
         {
             return Profits;
         }
@@ -133,6 +141,11 @@ namespace StockSolution.Model
             if(!RealizedProfits().ContainsKey(securityID))
             {
                 RealizedProfits()[securityID] = 0m;
+            }
+
+            if(!AlltimeRealizedProfits().ContainsKey(securityID))
+            {
+                AlltimeRealizedProfits()[securityID] = 0m;
             }
         }
     }

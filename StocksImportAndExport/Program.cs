@@ -15,8 +15,7 @@ namespace Stocks
         {
             //Services.Collector_DailyFull();
             //Services.Collector_DailyCompact();
-
-            ImportAndExport.CollectDailyData();
+            ImportAndExport.CollectData(CollectorType.Daily);
         }
     }
 }

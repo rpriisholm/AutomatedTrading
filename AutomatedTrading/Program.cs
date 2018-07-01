@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Stocks.Service;
 using StockSolution.Model;
 using StockSolution.Services;
 using System;
@@ -16,9 +17,22 @@ namespace StockSolution
     {
         private static StreamWriter ErrorWriter = null;
         private static bool RaceCondition = false;
+        private readonly static bool TestCandleDates = true;
 
         static void Main(string[] args)
         {
+            Console.SetOut(TextWriter.Null);
+            Console.SetError(TextWriter.Null);
+
+            //Should Be In A Sepperate Program
+            ImportAndExport.CollectData(CollectorType.Daily);
+
+            while (RaceCondition)
+            {
+                Thread.Sleep(500);
+            }
+
+            RaceCondition = true;
             bool completed = false;
             int count = 1;
 
@@ -34,120 +48,117 @@ namespace StockSolution
                     count += 1;
                 }
             }
+            RaceCondition = false;
 
+            Parallel.For(0, 7, prlNumber =>
+            {
+                //Should Amount To A Little More Than Two Years (Only Weekend Removed)
+                int minNrOfTestValues = 766;
+                //int minNrOfTestValues = 274;
 
-            Console.SetOut(TextWriter.Null);
-            Console.SetError(TextWriter.Null);
+                //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 55 - LLC: -0.12
+                int minOrders = 15;
+                int positiveOrderPct = 75;
+                int minProfitPct = 55;
+                decimal loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
+                //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 55 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 70;
+                minProfitPct = 55;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            /* TODO - Next Step - Use Dates And Include An TimeLag - Should Still Relay On A Number Of Candles But Also Between A Start And End Date (Could Be Dynamic, Now Till -x Days)
+                //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 60 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 70;
+                minProfitPct = 60;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Should Amount To A Little More Than Two Years (Only Weekend Removed)
-            int minNrOfTestValues = 766;
-            //int minNrOfTestValues = 274;
+                //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
+                minOrders = 20;
+                positiveOrderPct = 65;
+                minProfitPct = 60;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 55 - LLC: -0.12
-            int minOrders = 15;
-            int positiveOrderPct = 75;
-            int minProfitPct = 55;
-            decimal loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 40 - LLC: -0.12
+                minOrders = 20;
+                positiveOrderPct = 75;
+                minProfitPct = 40;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 55 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 70;
-            minProfitPct = 55;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
+                minOrders = 20;
+                positiveOrderPct = 75;
+                minProfitPct = 45;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 60 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 70;
-            minProfitPct = 60;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
-           
-            //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
-            minOrders = 20;
-            positiveOrderPct = 65;
-            minProfitPct = 60;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 50 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 75;
+                minProfitPct = 50;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 40 - LLC: -0.12
-            minOrders = 20;
-            positiveOrderPct = 75;
-            minProfitPct = 40;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 20 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
+                minOrders = 20;
+                positiveOrderPct = 70;
+                minProfitPct = 50;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
-            minOrders = 20;
-            positiveOrderPct = 75;
-            minProfitPct = 45;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 65;
+                minProfitPct = 60;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 50 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 75;
-            minProfitPct = 50;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
+                minOrders = 20;
+                positiveOrderPct = 65;
+                minProfitPct = 55;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 20 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
-            minOrders = 20;
-            positiveOrderPct = 70;
-            minProfitPct = 50;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 70;
+                minProfitPct = 50;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 65;
-            minProfitPct = 60;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 35 - LLC: -0.12
+                minOrders = 20;
+                positiveOrderPct = 75;
+                minProfitPct = 35;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
-            minOrders = 20;
-            positiveOrderPct = 65;
-            minProfitPct = 55;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 75;
+                minProfitPct = 45;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 70;
-            minProfitPct = 50;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
+                minOrders = 15;
+                positiveOrderPct = 65;
+                minProfitPct = 55;
+                loseLimitConstant = -0.12m;
+                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
-            //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 35 - LLC: -0.12
-            minOrders = 20;
-            positiveOrderPct = 75;
-            minProfitPct = 35;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                //SingleTest();
+                //BIGTest();
+            });
 
-            //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 75;
-            minProfitPct = 45;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
-
-            //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
-            minOrders = 15;
-            positiveOrderPct = 65;
-            minProfitPct = 55;
-            loseLimitConstant = -0.12m;
-            TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
-
-            //SingleTest();
-            //BIGTest();
-
-            ErrorWriter.Flush();
+            ErrorWriter.FlushAsync().Wait();
             ErrorWriter.Close();
         }
 
@@ -168,13 +179,14 @@ namespace StockSolution
             return default(T);
         }
 
+        //Simulate Real Trades Using Specificed Strategy
         public static void TestSelectedValuesAllData(int minNrOfTestValues, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant)
         {
-            bool testCandleDates = false;
             int nrOfTestValues = 90;
             int realValues = 30;
             int initialMoney = 100000;
             int orderLimit = initialMoney / 10;
+            DateTimeOffset dateMayNotBeOlderThan = DateTimeOffset.UtcNow.AddDays(-(minNrOfTestValues * 1.7));
 
             try
             {
@@ -195,12 +207,10 @@ namespace StockSolution
                 #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
                 var startTime = DateTime.Now;
                 System.Console.WriteLine(startTime);
-                candlesDictionary = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), @"C:\StockHistory\TEST", new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
-
+                candlesDictionary = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), ImportAndExport.GetFullPath(CollectorType.Daily), new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
 
                 #region Remove Candle Values If To Few
                 String[] keys = candlesDictionary.Keys.ToArray();
-
 
                 //Remove Candle Values If To Few
                 for (int i = 0; i < keys.Length; i++)
@@ -208,6 +218,15 @@ namespace StockSolution
                     if (candlesDictionary[keys[i]].Count < minNrOfTestValues)
                     {
                         candlesDictionary.Remove(keys[i]);
+                    }
+                    else
+                    {
+                        int firstTestIndex = candlesDictionary[keys[i]].Count - minNrOfTestValues;
+                        DateTimeOffset startDateTest = candlesDictionary[keys[i]][firstTestIndex].CloseTime;
+                        if (startDateTest.CompareTo(dateMayNotBeOlderThan) < 0)
+                        {
+                            candlesDictionary.Remove(keys[i]);
+                        }
                     }
                 }
                 #endregion
@@ -250,131 +269,17 @@ namespace StockSolution
                     #endregion
 
                     #region Optimizer Options - Temp Calcs
-                    OptimizerOptions optimizerOptionsTemp = OptimizerOptions.GetInstance(TickPeriod.Daily);
-                    optimizerOptionsTemp.MinProfitPct = minProfitPct;
-                    optimizerOptionsTemp.MinOrders = minOrders;
-                    optimizerOptionsTemp.PositiveOrderPct = positiveOrderPct;
-                    optimizerOptionsTemp.LoseLimitConstant = loseLimitConstant;
-                    int indicatorLength = optimizerOptionsTemp.IndicatorLength.Max;
-
+                    int indicatorLength = OptimizerOptions.GetIndicatorLength(TickPeriod.Daily).Max;
                     int nrOfTests = (minNrOfTestValues - (indicatorLength + (optimizer.RecursiveTests * nrOfTestValues))) / realValues;
                     #endregion
 
                     for (int currentTestNr = 0; currentTestNr < nrOfTests; currentTestNr++)
                     {
-                        int successfulSecurityIDs = 0;
-                        decimal profitPctTotal = 0m;
-                        DateTimeOffset? start = DateTimeOffset.MaxValue;
-                        DateTimeOffset? end = DateTimeOffset.MinValue;
-
-                        //Calc Average
-                        //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 4 }, securityID =>
-                        foreach (string securityID in candlesDictionary.Keys)
-                        {
-                            try
-                            {
-                                #region Optimizer Options
-                                OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
-                                optimizerOptions.MinProfitPct = minProfitPct;
-                                optimizerOptions.MinOrders = minOrders;
-                                optimizerOptions.PositiveOrderPct = positiveOrderPct;
-                                optimizerOptions.LoseLimitConstant = loseLimitConstant;
-                                #endregion
-
-
-                                #region Set Candles
-                                //Get Test Candles
-                                List<Candle> candles = candlesDictionary[securityID].ToList();
-                                int keyCount = candles.Count;
-                                int beginIndexTest = keyCount - (optimizer.RecursiveTests * nrOfTestValues + realValues * (nrOfTests - currentTestNr) + indicatorLength);
-                                int testCount = indicatorLength + optimizer.RecursiveTests * nrOfTestValues;
-                                int beginIndexReal = beginIndexTest + testCount;
-
-                                List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
-                                List<Candle> realCandles = candles.GetRange(beginIndexReal, realValues);
-
-                                //if (start != null && end != null) { }
-                                if ((start < realCandles[0].CloseTime && end > realCandles[realCandles.Count - 1].CloseTime)) { }
-                                else
-                                {
-                                    start = realCandles[0].CloseTime;
-                                    end = realCandles[realCandles.Count - 1].CloseTime;
-                                }
-                                #endregion
-
-                                try
-                                {
-                                    if (!testCandleDates)
-                                    {
-                                        #region Find Strategy
-
-                                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
-                                        #endregion
-
-                                        #region Simulate Real Values
-                                        EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
-                                        decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
-                                        StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
-                                        strategy.Start();
-                                        //Candle Simulation Still Fake
-                                        for (int i = 0; i < realCandles.Count; i++)
-                                        {
-                                            strategy.ProcessCandle(realCandles[i]);
-                                        }
-                                        strategy.Stop();
-                                        #endregion
-
-                                        while (RaceCondition) { Thread.Sleep(5); }
-                                        RaceCondition = true;
-
-                                        //Calc Result
-                                        decimal profit = emulationConnection.GetTotalValue() - initialMoney;
-                                        profitPctTotal += (profit / orderLimit * 100);
-                                        successfulSecurityIDs += 1;
-                                    }
-                                }
-                                catch (System.NullReferenceException)
-                                {
-                                    Console.WriteLine("NullReferenceException - No Strategy Found - " + securityID);
-                                }
-
-                                RaceCondition = false;
-                            }
-                            catch (Exception e)
-                            {
-                                while (RaceCondition) { Thread.Sleep(5); }
-                                RaceCondition = true;
-                                try
-                                {
-                                    ErrorWriter.WriteLine(e.ToString());
-                                    ErrorWriter.WriteLine(e.Message);
-                                    ErrorWriter.WriteLine(e.Data);
-                                    ErrorWriter.Flush();
-                                }
-                                catch { }
-                                finally { RaceCondition = false; }
-                            }
-                        }
-                        //);
-
-
-                        if (successfulSecurityIDs == 0)
-                        {
-                            csvWriter.WriteField("No Security IDs");
-                        }
-                        else
-                        {
-                            csvWriter.WriteField(profitPctTotal / successfulSecurityIDs);
-                        }
-
-
-                        csvWriter.WriteField(profitPctTotal);
-                        csvWriter.WriteField(successfulSecurityIDs);
-                        csvWriter.WriteField(((DateTimeOffset)start).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
-                        csvWriter.WriteField(((DateTimeOffset)end).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
-                        csvWriter.NextRecord();
-                        csvWriter.Flush();
-                        streamWriter.Flush();
+                        TestSelectedValuesOnce(ref streamWriter, ref csvWriter,
+                            ref candlesDictionary, ref optimizer, minOrders,
+                            positiveOrderPct, minProfitPct, loseLimitConstant,
+                            indicatorLength, realValues, nrOfTestValues, nrOfTests,
+                            currentTestNr, orderLimit, initialMoney, TestCandleDates);
                     }
                 }
                 else
@@ -384,7 +289,6 @@ namespace StockSolution
                     streamWriter.Flush();
                 }
 
-
                 streamWriter.Close();
             }
             catch (Exception e)
@@ -393,10 +297,10 @@ namespace StockSolution
                 RaceCondition = true;
                 try
                 {
-                    ErrorWriter.WriteLine(e.ToString());
-                    ErrorWriter.WriteLine(e.Message);
-                    ErrorWriter.WriteLine(e.Data);
-                    ErrorWriter.Flush();
+                    ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                    ErrorWriter.WriteLineAsync(e.Message).Wait();
+                    ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                    ErrorWriter.FlushAsync().Wait();
                 }
                 catch { }
                 finally { RaceCondition = false; }
@@ -404,42 +308,122 @@ namespace StockSolution
         }
 
 
-        private static void ExtractCandles(int minNrOfTestValues)
+        private static void TestSelectedValuesOnce(ref StreamWriter streamWriter, ref CsvWriter csvWriter, ref IDictionary<string, IList<Candle>> candlesDictionary, ref Optimizer optimizer, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, int indicatorLength, int realValues, int nrOfTestValues, int nrOfTests, int currentTestNr, int orderLimit, int initialMoney, bool testCandleDates)
         {
+            int successfulSecurityIDs = 0;
+            decimal profitPctTotal = 0m;
+            DateTimeOffset? start = DateTimeOffset.MaxValue;
+            DateTimeOffset? end = DateTimeOffset.MinValue;
 
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public static List<List<T>> BreakIntoChunks<T>(List<T> list, int chunkSize)
-        {
-            if (chunkSize <= 0)
+            //Calc Average
+            //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 4 }, securityID =>
+            foreach (string securityID in candlesDictionary.Keys)
             {
-                throw new ArgumentException("chunkSize must be greater than 0.");
+                try
+                {
+                    #region Optimizer Options
+                    OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+                    optimizerOptions.MinProfitPct = minProfitPct;
+                    optimizerOptions.MinOrders = minOrders;
+                    optimizerOptions.PositiveOrderPct = positiveOrderPct;
+                    optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                    #endregion
+
+
+                    #region Set Candles
+                    //Get Test Candles
+                    List<Candle> candles = candlesDictionary[securityID].ToList();
+                    int keyCount = candles.Count;
+                    int beginIndexTest = keyCount - (optimizer.RecursiveTests * nrOfTestValues + realValues * (nrOfTests - currentTestNr) + indicatorLength);
+                    int testCount = indicatorLength + optimizer.RecursiveTests * nrOfTestValues;
+                    int beginIndexReal = beginIndexTest + testCount;
+
+                    List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
+                    List<Candle> realCandles = candles.GetRange(beginIndexReal, realValues);
+
+                    //if (start != null && end != null) { }
+                    if ((start < realCandles[0].CloseTime && end > realCandles[realCandles.Count - 1].CloseTime)) { }
+                    else
+                    {
+                        start = realCandles[0].CloseTime;
+                        end = realCandles[realCandles.Count - 1].CloseTime;
+                    }
+                    #endregion
+
+                    try
+                    {
+                        if (!testCandleDates)
+                        {
+                            #region Find Strategy
+
+                            optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
+                            #endregion
+
+                            #region Simulate Real Values
+                            EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
+                            decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
+                            StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
+                            strategy.Start();
+                            //Candle Simulation Still Fake
+                            for (int i = 0; i < realCandles.Count; i++)
+                            {
+                                strategy.ProcessCandle(realCandles[i]);
+                            }
+                            strategy.Stop();
+                            #endregion
+
+                            while (RaceCondition) { Thread.Sleep(5); }
+                            RaceCondition = true;
+
+                            //Calc Result
+                            decimal profit = emulationConnection.GetTotalValue() - initialMoney;
+                            profitPctTotal += (profit / orderLimit * 100);
+                            successfulSecurityIDs += 1;
+                        }
+                    }
+                    catch (System.NullReferenceException)
+                    {
+                        Console.WriteLine("NullReferenceException - No Strategy Found - " + securityID);
+                    }
+
+                    RaceCondition = false;
+                }
+                catch (Exception e)
+                {
+                    while (RaceCondition) { Thread.Sleep(5); }
+                    RaceCondition = true;
+                    try
+                    {
+                        ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                        ErrorWriter.WriteLineAsync(e.Message).Wait();
+                        ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                        ErrorWriter.FlushAsync().Wait();
+                    }
+                    catch { }
+                    finally { RaceCondition = false; }
+                }
+            }
+            //);
+
+
+            if (successfulSecurityIDs == 0)
+            {
+                csvWriter.WriteField("No Security IDs");
+            }
+            else
+            {
+                csvWriter.WriteField(profitPctTotal / successfulSecurityIDs);
             }
 
-            List<List<T>> retVal = new List<List<T>>();
 
-            while (list.Count > 0)
-            {
-                int count = list.Count > chunkSize ? chunkSize : list.Count;
-                retVal.Add(list.GetRange(0, count));
-                list.RemoveRange(0, count);
-            }
-
-            return retVal;
+            csvWriter.WriteField(profitPctTotal);
+            csvWriter.WriteField(successfulSecurityIDs);
+            csvWriter.WriteField(((DateTimeOffset)start).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
+            csvWriter.WriteField(((DateTimeOffset)end).ToString("yyyyy-MM-dd hh:mm", new CultureInfo("da-DK")));
+            csvWriter.NextRecord();
+            csvWriter.Flush();
+            streamWriter.Flush();
         }
-
 
         private static void SingleTest()
         {

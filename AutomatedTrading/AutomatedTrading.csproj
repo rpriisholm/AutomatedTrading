@@ -98,7 +98,6 @@
     <Compile Include="Model\Storage.cs" />
     <Compile Include="Model\StrategyBasic.cs" />
     <Compile Include="Model\StrategyGeneric.cs" />
-    <Compile Include="Model\StrategyGeneric_Old.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CreationService.cs" />
@@ -115,6 +114,12 @@
   <ItemGroup>
     <Content Include="Model\OLD.txt" />
     <Content Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StocksImportAndExport\StocksImportAndExport.csproj">
+      <Project>{aa75356b-7482-4fa9-86ce-cb503407cf36}</Project>
+      <Name>StocksImportAndExport</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,7 +4,7 @@ using System.Text;
 using Ecng.Common;
 using StockSharp.Algo.Indicators;
 using StockSharp.Messages;
-using StockSolution.Model;
+using StockSolution.Entity.Models;
 
 namespace StockSolution.Services
 {

@@ -1,9 +1,10 @@
-﻿using StockSolution.Model;
+﻿using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TickEnum;
 
 namespace TradingNotifierApp
 {
@@ -27,6 +28,9 @@ namespace TradingNotifierApp
             strategies.Add(strategy);
 
             RealLib.CollectorLib.SaveStrategies(strategies);
+
+            strategies = RealLib.CollectorLib.LoadStrategies();
+            //
         }
     }
 }

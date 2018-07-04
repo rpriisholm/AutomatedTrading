@@ -42,7 +42,9 @@ namespace Stocks
             foreach (JToken tk in jsonObj.Children())
             {
                 string key = JSON.GetQuotedContent(tk.ToString());
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
                 int intervalSec = 0;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
                 /*
                 if (Stocks_AlphaVantage.ValidateKey(key, ref intervalSec))
@@ -80,7 +82,9 @@ namespace Stocks
         //Accepts JToken For A Single Instance
         private static StockEntity_AlphaVantage Initialize_AlphaVantage(Node<JEnumerable<JToken>> node, int intervalSec)
         {
+#pragma warning disable IDE0017 // Simplify object initialization
             StockEntity_AlphaVantage seav = new StockEntity_AlphaVantage();
+#pragma warning restore IDE0017 // Simplify object initialization
 
             seav.StartTime = DateTime.Parse(node.Key);
             seav.EndTime = seav.StartTime.AddSeconds(intervalSec);

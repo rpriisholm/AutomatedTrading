@@ -1,5 +1,5 @@
 ﻿using Stocks.Service;
-using StockSolution.Model;
+using StockSolution.Entity.Models;
 using StockSolution.Services;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TickEnum;
 
 namespace RealLib
 {
@@ -16,15 +17,15 @@ namespace RealLib
 
         public static void DownloadHistoricalData()
         {
-            ImportAndExport.CollectData(CollectorType.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily);
         }
 
         public static void DownloadCurrentData()
         {
-            ImportAndExport.CollectData(CollectorType.Daily);
-            ImportAndExport.CollectData(CollectorType.SixMin);
-            ImportAndExport.CollectData(CollectorType.ThreeMin);
-            ImportAndExport.CollectData(CollectorType.OneMin);
+            ImportAndExport.CollectData(TickPeriod.Daily);
+            ImportAndExport.CollectData(TickPeriod.SixMin);
+            ImportAndExport.CollectData(TickPeriod.ThreeMin);
+            ImportAndExport.CollectData(TickPeriod.OneMin);
         }
 
         public static void LoadData()

@@ -10,17 +10,10 @@ using Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Threading;
 using LumenWorks.Framework.IO.Csv;
+using TickEnum;
 
 namespace Stocks.Service
 {
-    public enum CollectorType
-    {
-        Daily,
-        SixMin,
-        ThreeMin,
-        OneMin
-    }
-
     public static class ImportAndExport
     {
         public static string PartialPath = @"C:\StockHistory\Active\";
@@ -44,43 +37,43 @@ namespace Stocks.Service
             }
         }
 
-        public static void CollectData(CollectorType cType)
+        public static void CollectData(TickPeriod tickPeriod)
         {
             //string size = "full";
             Parallel.ForEach(GetSymbols(), symbol =>
             {
-                CollectChoosenData(symbol, cType);
+                CollectChoosenData(symbol, tickPeriod);
             });
 
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
         }
 
-        public static void CollectChoosenData(string symbol, CollectorType cType)
+        public static void CollectChoosenData(string symbol, TickPeriod tickPeriod)
         {
             string url = null;
-            string path = $"{GetFullPath(CollectorType.Daily)}{symbol}.csv";
+            string path = $"{GetFullPath(TickPeriod.Daily)}{symbol}.csv";
 
             // Get Information About Stock
             // https://api.iextrading.com/1.0/stock/aapl/quote
             //-----/ /-----/ /-----/ /-----/  
             try
             {
-                switch (cType)
+                switch (tickPeriod)
                 {
-                    case CollectorType.Daily:
+                    case TickPeriod.Daily:
                         url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
                         break;
 
-                    case CollectorType.SixMin:
+                    case TickPeriod.SixMin:
                         url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/6m?format=csv";
                         break;
 
-                    case CollectorType.ThreeMin:
+                    case TickPeriod.ThreeMin:
                         url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/3m?format=csv";
                         break;
 
-                    case CollectorType.OneMin:
+                    case TickPeriod.OneMin:
                         url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1m?format=csv";
                         break;
                 }
@@ -153,22 +146,22 @@ namespace Stocks.Service
             return symbols;
         }
 
-        public static string GetFullPath(CollectorType cType)
+        public static string GetFullPath(TickPeriod tickPeriod)
         {
             string path = PartialPath;
 
-            switch (cType)
+            switch (tickPeriod)
             {
-                case CollectorType.Daily:
+                case TickPeriod.Daily:
                     path += @"Daily\";
                     break;
-                case CollectorType.SixMin:
+                case TickPeriod.SixMin:
                     path += @"6Min\";
                     break;
-                case CollectorType.ThreeMin:
+                case TickPeriod.ThreeMin:
                     path += @"3Min\";
                     break;
-                case CollectorType.OneMin:
+                case TickPeriod.OneMin:
                     path += @"1Min\";
                     break;
             }

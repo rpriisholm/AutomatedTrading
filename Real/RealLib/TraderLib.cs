@@ -1,11 +1,12 @@
 ﻿using Stocks.Service;
-using StockSolution.Model;
+using StockSolution.Entity.Models;
 using StockSolution.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TickEnum;
 
 namespace RealLib
 {
@@ -51,7 +52,7 @@ namespace RealLib
             DateTime startDate = DateTime.Now.AddYears(-5);
             DateTime endDate = DateTime.Now;
             TimeSpan timeSpan = TimeSpan.FromDays(1);
-            string path = ImportAndExport.GetFullPath(CollectorType.Daily);
+            string path = ImportAndExport.GetFullPath(TickPeriod.Daily);
             
             IDictionary<string, IList<Candle>> symbolsAndCandles = LoaderService.LoadLocalCandles(timeSpan, path, startDate, endDate);
 

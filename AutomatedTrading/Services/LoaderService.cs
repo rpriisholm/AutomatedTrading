@@ -1,7 +1,7 @@
 ﻿using LumenWorks.Framework.IO.Csv;
 using SandS.Algorithm.Library.SortNamespace;
 using StockSharp.BusinessEntities;
-using StockSolution.Model;
+using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -25,7 +25,9 @@ namespace SymbolExtractorEtoro_Test
             // c# get rendered html
 
 
+#pragma warning disable IDE0017 // Simplify object initialization
             WebBrowser wb = new WebBrowser();
+#pragma warning restore IDE0017 // Simplify object initialization
             wb.AllowNavigation = true;
             wb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(WB_DocumentCompleted);
             wb.Navigate(url);
@@ -39,7 +41,9 @@ namespace SymbolExtractorEtoro_Test
 
             var dd = wb.Document.DomDocument as IHTMLDocument2;
             string val = dd.body.parentElement.outerHTML;
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
             string s = null;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
         }
 
         private static void WB_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)

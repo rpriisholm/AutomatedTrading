@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TickEnum;
 
 namespace Stocks
 {
@@ -15,7 +16,7 @@ namespace Stocks
         {
             //Services.Collector_DailyFull();
             //Services.Collector_DailyCompact();
-            ImportAndExport.CollectData(CollectorType.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily);
         }
     }
 }

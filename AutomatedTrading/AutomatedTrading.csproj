@@ -8,10 +8,12 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>StockSolution</RootNamespace>
     <AssemblyName>StockSolution</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,12 +35,31 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="API">
       <HintPath>..\..\..\..\..\..\OneDrive\Documents\GitHub\Stock Sharp Extra\StockSharp_4.4.6.1_en\References\API.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.7.1.0\lib\net45\CsvHelper.dll</HintPath>
+      <HintPath>..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Common">
       <HintPath>..\..\..\..\..\..\OneDrive\Documents\GitHub\Stock Sharp Extra\StockSharp_4.4.6.1_en\References\Ecng.Common.dll</HintPath>
@@ -49,14 +70,50 @@
     <Reference Include="Ecng.Serialization">
       <HintPath>..\..\..\..\..\..\OneDrive\Documents\GitHub\Stock Sharp Extra\StockSharp_4.4.6.1_en\References\Ecng.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.6.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.6.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.8.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.8.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="LumenWorks.Framework.IO, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5ad3ea2f85776344, processorArchitecture=MSIL">
       <HintPath>..\packages\LumenWorksCsvReader.4.0.0\lib\net461\LumenWorks.Framework.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SandS.Algorithm.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SandS.Algorithm.Common.2.0.1.02\lib\SandS.Algorithm.Common.dll</HintPath>
     </Reference>
+    <Reference Include="SandS.Algorithm.Extensions.DateTimeExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SandS.Algorithm.Extensions.DateTimeExtension.2.0.1.01\lib\SandS.Algorithm.Extensions.DateTimeExtension.dll</HintPath>
+    </Reference>
     <Reference Include="SandS.Algorithm.Extensions.EnumerableExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SandS.Algorithm.Extensions.EnumerableExtensions.2.0.3.01\lib\SandS.Algorithm.Extensions.EnumerableExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="SandS.Algorithm.Extensions.GraphicsDeviceExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SandS.Algorithm.Extensions.GraphicsDeviceExtension.2.0.1.01\lib\SandS.Algorithm.Extensions.GraphicsDeviceExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="SandS.Algorithm.Extensions.IComparableExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SandS.Algorithm.Extensions.IComparableExtension.2.0.2\lib\SandS.Algorithm.Extensions.IComparableExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="SandS.Algorithm.Extensions.IListExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SandS.Algorithm.Extensions.IListExtension.2.0.1.01\lib\SandS.Algorithm.Extensions.IListExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="SandS.Algorithm.Extensions.StringBuilderExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SandS.Algorithm.Extensions.StringBuilderExtension.2.0.1.01\lib\SandS.Algorithm.Extensions.StringBuilderExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="SandS.Algorithm.Extensions.StringExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SandS.Algorithm.Extensions.StringExtension.2.0.1.01\lib\SandS.Algorithm.Extensions.StringExtension.dll</HintPath>
     </Reference>
     <Reference Include="SandS.Algorithm.Library.Sort, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SandS.Algorithm.Library.Sort.2.0.2\lib\SandS.Algorithm.Library.Sort.dll</HintPath>
@@ -77,27 +134,28 @@
       <HintPath>..\..\..\..\..\..\OneDrive\Documents\GitHub\Stock Sharp Extra\StockSharp_4.4.6.1_en\References\StockSharp.Messages.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Candle.cs" />
-    <Compile Include="Model\EmulationConnector.cs" />
-    <Compile Include="Model\IConnection.cs" />
-    <Compile Include="Model\IEnumeratorHelper.cs" />
-    <Compile Include="Model\IndicatorPair.cs" />
-    <Compile Include="Model\Optimizer.cs" />
-    <Compile Include="Model\OptimizerOptions.cs" />
-    <Compile Include="Model\Order.cs" />
-    <Compile Include="Model\Portfolio.cs" />
-    <Compile Include="Model\Storage.cs" />
-    <Compile Include="Model\StrategyBasic.cs" />
-    <Compile Include="Model\StrategyGeneric.cs" />
+    <Compile Include="CodeFirst\DbContextMSSQL.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CreationService.cs" />
@@ -112,14 +170,24 @@
     <Folder Include="GUI\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Model\OLD.txt" />
     <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Models\Models\Models.csproj">
+      <Project>{06B46620-C1F8-42D7-B3A7-A82FCFB6926E}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StocksImportAndExport\StocksImportAndExport.csproj">
       <Project>{aa75356b-7482-4fa9-86ce-cb503407cf36}</Project>
       <Name>StocksImportAndExport</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TickEnum\TickEnum.csproj">
+      <Project>{D7A31468-8E2E-4F8C-AECF-FC0C761D4BBD}</Project>
+      <Name>TickEnum</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

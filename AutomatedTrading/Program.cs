@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
 using Stocks.Service;
-using StockSolution.Model;
+using StockSolution.Entity.Models;
 using StockSolution.Services;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TickEnum;
+using static Stocks.Services;
 
 namespace StockSolution
 {
@@ -25,7 +27,7 @@ namespace StockSolution
             Console.SetError(TextWriter.Null);
 
             //Should Be In A Sepperate Program
-            ImportAndExport.CollectData(CollectorType.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily);
 
             while (RaceCondition)
             {
@@ -207,7 +209,8 @@ namespace StockSolution
                 #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
                 var startTime = DateTime.Now;
                 System.Console.WriteLine(startTime);
-                candlesDictionary = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), ImportAndExport.GetFullPath(CollectorType.Daily), new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
+                string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+                candlesDictionary = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
 
                 #region Remove Candle Values If To Few
                 String[] keys = candlesDictionary.Keys.ToArray();

@@ -62,7 +62,7 @@ namespace Stocks
         }
 
         //Select statement
-        public void user_check(string username, string password)
+        public void User_check(string username, string password)
         {
             string query = "SELECT * FROM swear_tool WHERE username =" + username;
 

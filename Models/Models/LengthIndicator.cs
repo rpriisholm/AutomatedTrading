@@ -110,6 +110,16 @@ namespace StockSolution.Entity.Models
             }
         }
 
+        public decimal GetCurrentValue()
+        {
+            return this.Indicator.GetCurrentValue();
+        }
+
+        public decimal GetValue(int index)
+        {
+            return this.Indicator.GetValue(index);
+        }
+
         public void Process(decimal price, bool isFinal)
         {
             Indicator.Process(price, isFinal);

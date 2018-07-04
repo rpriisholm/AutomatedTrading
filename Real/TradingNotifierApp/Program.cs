@@ -1,4 +1,5 @@
 ﻿using StockSolution.Entity.Models;
+using StockSolution.ModelEntities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

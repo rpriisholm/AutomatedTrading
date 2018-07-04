@@ -61,6 +61,11 @@
     <Compile Include="IConnection.cs" />
     <Compile Include="IEnumeratorHelper.cs" />
     <Compile Include="IndicatorPair.cs" />
+    <Compile Include="Migrations\201807040102526_IndicatorPair.cs" />
+    <Compile Include="Migrations\201807040102526_IndicatorPair.Designer.cs">
+      <DependentUpon>201807040102526_IndicatorPair.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="OptimizerOptions.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Portfolio.cs" />
@@ -74,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Models\Models\Models.csproj">
+      <Project>{06B46620-C1F8-42D7-B3A7-A82FCFB6926E}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SidesEnum\SidesEnum.csproj">
       <Project>{2F3C18A2-6629-485B-B92C-03A2D137FC48}</Project>
       <Name>SidesEnum</Name>
@@ -82,6 +91,11 @@
       <Project>{D7A31468-8E2E-4F8C-AECF-FC0C761D4BBD}</Project>
       <Name>TickEnum</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201807040102526_IndicatorPair.resx">
+      <DependentUpon>201807040102526_IndicatorPair.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

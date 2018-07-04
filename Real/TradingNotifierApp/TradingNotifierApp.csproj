@@ -138,6 +138,10 @@
       <Project>{173C308A-F28A-4740-BB5F-B8E516B2E53F}</Project>
       <Name>AutomatedTrading</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ModelEntities\ModelEntities.csproj">
+      <Project>{DD8EF70E-BAFF-402C-AE4D-E631BD2869A0}</Project>
+      <Name>ModelEntities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Models\Models\Models.csproj">
       <Project>{06b46620-c1f8-42d7-b3a7-a82fcfb6926e}</Project>
       <Name>Models</Name>

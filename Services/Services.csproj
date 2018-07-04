@@ -66,6 +66,10 @@
       <Project>{DD8EF70E-BAFF-402C-AE4D-E631BD2869A0}</Project>
       <Name>ModelEntities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Models\Models\Models.csproj">
+      <Project>{06B46620-C1F8-42D7-B3A7-A82FCFB6926E}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -10,12 +10,14 @@ namespace StockSolution.Entity.Models
     {
         [Key]
         public string SecurityID { get; set; }
+        public TimeSpan TimeFrame { get; set; }
         public DateTime CloseTime { get; set; }
         public DateTime OpenTime { get; set; }
         public decimal ClosePrice { get; set; }
         public decimal OpenPrice { get; set; }
-        public decimal LowestPrice { get; set; }
-        public decimal HighestPrice { get; set; }
+        public decimal LowPrice { get; set; }
+        public decimal HighPrice { get; set; }
+        public decimal TotalVolume {get;set;}
         public decimal AvgPrice { get; set; }
 
         public int CompareTo(object other)

@@ -1,4 +1,4 @@
-﻿using StockSharp.Algo.Indicators;
+﻿using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,8 +13,8 @@ namespace StockSolution.ModelEntities.Models
 
         public IConnection Connection { get; protected set; }
         //public decimal CurrentPosition { get; set; }
-        public LengthIndicator<decimal> LongIndicator { get; }
-        public LengthIndicator<decimal> ShortIndicator { get; }
+        public LengthIndicator LongIndicator { get; }
+        public LengthIndicator ShortIndicator { get; }
         public string SecurityID { get; }
         protected bool _isRunning = false;
         protected bool _isShortLessThenLong;
@@ -25,7 +25,7 @@ namespace StockSolution.ModelEntities.Models
         public bool IsDisabled { get; set; }
         public decimal LoseLimitConstant { get; set; }
 
-        public StrategyBasic(IConnection connection, string securityID, LengthIndicator<decimal> longIndicator, LengthIndicator<decimal> shortIndicator, decimal loseLimitConstant)
+        public StrategyBasic(IConnection connection, string securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
         {
             this.Connection = connection;
             this.SecurityID = securityID;
@@ -38,7 +38,7 @@ namespace StockSolution.ModelEntities.Models
             this.LoseLimitConstant = loseLimitConstant;
         }
 
-        public StrategyBasic(IConnection connection, string securityID, LengthIndicator<decimal> longIndicator, LengthIndicator<decimal> shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, longIndicator, shortIndicator, loseLimitConstant)
+        public StrategyBasic(IConnection connection, string securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, longIndicator, shortIndicator, loseLimitConstant)
         {
             this.IsSellEnabled = isSellEnabled;
             this.IsBuyEnabled = isBuyEnabled;

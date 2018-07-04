@@ -155,7 +155,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeFirst\DbContextMSSQL.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CreationService.cs" />
@@ -173,9 +172,17 @@
     <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ModelEntities\ModelEntities.csproj">
+      <Project>{DD8EF70E-BAFF-402C-AE4D-E631BD2869A0}</Project>
+      <Name>ModelEntities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Models\Models\Models.csproj">
       <Project>{06B46620-C1F8-42D7-B3A7-A82FCFB6926E}</Project>
       <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{15982E44-6A0A-46B6-B75E-40ADB2CF6C74}</Project>
+      <Name>Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\StocksImportAndExport\StocksImportAndExport.csproj">
       <Project>{aa75356b-7482-4fa9-86ce-cb503407cf36}</Project>

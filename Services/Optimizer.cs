@@ -1,5 +1,6 @@
 ﻿using SandS.Algorithm.Library.SortNamespace;
 using StockSharp.Algo.Indicators;
+using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using System;
 using System.Collections.Generic;
@@ -155,7 +156,10 @@ namespace StockSolution.Services.Optimizer
                             {
                                 LengthIndicator<decimal> shortIndicatorClone = indicators[shortIndicator].Clone() as LengthIndicator<decimal>;
                                 LengthIndicator<decimal> longIndicatorClone = indicators[longIndicator].Clone() as LengthIndicator<decimal>;
-                                indicatorPairs.Add(new IndicatorPair(shortIndicatorClone, longIndicatorClone));
+                                LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
+                                LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
+
+                                indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter));
                             }
 
                         }

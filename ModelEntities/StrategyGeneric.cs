@@ -1,5 +1,5 @@
 ﻿using SidesEnum;
-using StockSharp.Algo.Indicators;
+using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +12,7 @@ namespace StockSolution.ModelEntities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        public StrategyGeneric(IConnection connection, string securityID, LengthIndicator<decimal> longIndicator, LengthIndicator<decimal> shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+        public StrategyGeneric(IConnection connection, string securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
         {
 
         }

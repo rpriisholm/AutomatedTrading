@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockSolution.Entity.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -16,7 +17,7 @@ namespace StockSolution.ModelEntities.Models
         public int Orders { get; set; }
         public int PositiveOrderPct { get; set; }
 
-        public IndicatorPair(LengthIndicator<decimal> shortIndicator, LengthIndicator<decimal> longIndicator)
+        public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator)
         {
             this.ShortIndicator = shortIndicator;
             this.LongIndicator = longIndicator;

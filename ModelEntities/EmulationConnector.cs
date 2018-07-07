@@ -1,4 +1,5 @@
 ﻿using SidesEnum;
+using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,39 +8,37 @@ using System.Text;
 
 namespace StockSolution.ModelEntities.Models
 {
-    public class EmulationConnection : IConnection
+    public class EmulationConnection : AConnection
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
+        public virtual Dictionary<SecurityInfo, decimal> Profits { get; set; }
+        public virtual Dictionary<SecurityInfo, decimal> AlltimeProfits { get; set; }
+        public decimal RemainingValue { get; set; }
 
-        private Dictionary<string, Order> Orders { get; set; }
-        private Dictionary<string, decimal> Profits { get; set; }
-        private Dictionary<string, decimal> AlltimeProfits = new Dictionary<string, decimal>();
-        private decimal RemainingValue { get; set; }
-        public decimal GetTotalValue() { return GetRemainingValue() + GetInvestedValue(); }
-        private Portfolio Portfolio;
-        public Portfolio GetPortfolio() { return Portfolio; }
-
-        public EmulationConnection(decimal initialMoney, OrderLimitType orderLimitType, decimal orderLimit, int leverageLimit, int maxInvestedPct)
+        public EmulationConnection()
         {
-            this.RemainingValue = initialMoney;
-            this.Orders = new Dictionary<string, Order>();
-            this.Portfolio = new Portfolio(this, orderLimitType, orderLimit, leverageLimit, maxInvestedPct);
-            this.Profits = new Dictionary<string, decimal>();
-            this.AlltimeProfits = new Dictionary<string, decimal>();
+            this.AlltimeProfits = new Dictionary<SecurityInfo, decimal>();
+            this.Profits = new Dictionary<SecurityInfo, decimal>();
+            this.Orders = new Dictionary<SecurityInfo, Order>();
         }
 
-        public decimal GetRemainingValue()
+        public EmulationConnection(decimal initialMoney, OrderLimitType orderLimitType, decimal orderLimit, int leverageLimit, int maxInvestedPct) : this()
+        {
+            this.RemainingValue = initialMoney;
+            
+            this.Portfolio = new Portfolio(this, orderLimitType, orderLimit, leverageLimit, maxInvestedPct);         
+        }
+
+        public override decimal GetRemainingValue()
         {
             return this.RemainingValue;
         }
 
-        public decimal GetInvestedValue()
+        public override decimal GetInvestedValue()
         {
-            Dictionary<string, Order> orders = LoadOrders();
+            Dictionary<SecurityInfo, Order> orders = LoadOrders();
             decimal investedValue = 0;
 
-            foreach (string securityID in orders.Keys)
+            foreach (SecurityInfo securityID in orders.Keys)
             {
                 if (orders[securityID] != null)
                 {
@@ -50,12 +49,7 @@ namespace StockSolution.ModelEntities.Models
             return investedValue;
         }
 
-        public Dictionary<string, Order> LoadOrders()
-        {
-            return this.Orders;
-        }
-
-        public Order MakeOrder(string securityCode, Sides direction, int leverage, decimal piecePrice)
+        public override Order MakeOrder(SecurityInfo securityCode, Sides direction, int leverage, decimal piecePrice)
         {
             Order order = null;
             decimal payment = CalcPayment();
@@ -65,7 +59,7 @@ namespace StockSolution.ModelEntities.Models
             if (newInvestPct < GetPortfolio().MaxInvestedPct)
             {
                 RemainingValue -= payment;
-                order = new Order(direction, securityCode, securityCode, leverage, payment, piecePrice);
+                order = new Order(direction, securityCode, leverage, payment, piecePrice);
                 order.StartPieceValue = piecePrice;
                 this.Orders[securityCode] = order;
             }
@@ -74,7 +68,7 @@ namespace StockSolution.ModelEntities.Models
             return order;
         }
 
-        public Order CancelOrder(string securityCode, Sides direction, decimal piecePrice)
+        public override Order CancelOrder(SecurityInfo securityCode, Sides direction, decimal piecePrice)
         {
             Order order = null;
             if (LoadOrders().ContainsKey(securityCode))
@@ -95,17 +89,17 @@ namespace StockSolution.ModelEntities.Models
             return order;
         }
 
-        public Dictionary<string, decimal> RealizedProfits()
+        public override Dictionary<SecurityInfo, decimal> RealizedProfits()
         {
             return Profits;
         }
 
-        public Dictionary<string, decimal> AlltimeRealizedProfits()
+        public override Dictionary<SecurityInfo, decimal> AlltimeRealizedProfits()
         {
             return Profits;
         }
 
-        public decimal Profit(string securityID)
+        public override decimal Profit(SecurityInfo securityID)
         {
             decimal profit = 0;
             if(LoadOrders().ContainsKey(securityID) && LoadOrders()[securityID] != null)
@@ -117,7 +111,7 @@ namespace StockSolution.ModelEntities.Models
             return profit;
         }
 
-        public decimal CalcPayment()
+        public override decimal CalcPayment()
         {
             decimal payment = 0m;
 
@@ -134,7 +128,7 @@ namespace StockSolution.ModelEntities.Models
             return payment;
         }
 
-        public void InitializeSecurityID(string securityID)
+        public override void InitializeSecurityID(SecurityInfo securityID)
         {
             if(!LoadOrders().ContainsKey(securityID))
             {

@@ -1,4 +1,5 @@
-﻿using LumenWorks.Framework.IO.Csv;
+﻿using Ecng.Common;
+using LumenWorks.Framework.IO.Csv;
 using SandS.Algorithm.Library.SortNamespace;
 using StockSharp.BusinessEntities;
 using StockSolution.Entity.Models;
@@ -13,17 +14,17 @@ namespace StockSolution.Services
 {
     public class LoaderService
     {
-        public static IList<Candle> LoadLocalCandles(TimeSpan timeFrame, string storagePath, string securityID, DateTime startTime, DateTime stopTime)
+        public static IList<Candle> LoadLocalCandles(TimeSpan timeFrame, string storagePath, SecurityInfo securityID, DateTime startTime, DateTime stopTime)
         {
             return ConvertCsvToCandles(timeFrame, storagePath, securityID);
         }
 
-        public static IDictionary<string, IList<Candle>> LoadLocalCandles(TimeSpan timeFrame, string storagePath, DateTime startTime, DateTime stopTime)
+        public static IDictionary<SecurityInfo, IList<Candle>> LoadLocalCandles(TimeSpan timeFrame, string storagePath, DateTime startTime, DateTime stopTime)
         {
-            Dictionary<string, IList<Candle>> candles = new Dictionary<string, IList<Candle>>();
-            List<string> failedSecurities = new List<string>();
+            Dictionary<SecurityInfo, IList<Candle>> candles = new Dictionary<SecurityInfo, IList<Candle>>();
+            List<SecurityInfo> failedSecurities = new List<SecurityInfo>();
 
-            foreach (string securityID in GetSecurityIDs(storagePath))
+            foreach (SecurityInfo securityID in GetSecurityIDs(storagePath))
             {
                 try
                 {
@@ -39,12 +40,22 @@ namespace StockSolution.Services
             return candles;
         }
 
-        private static IList<string> GetSecurityIDs(string storagePath)
+        private static IList<SecurityInfo> GetSecurityIDs(string storagePath)
         {
-            return new List<string>(Directory.GetFiles(storagePath, "*.csv").Select(Path.GetFileNameWithoutExtension));
+            string[] filePaths = Directory.GetFiles(storagePath, "*.csv");
+            IEnumerable<string> IDs = filePaths.Select(Path.GetFileNameWithoutExtension);
+            List<string> IdStrings = new List<string>(IDs);
+            List<SecurityInfo> securityInfos = new List<SecurityInfo>();
+
+            foreach (string id in IdStrings)
+            {
+                securityInfos.Add(new SecurityInfo() { SecurityID = id });
+            }
+
+            return securityInfos;
         }
 
-        public static IList<Candle> ConvertCsvToCandles(TimeSpan timeFrame, string filePath, string securityID)
+        public static IList<Candle> ConvertCsvToCandles(TimeSpan timeFrame, string filePath, SecurityInfo securityID)
         {
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
@@ -76,7 +87,7 @@ namespace StockSolution.Services
 
                 Candle candle = new Candle
                 {
-                    SecurityID = securityID,
+                    SecurityID = securityID.SecurityID,
                     TimeFrame = timeFrame,
                     OpenTime = openTime,
                     CloseTime = openTime.Add(timeFrame),

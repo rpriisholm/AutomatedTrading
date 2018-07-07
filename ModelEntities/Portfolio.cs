@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -13,14 +14,14 @@ namespace StockSolution.ModelEntities.Models
 
     public class Portfolio
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-
-        private IConnection Connection { get; set; }
+        public virtual IConnection Connection { get; set; }
         public decimal TotalValue {get {return this.MoneyCurrent + this.InvestedMoney;}}
         public decimal MoneyCurrent { get { return Connection.GetRemainingValue(); } }
         public decimal InvestedMoney { get { return Connection.GetInvestedValue(); } }
-        public OrderLimitType OrderLimitType { get; set; }
+        public virtual OrderLimitType OrderLimitType { get; set; }
         public decimal OrderLimit { get; set; }
         private decimal OrderLimitValue
         {

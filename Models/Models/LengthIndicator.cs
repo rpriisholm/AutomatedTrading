@@ -12,6 +12,10 @@ namespace StockSolution.Entity.Models
 {
     public class LengthIndicator
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
         public static readonly Dictionary<string, Type> IndicatorNames = new Dictionary<string, Type>()
         {
             { (new SimpleMovingAverage()).ToString(), (new SimpleMovingAverage()).GetType()},
@@ -54,7 +58,7 @@ namespace StockSolution.Entity.Models
     };
 
 
-        public List<Candle> Candles { get; set; }
+        public virtual List<Candle> Candles { get; set; }
 
         [NotMapped]
         public LengthIndicator<decimal> Indicator { get; set; }

@@ -54,11 +54,12 @@ namespace StockSolution.Services.Optimizer
                     int initialMoney = 100000;
                     int orderLimit = initialMoney / 10;
                     int maxInvestedPct = 80;
+                    SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
 
                     List<Candle> currentCandles = candles.GetRange(candles.Count - (1 + nrOfTestValues * (optimizerOptions.RecursiveTests - recursiveTests)), nrOfTestValues);
 
                     EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, leverage, maxInvestedPct);
-                    StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, "TestID", indicatorPair.LongIndicator, indicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
+                    StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
 
                     strategyGeneric.Start();
                     //Process Candles

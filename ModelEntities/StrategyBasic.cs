@@ -1,6 +1,7 @@
 ﻿using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -8,14 +9,15 @@ namespace StockSolution.ModelEntities.Models
 {
     public abstract class StrategyBasic : IComparable<StrategyBasic>
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
-
-        public IConnection Connection { get; protected set; }
+        public int Id { get; set; }
+        public virtual AConnection Connection { get; set; }
         //public decimal CurrentPosition { get; set; }
-        public LengthIndicator LongIndicator { get; }
-        public LengthIndicator ShortIndicator { get; }
-        public string SecurityID { get; }
+        public virtual LengthIndicator LongIndicator { get; set; }
+        public virtual LengthIndicator ShortIndicator { get; set; }
+        [Required]
+        public SecurityInfo SecurityID { get; set; }
         protected bool _isRunning = false;
         protected bool _isShortLessThenLong;
         public bool IsSellEnabled { get; set; }
@@ -25,9 +27,9 @@ namespace StockSolution.ModelEntities.Models
         public bool IsDisabled { get; set; }
         public decimal LoseLimitConstant { get; set; }
 
-        public StrategyBasic(IConnection connection, string securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
+        public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
         {
-            this.Connection = connection;
+            this.Connection = connection as AConnection;
             this.SecurityID = securityID;
             this.LongIndicator = longIndicator;
             this.ShortIndicator = shortIndicator;
@@ -38,7 +40,7 @@ namespace StockSolution.ModelEntities.Models
             this.LoseLimitConstant = loseLimitConstant;
         }
 
-        public StrategyBasic(IConnection connection, string securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, longIndicator, shortIndicator, loseLimitConstant)
+        public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, longIndicator, shortIndicator, loseLimitConstant)
         {
             this.IsSellEnabled = isSellEnabled;
             this.IsBuyEnabled = isBuyEnabled;

@@ -1,6 +1,8 @@
 ﻿using SidesEnum;
+using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -8,14 +10,18 @@ namespace StockSolution.ModelEntities.Models
 {
     public class Order
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
-
-        public string SecurityCode { get; private set; }
-        public string SecurityName { get; private set; }
+        public int Id { get; set; }
+        [Required]
+        public SecurityInfo SecurityId { get; set; }
+        [Required]
         public int Leverage { get; private set; }
+        [Required]
         public decimal StartPieceValue { get; set; }
+        [Required]
         public decimal CurrentPieceValue { get; set; }
+        [Required]
         public decimal StartValue { get; private set; }
 
         /* CHECK CALCS + ORDER ESSPACALY ON SALE */
@@ -53,12 +59,11 @@ namespace StockSolution.ModelEntities.Models
 
         public decimal LoanedValue { get { return StartValue * Leverage - StartValue; } }
 
-        public Sides Direction { get; set; }
+        public virtual Sides Direction { get; set; }
 
-        public Order(Sides direction, string securityCode, string securityName, int leverage, decimal startValue, decimal startPieceValue)
+        public Order(Sides direction, SecurityInfo securityInfo, int leverage, decimal startValue, decimal startPieceValue)
         {
-            this.SecurityCode = securityCode;
-            this.SecurityName = securityName;
+            this.SecurityId = securityInfo;
             this.Leverage = leverage;
             this.StartValue = startValue;
             this.Direction = direction;

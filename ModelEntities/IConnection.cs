@@ -1,4 +1,5 @@
 ﻿using SidesEnum;
+using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,13 +12,13 @@ namespace StockSolution.ModelEntities.Models
         decimal GetRemainingValue();
         decimal GetInvestedValue();
         decimal GetTotalValue();
-        Dictionary<string, decimal> RealizedProfits();
-        Dictionary<string, decimal> AlltimeRealizedProfits();
-        decimal Profit(string securityID);
-        Dictionary<string, Order> LoadOrders();
-        Order MakeOrder(string securityCode, Sides direction, int leverage, decimal piecePrice);
-        Order CancelOrder(string securityCode, Sides direction, decimal piecePrice);
-        void InitializeSecurityID(string securityID);
+        Dictionary<SecurityInfo, decimal> RealizedProfits();
+        Dictionary<SecurityInfo, decimal> AlltimeRealizedProfits();
+        decimal Profit(SecurityInfo securityID);
+        Dictionary<SecurityInfo, Order> LoadOrders();
+        Order MakeOrder(SecurityInfo securityCode, Sides direction, int leverage, decimal piecePrice);
+        Order CancelOrder(SecurityInfo securityCode, Sides direction, decimal piecePrice);
+        void InitializeSecurityID(SecurityInfo securityID);
         decimal CalcPayment();
         //bool CancelOrder();
     }

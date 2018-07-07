@@ -23,7 +23,7 @@ namespace TradingNotifierApp
             int maxInvestedPct = 80;
             IConnection connection = new EmulationConnection(initialValue, orderLimitType, orderLimit, leverage, maxInvestedPct);
 
-            string securityId = "TEST_ID";
+            SecurityInfo securityId = new SecurityInfo() { SecurityID = "TEST_ID" };
             StrategyGeneric strategy = new StrategyGeneric(connection, securityId, OptimizerOptions.GetInstance(TickPeriod.Daily));
             List<StrategyGeneric> strategies = new List<StrategyGeneric>();
             strategies.Add(strategy);

@@ -1,6 +1,7 @@
 ﻿using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -8,11 +9,12 @@ namespace StockSolution.ModelEntities.Models
 {
     public class IndicatorPair : IComparable<IndicatorPair>, IComparable
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
-        public LengthIndicator ShortIndicator;
-        public LengthIndicator LongIndicator;
+        public virtual LengthIndicator ShortIndicator { get; set; }
+        public virtual LengthIndicator LongIndicator { get; set; }
         public decimal LastResult { get; set; }
         public int Orders { get; set; }
         public int PositiveOrderPct { get; set; }

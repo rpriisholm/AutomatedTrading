@@ -55,7 +55,7 @@ namespace RealLib
             TimeSpan timeSpan = TimeSpan.FromDays(1);
             string path = ImportAndExport.GetFullPath(TickPeriod.Daily);
             
-            IDictionary<string, IList<Candle>> symbolsAndCandles = LoaderService.LoadLocalCandles(timeSpan, path, startDate, endDate);
+            IDictionary<SecurityInfo, IList<Candle>> symbolsAndCandles = LoaderService.LoadLocalCandles(timeSpan, path, startDate, endDate);
 
         }
     }

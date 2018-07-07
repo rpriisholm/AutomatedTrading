@@ -9,11 +9,19 @@ namespace StockSolution.Entity.Models
     public class Candle : IComparable
     {
         [Key]
-        public string SecurityID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        [Required]
+        public virtual string SecurityID { get; set; }
+        [Required]
         public TimeSpan TimeFrame { get; set; }
+        [Required]
         public DateTime CloseTime { get; set; }
+        [Required]
         public DateTime OpenTime { get; set; }
+        [Required]
         public decimal ClosePrice { get; set; }
+        [Required]
         public decimal OpenPrice { get; set; }
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }

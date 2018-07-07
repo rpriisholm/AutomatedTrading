@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,13 @@ namespace StockSolution.ModelEntities.Models
 {
     public class OptimizerOptions
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         private IndicatorPair _BestIndicatorPair = null;
 
-        public IndicatorPair BestIndicatorPair
+        public virtual IndicatorPair BestIndicatorPair
         {
             get
             {
@@ -40,7 +42,7 @@ namespace StockSolution.ModelEntities.Models
         //public OptimizerOption<int> MaxOrders { get; set; }
         public int MinProfitPct { get; set; }
         public decimal LoseLimitConstant { get; set; }
-        public OptimizerOption<int> IndicatorLength { get; set; }
+        public virtual OptimizerOption<int> IndicatorLength { get; set; }
 
 
         private OptimizerOptions()

@@ -2,6 +2,7 @@
 using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -9,15 +10,12 @@ namespace StockSolution.ModelEntities.Models
 {
     public class StrategyGeneric : StrategyBasic, IComparable
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
-
-        public StrategyGeneric(IConnection connection, string securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+        public StrategyGeneric(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
         {
 
         }
 
-        public StrategyGeneric(IConnection connection, string securityID, OptimizerOptions optimizerOptions) : 
+        public StrategyGeneric(IConnection connection, SecurityInfo securityID, OptimizerOptions optimizerOptions) : 
             base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant)
         {
 

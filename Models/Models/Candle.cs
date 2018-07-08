@@ -12,8 +12,6 @@ namespace StockSolution.Entity.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public virtual string SecurityID { get; set; }
-        [Required]
         public TimeSpan TimeFrame { get; set; }
         [Required]
         public DateTime CloseTime { get; set; }

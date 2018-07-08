@@ -1,10 +1,10 @@
 ﻿using Ecng.Common;
 using LumenWorks.Framework.IO.Csv;
 using SandS.Algorithm.Library.SortNamespace;
-using StockSharp.BusinessEntities;
 using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,49 +14,48 @@ namespace StockSolution.Services
 {
     public class LoaderService
     {
-        public static IList<Candle> LoadLocalCandles(TimeSpan timeFrame, string storagePath, SecurityInfo securityID, DateTime startTime, DateTime stopTime)
+        public static SecurityInfo LoadLocalCandles(TimeSpan timeFrame, string storagePath, string securityID, DateTime startTime, DateTime stopTime)
         {
             return ConvertCsvToCandles(timeFrame, storagePath, securityID);
         }
 
-        public static IDictionary<SecurityInfo, IList<Candle>> LoadLocalCandles(TimeSpan timeFrame, string storagePath, DateTime startTime, DateTime stopTime)
+        public static IList<SecurityInfo> LoadLocalCandles(TimeSpan timeFrame, string storagePath, DateTime startTime, DateTime stopTime)
         {
-            Dictionary<SecurityInfo, IList<Candle>> candles = new Dictionary<SecurityInfo, IList<Candle>>();
-            List<SecurityInfo> failedSecurities = new List<SecurityInfo>();
+            IList<SecurityInfo> securityInfoes = new List<SecurityInfo>();
+            List<string> failedSecurities = new List<string>();
 
-            foreach (SecurityInfo securityID in GetSecurityIDs(storagePath))
+            foreach (string securityID in GetSecurityIDs(storagePath))
             {
                 try
                 {
-                    candles[securityID] = LoadLocalCandles(timeFrame, storagePath, securityID, startTime, stopTime);
+                    SecurityInfo securityInfo = LoadLocalCandles(timeFrame, storagePath, securityID, startTime, stopTime);
+                    securityInfoes.Add(securityInfo);
                 }
                 catch (Exception e)
                 {
                     failedSecurities.Add(securityID);
                     System.Console.WriteLine(e.ToString());
+                    System.Console.WriteLine(new StackTrace(e, true).GetFrame(0).GetFileLineNumber());
                 }
             }
             failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
-            return candles;
+            return securityInfoes;
         }
 
-        private static IList<SecurityInfo> GetSecurityIDs(string storagePath)
+        private static IList<string> GetSecurityIDs(string storagePath)
         {
             string[] filePaths = Directory.GetFiles(storagePath, "*.csv");
             IEnumerable<string> IDs = filePaths.Select(Path.GetFileNameWithoutExtension);
             List<string> IdStrings = new List<string>(IDs);
-            List<SecurityInfo> securityInfos = new List<SecurityInfo>();
 
-            foreach (string id in IdStrings)
-            {
-                securityInfos.Add(new SecurityInfo() { SecurityID = id });
-            }
-
-            return securityInfos;
+            return IdStrings;
         }
 
-        public static IList<Candle> ConvertCsvToCandles(TimeSpan timeFrame, string filePath, SecurityInfo securityID)
+        public static SecurityInfo ConvertCsvToCandles(TimeSpan timeFrame, string filePath, string securityID)
         {
+            //Create SecurityInfo
+            SecurityInfo securityInfo = new SecurityInfo() { SecurityID = securityID };
+
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
             CachedCsvReader csvReader = new CachedCsvReader(streamReader);
@@ -65,8 +64,6 @@ namespace StockSolution.Services
             //Language Standard
             CultureInfo cultureInfo = new CultureInfo("en-US");
 
-            //Create TimeFrameCandle List
-            IList<Candle> candles = new List<Candle>();
 
             // Generate Candles
             while (csvReader.ReadNextRecord())
@@ -87,7 +84,6 @@ namespace StockSolution.Services
 
                 Candle candle = new Candle
                 {
-                    SecurityID = securityID.SecurityID,
                     TimeFrame = timeFrame,
                     OpenTime = openTime,
                     CloseTime = openTime.Add(timeFrame),
@@ -98,10 +94,10 @@ namespace StockSolution.Services
                     TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
                 };
 
-                candles.Add(candle);
+                securityInfo.Candles.Add(candle);
             }
-            candles = SortingAlgorithm.MergeSort(candles);
-            return candles;
+            securityInfo.Candles = SortingAlgorithm.MergeSort(securityInfo.Candles);
+            return securityInfo;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace RealLib
         {
 
         }
-
+        /*
         public static void FindStrategies()
         {
             DateTime startDate = DateTime.Now.AddYears(-5);
@@ -58,5 +58,6 @@ namespace RealLib
             IDictionary<SecurityInfo, IList<Candle>> symbolsAndCandles = LoaderService.LoadLocalCandles(timeSpan, path, startDate, endDate);
 
         }
+        */
     }
 }

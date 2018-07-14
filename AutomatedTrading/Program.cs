@@ -26,8 +26,12 @@ namespace StockSolution
 
         static void Main(string[] args)
         {
+            ThreadPool.SetMaxThreads(254,254);
+            ThreadPool.SetMinThreads(64,64);
+            
             Console.SetOut(TextWriter.Null);
             Console.SetError(TextWriter.Null);
+            
 
             //NEEDS TO BE ABLE TO CREATE PATH OR PUT IN DATABASE (HIDDEN ERRROR)
             //Should Be In A Sepperate Program
@@ -306,7 +310,6 @@ namespace StockSolution
                     ErrorWriter.WriteLineAsync(e.ToString()).Wait();
                     ErrorWriter.WriteLineAsync(e.Message).Wait();
                     ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
-                    ErrorWriter.WriteLineAsync(new StackTrace(e, true).GetFrame(0).GetFileLineNumber().ToString());
                     ErrorWriter.FlushAsync().Wait();
                 }
                 catch { }
@@ -326,8 +329,10 @@ namespace StockSolution
             //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 4 }, securityID =>
             //Parallel.ForEach(securityInfoes, new ParallelOptions { MaxDegreeOfParallelism = 32 }, securityID =>
             //foreach (SecurityInfo securityID in candlesDictionary.Keys)
-
-            Parallel.For(0, securityInfoes.Count, new ParallelOptions { MaxDegreeOfParallelism = 32 }, index =>
+            
+            //HIGH RAM USAGE !!!
+            //Parallel.For(0, securityInfoes.Count, new ParallelOptions { MaxDegreeOfParallelism = 3 }, index =>
+            for(int index = 0; index < securityInfoes.Count; index++)
             {
                 try
                 {
@@ -414,7 +419,6 @@ namespace StockSolution
                     finally { RaceCondition = false; }
                 }
             }
-            );
             //);
 
 

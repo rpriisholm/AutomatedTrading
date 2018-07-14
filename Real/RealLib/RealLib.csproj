@@ -34,12 +34,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -143,8 +144,8 @@
       <Project>{AA75356B-7482-4FA9-86CE-CB503407CF36}</Project>
       <Name>StocksImportAndExport</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TickEnum\TickEnum.csproj">
-      <Project>{D7A31468-8E2E-4F8C-AECF-FC0C761D4BBD}</Project>
+    <ProjectReference Include="..\..\TickEnum\TickEnum\TickEnum.csproj">
+      <Project>{64C1CFFD-B40D-4F65-BA6E-5F74BD3274B2}</Project>
       <Name>TickEnum</Name>
     </ProjectReference>
   </ItemGroup>

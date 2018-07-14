@@ -13,7 +13,7 @@ namespace StockSolution.Entity.Models
         [Key]
         public string SecurityID { get; set; }
 
-        public IList<Candle> Candles { get; set; }
+        public List<Candle> Candles { get; set; }
 
         public SecurityInfo()
         {

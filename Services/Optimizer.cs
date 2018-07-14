@@ -47,34 +47,103 @@ namespace StockSolution.Services.Optimizer
 
             for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
             {
+                Task[] tasks = new Task[indicatorPairs.Count];
+                //List<Task> tasks = new List<Task>();
+                int pointer = 0;
+
                 //bool raceCondition = false;
-                Parallel.ForEach(indicatorPairs, indicatorPair =>
-                //foreach (IndicatorPair indicatorPair in indicatorPairs)
+                //Parallel.ForEach(indicatorPairs, new ParallelOptions { MaxDegreeOfParallelism = 32 }, indicatorPair =>
+                foreach (IndicatorPair indicatorPair in indicatorPairs)
                 {
-                    int initialMoney = 100000;
-                    int orderLimit = initialMoney / 10;
-                    int maxInvestedPct = 80;
-                    SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
+                    //var t = new Task(() => { });
 
-                    List<Candle> currentCandles = candles.GetRange(candles.Count - (1 + nrOfTestValues * (optimizerOptions.RecursiveTests - recursiveTests)), nrOfTestValues);
-
-                    EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, leverage, maxInvestedPct);
-                    StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
-
-                    strategyGeneric.Start();
-                    //Process Candles
-                    for (int i = 0; i < currentCandles.Count; i++)
+                   
+                    Task t = new Task(() =>
+                    //ThreadPool.QueueUserWorkItem((Object stateInfo) =>
                     {
-                        strategyGeneric.ProcessCandle(currentCandles[i]);
-                    }
-                    strategyGeneric.Stop();
-                    //Set LastResult
-                    indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
-                    //SET ORDERS OG POSITIVE ORDER PCT
-                    indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
-                    indicatorPair.Orders = strategyGeneric.OrderCount;
+                        int initialMoney = 100000;
+                        int orderLimit = initialMoney / 10;
+                        int maxInvestedPct = 80;
+                        SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
+
+                        List<Candle> currentCandles = candles.GetRange(candles.Count - (1 + nrOfTestValues * (optimizerOptions.RecursiveTests - recursiveTests)), nrOfTestValues);
+
+                        EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, leverage, maxInvestedPct);
+                        StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
+
+                        strategyGeneric.Start();
+                        //Process Candles
+                        for (int i = 0; i < currentCandles.Count; i++)
+                        {
+                            strategyGeneric.ProcessCandle(currentCandles[i]);
+                        }
+                        strategyGeneric.Stop();
+                        //Set LastResult
+                        indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
+                        //SET ORDERS OG POSITIVE ORDER PCT
+                        indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
+                        indicatorPair.Orders = strategyGeneric.OrderCount;
+                    }, TaskCreationOptions.LongRunning);
+                    
+
+                    tasks[pointer] = t;
+                    tasks[pointer].Start();
+                    pointer++;
+                    //t.Start();
+                    //tasks.Add(t);
+                    
                 }
-                );
+
+                Task.WaitAll(tasks);
+                
+                /*
+                int maxThreads = 32;
+                int counter = 0;
+                while (tasks.Count > maxThreads)
+                {
+                    if (counter == maxThreads)
+                    {
+                        for (int threadNr = 0; counter == maxThreads; threadNr++)
+                        {
+                            //Reset And Sleep
+                            if (threadNr == maxThreads) { threadNr = 0; Thread.Sleep(1000); }
+
+                            //Remove finished thread
+                            if (tasks[threadNr].Status != TaskStatus.Created &&
+                                tasks[threadNr].Status != TaskStatus.Running &&
+                                tasks[threadNr].Status != TaskStatus.WaitingForActivation &&
+                                tasks[threadNr].Status != TaskStatus.WaitingForChildrenToComplete &&
+                                tasks[threadNr].Status != TaskStatus.WaitingToRun)
+                            {
+                                tasks.RemoveAt(threadNr);
+                                counter--;
+                            }
+                        }
+                    }
+
+                    tasks[counter].Start();
+                    counter++;
+                }
+
+                //Rest Start
+                foreach (Task task in tasks)
+                {
+                    task.Start();
+                }
+
+                //Rest Wait
+                foreach (Task task in tasks)
+                {
+                    task.Wait();
+                }
+                */
+
+                //tasks[pointer].Start();
+                //pointer++;
+
+
+                //Task.WaitAll(tasks);
+                //);
 
                 //Missing Recursive AND FILTER
                 List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();

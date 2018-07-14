@@ -96,7 +96,8 @@ namespace StockSolution.Services
 
                 securityInfo.Candles.Add(candle);
             }
-            securityInfo.Candles = SortingAlgorithm.MergeSort(securityInfo.Candles);
+
+            securityInfo.Candles = (List<Candle>) SortingAlgorithm.MergeSort(securityInfo.Candles);
             return securityInfo;
         }
     }

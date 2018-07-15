@@ -412,7 +412,7 @@
       <HintPath>..\packages\SandS.Algorithm.Common.2.0.1.02\lib\SandS.Algorithm.Common.dll</HintPath>
     </Reference>
     <Reference Include="SandS.Algorithm.Extensions.EnumerableExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SandS.Algorithm.Extensions.EnumerableExtensions.2.0.1.01\lib\SandS.Algorithm.Extensions.EnumerableExtension.dll</HintPath>
+      <HintPath>..\packages\SandS.Algorithm.Extensions.EnumerableExtensions.2.0.3.01\lib\SandS.Algorithm.Extensions.EnumerableExtension.dll</HintPath>
     </Reference>
     <Reference Include="SandS.Algorithm.Library.Sort, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SandS.Algorithm.Library.Sort.2.0.2\lib\SandS.Algorithm.Library.Sort.dll</HintPath>
@@ -581,98 +581,74 @@
     </Reference>
     <Reference Include="StockSharp.Poloniex, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Poloniex.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.QuantHouse, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.QuantHouse.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Quik, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Quik.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.QuikLua, Version=4.4.12.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.QuikLua.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Rithmic, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Rithmic.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Rss, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Rss.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.SmartCom, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.SmartCom.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.SpbEx, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.SpbEx.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Sterling, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Sterling.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Transaq, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Transaq.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Twime, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Twime.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Xaml, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Xaml.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Xaml.Charting, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Xaml.Charting.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Xaml.Diagram, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Xaml.Diagram.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="StockSharp.Yobit, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\StockSharp.Yobit.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.79.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=AMD64">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.FileSystem, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.IO.FileSystem.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.FtpClient, Version=1.0.5281.14405, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Net.FtpClient.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Reflection.Metadata, Version=1.4.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Security.Cryptography.Algorithms.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Security.Cryptography.Primitives.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -682,27 +658,21 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\System.Xml.ReaderWriter.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Types, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\Types.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Xceed.Wpf.Toolkit, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\Xceed.Wpf.Toolkit.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="XigniteCodeGen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\XigniteCodeGen.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="xNet, Version=3.3.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\xNet.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="zlibnet, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.12\lib\net45\zlibnet.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -721,6 +691,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

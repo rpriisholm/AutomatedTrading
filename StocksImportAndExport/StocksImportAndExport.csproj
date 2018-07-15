@@ -129,10 +129,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Export\CSVToMySQL.cs" />
+    <Compile Include="Export\InteropExcel.cs" />
     <Compile Include="Import\Other.cs" />
     <Compile Include="Service\Collector.cs" />
     <Compile Include="DB_Connector_MySQL.cs" />
-    <Compile Include="Export\InteropExcel.cs" />
     <Compile Include="Import\CSV.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -186,6 +186,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

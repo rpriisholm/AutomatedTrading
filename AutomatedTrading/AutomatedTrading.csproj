@@ -78,18 +78,6 @@
   <PropertyGroup>
     <StartupObject>StockSolution.Program</StartupObject>
   </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>8DF0A5F54B91E6CC629C85754421317089E6400A</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>AutomatedTrading_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="API">
       <HintPath>..\..\..\..\..\..\OneDrive\Documents\GitHub\Stock Sharp Extra\StockSharp_4.4.6.1_en\References\API.dll</HintPath>

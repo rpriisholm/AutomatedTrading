@@ -17,7 +17,7 @@ using TickEnum;
 using static Stocks.Services;
 
 namespace StockSolution
-{
+{ 
     class Program
     {
         private static StreamWriter ErrorWriter = null;

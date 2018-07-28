@@ -52,6 +52,8 @@ namespace StockSolution
 
             //Parallel.For(0, 15, prlNumber =>
             {
+				DateTime startTime = DateTime.Now;
+
                 //Should Amount To A Little More Than Two Years (Only Weekend Removed)
                 int minNrOfTestValues = 766;
 
@@ -66,98 +68,98 @@ namespace StockSolution
                 int positiveOrderPct = 75;
                 int minProfitPct = 55;
                 decimal loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 55 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 70;
                 minProfitPct = 55;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 60 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 70;
                 minProfitPct = 60;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 65;
                 minProfitPct = 60;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 40 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 75;
                 minProfitPct = 40;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 75;
                 minProfitPct = 45;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 50 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 75;
                 minProfitPct = 50;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 70;
                 minProfitPct = 50;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 65;
                 minProfitPct = 60;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 65;
                 minProfitPct = 55;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 70;
                 minProfitPct = 50;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 35 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 75;
                 minProfitPct = 35;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 75;
                 minProfitPct = 45;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 65;
                 minProfitPct = 55;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
 
                 //SingleTest();
                 //BIGTest();
@@ -187,7 +189,7 @@ namespace StockSolution
         }
 
         //Simulate Real Trades Using Specificed Strategy
-        public static void TestSelectedValuesAllData(int minNrOfTestValues, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant)
+        public static void TestSelectedValuesAllData(DateTime startTime, int minNrOfTestValues, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant)
         {
             int nrOfTestValues = 90;
             int realValues = 30;
@@ -212,10 +214,10 @@ namespace StockSolution
                 IList<SecurityInfo> securityInfos = null;
 
                 #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
-                var startTime = DateTime.Now;
+                //var startTime = DateTime.Now;
                 System.Console.WriteLine(startTime);
                 string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
-                securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, new DateTime(2000, 1, 1), new DateTime(2019, 1, 1));
+                securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, startTime);
 
                 //Remove Candle Values If To Few
                 for (int i = 0; i < securityInfos.Count; i++)

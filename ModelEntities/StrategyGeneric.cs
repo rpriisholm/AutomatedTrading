@@ -28,6 +28,8 @@ namespace StockSolution.ModelEntities.Models
                 throw new Exception("Strategy Haven't Been Started");
             }
 
+            this.LastExecution = candle.CloseTime;
+
             if (!this.IsDisabled)
             {
                 Order closeOrderSell = null;

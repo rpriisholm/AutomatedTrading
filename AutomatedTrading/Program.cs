@@ -11,13 +11,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading; 
+using System.Threading;
 using System.Threading.Tasks;
 using TickEnum;
 using static Stocks.Services;
 
 namespace StockSolution
-{ 
+{
     class Program
     {
         private static StreamWriter ErrorWriter = null;
@@ -26,12 +26,9 @@ namespace StockSolution
 
         static void Main(string[] args)
         {
-            ThreadPool.SetMaxThreads(254,254);
-            ThreadPool.SetMinThreads(64,64);
-            
             Console.SetOut(TextWriter.Null);
             Console.SetError(TextWriter.Null);
-            
+
 
             //NEEDS TO BE ABLE TO CREATE PATH OR PUT IN DATABASE (HIDDEN ERRROR)
             //Should Be In A Sepperate Program
@@ -329,10 +326,10 @@ namespace StockSolution
             //Parallel.ForEach(candlesDictionary.Keys, new ParallelOptions { MaxDegreeOfParallelism = 4 }, securityID =>
             //Parallel.ForEach(securityInfoes, new ParallelOptions { MaxDegreeOfParallelism = 32 }, securityID =>
             //foreach (SecurityInfo securityID in candlesDictionary.Keys)
-            
+
             //HIGH RAM USAGE !!!
             //Parallel.For(0, securityInfoes.Count, new ParallelOptions { MaxDegreeOfParallelism = 3 }, index =>
-            for(int index = 0; index < securityInfoes.Count; index++)
+            for (int index = 0; index < securityInfoes.Count; index++)
             {
                 try
                 {
@@ -528,7 +525,12 @@ namespace StockSolution
             #endregion
 
             bool raceCondition = false;
+
+            //new ParallelOptions { MaxDegreeOfParallelism = 32,  }
+            //ThreadPool.SetMaxThreads(2, 2);
+            //ThreadPool.SetMinThreads(2, 2);
             Parallel.ForEach(SecurityInfoes, securityID =>
+            //foreach(SecurityInfo securityID in SecurityInfoes)
             {
                 // foreach (SecurityInfo securityID in candlesDictionary.Keys) {
                 /*
@@ -655,7 +657,9 @@ namespace StockSolution
                     csvWriter.Flush();
                     streamWriter.Flush();
                 }
-            });
+            }
+
+            );
             streamWriter.Close();
         }
 

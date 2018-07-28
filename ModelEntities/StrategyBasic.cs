@@ -26,6 +26,7 @@ namespace StockSolution.ModelEntities.Models
         public int PositiveOrderCount { get; set; }
         public bool IsDisabled { get; set; }
         public decimal LoseLimitConstant { get; set; }
+        public DateTime LastExecution { get; set; }
 
         public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
         {

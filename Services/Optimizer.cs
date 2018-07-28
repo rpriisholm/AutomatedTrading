@@ -52,13 +52,13 @@ namespace StockSolution.Services.Optimizer
                 int pointer = 0;
 
                 //bool raceCondition = false;
-                //Parallel.ForEach(indicatorPairs, new ParallelOptions { MaxDegreeOfParallelism = 32 }, indicatorPair =>
-                foreach (IndicatorPair indicatorPair in indicatorPairs)
+                Parallel.ForEach(indicatorPairs, indicatorPair =>
+                //foreach (IndicatorPair indicatorPair in indicatorPairs)
                 {
                     //var t = new Task(() => { });
 
                    
-                    Task t = new Task(() =>
+                    //Task t = new Task(() =>
                     //ThreadPool.QueueUserWorkItem((Object stateInfo) =>
                     {
                         int initialMoney = 100000;
@@ -83,18 +83,18 @@ namespace StockSolution.Services.Optimizer
                         //SET ORDERS OG POSITIVE ORDER PCT
                         indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
                         indicatorPair.Orders = strategyGeneric.OrderCount;
-                    }, TaskCreationOptions.LongRunning);
+                    }
                     
 
-                    tasks[pointer] = t;
-                    tasks[pointer].Start();
-                    pointer++;
+                    //tasks[pointer] = t;
+                    //tasks[pointer].Start();
+                    //pointer++;
                     //t.Start();
                     //tasks.Add(t);
                     
-                }
+                });
 
-                Task.WaitAll(tasks);
+                //Task.WaitAll(tasks);
                 
                 /*
                 int maxThreads = 32;

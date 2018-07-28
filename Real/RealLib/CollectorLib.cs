@@ -1,4 +1,6 @@
-﻿using Stocks.Service;
+﻿using CsvHelper;
+using LumenWorks.Framework.IO.Csv;
+using Stocks.Service;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using StockSolution.Services;
@@ -36,27 +38,57 @@ namespace RealLib
 
         public static void LoadStrategiesAndOrders()
         {
-            
+
         }
 
-        public static void SaveStrategies(List<StrategyGeneric> strategyGenerics)
+        public static void SaveStrategies(Dictionary<string, StrategyGeneric> strategyGenerics)
         {
-            WriteToBinaryFile<List<StrategyGeneric>>(DataLocation, strategyGenerics);
-        }
+            // Relocate old strategies csv using relocation date
+            // Need One For Strategies which haven't expired yeat (Will expire on next change)
 
-        public static List<StrategyGeneric> LoadStrategies()
-        {
-            List<StrategyGeneric> strategies = null;
+            StreamWriter streamWriter = new StreamWriter($"{DataLocation}\\CurrentStrategies.csv");
+            CsvWriter csvWriter = new CsvWriter(streamWriter);
 
-            try
+            csvWriter.WriteField("Symbol");
+            csvWriter.WriteField("Last Execution");
+            csvWriter.WriteField("Short Indicator");
+            csvWriter.WriteField("Long Indicator");
+            //MAYBE PROFIT?
+            csvWriter.NextRecord();
+
+            foreach (string symbol in strategyGenerics.Keys)
             {
-                strategies = ReadFromBinaryFile<List<StrategyGeneric>>(DataLocation);
+                csvWriter.WriteField(symbol);
+                csvWriter.WriteField(strategyGenerics[symbol].LastExecution.ToString("yyyy-MM-dd hh-mm"));
+                csvWriter.WriteField(strategyGenerics[symbol].ShortIndicator.ToString());
+                csvWriter.WriteField(strategyGenerics[symbol].LongIndicator.ToString());
+                csvWriter.NextRecord();
             }
-            catch { /* Do Nothing */ }
+
+            csvWriter.Flush();
+            streamWriter.Close();
+            //WriteToBinaryFile<List<StrategyGeneric>>(DataLocation, strategyGenerics);
+        }
+
+        public static Dictionary<string,StrategyGeneric> LoadStrategies()
+        {
+
+            Dictionary<string, StrategyGeneric> strategies = new Dictionary<string, StrategyGeneric>();
+
+            StreamReader streamReader = new StreamReader($"{DataLocation}\\CurrentStrategies.csv");
+            CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+
+            while (csvReader.ReadNextRecord())
+            {
+                // Prepare Strategy For Symbol
+                // Need to load current candles up till last execution date
+                strategies[csvReader["Symbol"]] = new StrategyGeneric(csvReader["Short Indicator"], csvReader["Long Indicator"], csvReader["Last Execution"], candles);
+            }
 
             return strategies;
         }
 
+    /*
         private static void WriteToBinaryFile<T>(string filePath, T objectToWrite, bool append = false)
         {
             using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
@@ -75,5 +107,5 @@ namespace RealLib
                 return (T)binaryFormatter.Deserialize(stream);
             }
         }
-    }
+        */
 }

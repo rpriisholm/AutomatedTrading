@@ -28,13 +28,14 @@ namespace StockSolution.ModelEntities.Models
         public decimal LoseLimitConstant { get; set; }
         public DateTime LastExecution { get; set; }
 
+
         public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
         {
             this.Connection = connection as AConnection;
             this.SecurityID = securityID;
             this.LongIndicator = longIndicator;
             this.ShortIndicator = shortIndicator;
-            this.IsSellEnabled = false;
+            this.IsSellEnabled = true;
             this.IsBuyEnabled = true;
             this.Connection.InitializeSecurityID(securityID);
             this.IsDisabled = false;

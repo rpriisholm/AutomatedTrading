@@ -1,11 +1,14 @@
 ﻿using CsvHelper;
 using LumenWorks.Framework.IO.Csv;
 using Stocks.Service;
+using StockSharp.Algo.Indicators;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using StockSolution.Services;
+using StockSolution.Services.Optimizer;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -70,19 +73,43 @@ namespace RealLib
             //WriteToBinaryFile<List<StrategyGeneric>>(DataLocation, strategyGenerics);
         }
 
-        public static Dictionary<string,StrategyGeneric> LoadStrategies()
+        public static Dictionary<string,StrategyGeneric> LoadStrategies(IConnection connection, TickPeriod tickPeriod)
         {
-
             Dictionary<string, StrategyGeneric> strategies = new Dictionary<string, StrategyGeneric>();
 
             StreamReader streamReader = new StreamReader($"{DataLocation}\\CurrentStrategies.csv");
             CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+            Optimizer optimizer = new Optimizer();
+            OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(tickPeriod);
 
             while (csvReader.ReadNextRecord())
             {
                 // Prepare Strategy For Symbol
                 // Need to load current candles up till last execution date
-                strategies[csvReader["Symbol"]] = new StrategyGeneric(csvReader["Short Indicator"], csvReader["Long Indicator"], csvReader["Last Execution"], candles);
+
+
+                string symbol = csvReader["Symbol"];
+                SecurityInfo securityInfo = new SecurityInfo() { SecurityID = symbol };
+
+                LengthIndicator longIndicator = optimizer.FindIndicator(csvReader["Long Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+                LengthIndicator shortIndicator = optimizer.FindIndicator(csvReader["Short Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+                bool isBuyEnabled = true;
+                bool isSellEnabled = true;
+                DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.CurrentCulture);
+                decimal loseLimitConstant = decimal.Parse(csvReader["Lose Limit Constant"]);
+
+                foreach (Candle candle in candles)
+                {
+                    if(lastExecution.CompareTo(candle.CloseTime) <= 0)
+                    {
+                        break;
+                    }
+
+                    longIndicator.Candles.Add(candle);
+                    shortIndicator.Candles.Add(candle);
+                }
+
+                strategies[symbol] = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
             }
 
             return strategies;

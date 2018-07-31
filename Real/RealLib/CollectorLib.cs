@@ -1,7 +1,6 @@
 ﻿using CsvHelper;
 using LumenWorks.Framework.IO.Csv;
 using Stocks.Service;
-using StockSharp.Algo.Indicators;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using StockSolution.Services;
@@ -73,7 +72,7 @@ namespace RealLib
             //WriteToBinaryFile<List<StrategyGeneric>>(DataLocation, strategyGenerics);
         }
 
-        public static Dictionary<string,StrategyGeneric> LoadStrategies(IConnection connection, TickPeriod tickPeriod)
+        public static Dictionary<string, StrategyGeneric> LoadStrategies(IConnection connection, TickPeriod tickPeriod)
         {
             Dictionary<string, StrategyGeneric> strategies = new Dictionary<string, StrategyGeneric>();
 
@@ -100,7 +99,7 @@ namespace RealLib
 
                 foreach (Candle candle in candles)
                 {
-                    if(lastExecution.CompareTo(candle.CloseTime) <= 0)
+                    if (lastExecution.CompareTo(candle.CloseTime) <= 0)
                     {
                         break;
                     }
@@ -115,24 +114,25 @@ namespace RealLib
             return strategies;
         }
 
-    /*
-        private static void WriteToBinaryFile<T>(string filePath, T objectToWrite, bool append = false)
-        {
-            using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
+        /*
+            private static void WriteToBinaryFile<T>(string filePath, T objectToWrite, bool append = false)
             {
-                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                binaryFormatter.Serialize(stream, objectToWrite);
+                using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
+                {
+                    var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                    binaryFormatter.Serialize(stream, objectToWrite);
+                }
             }
-        }
 
-        //Muligt at et id kan blive nødvendigt til referencer (sættes i public set metoder) 
-        private static T ReadFromBinaryFile<T>(string filePath)
-        {
-            using (Stream stream = File.Open(filePath, FileMode.Open))
+            //Muligt at et id kan blive nødvendigt til referencer (sættes i public set metoder) 
+            private static T ReadFromBinaryFile<T>(string filePath)
             {
-                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                return (T)binaryFormatter.Deserialize(stream);
+                using (Stream stream = File.Open(filePath, FileMode.Open))
+                {
+                    var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                    return (T)binaryFormatter.Deserialize(stream);
+                }
             }
-        }
-        */
+            */
+    }
 }

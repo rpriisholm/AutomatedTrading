@@ -105,8 +105,8 @@ namespace RealLib
                         break;
                     }
 
-                    longIndicator.Candles.Add(candle);
-                    shortIndicator.Candles.Add(candle);
+                    longIndicator.Process(candle.ClosePrice, true);
+                    shortIndicator.Process(candle.ClosePrice, true);
                 }
 
                 strategies[symbol] = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);

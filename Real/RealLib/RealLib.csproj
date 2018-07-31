@@ -55,6 +55,8 @@
     <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
     </Reference>
+    <Reference Include="Ecng.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10e79ed0227b515" />
+    <Reference Include="Ecng.Serialization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10e79ed0227b515" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -103,6 +105,7 @@
     <Reference Include="SandS.Algorithm.Library.Sort, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SandS.Algorithm.Library.Sort.2.0.2\lib\SandS.Algorithm.Library.Sort.dll</HintPath>
     </Reference>
+    <Reference Include="StockSharp.Algo, Version=4.4.12.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -139,6 +142,10 @@
     <ProjectReference Include="..\..\Models\Models\Models.csproj">
       <Project>{06b46620-c1f8-42d7-b3a7-a82fcfb6926e}</Project>
       <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Services.csproj">
+      <Project>{15982E44-6A0A-46B6-B75E-40ADB2CF6C74}</Project>
+      <Name>Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\StocksImportAndExport\StocksImportAndExport.csproj">
       <Project>{AA75356B-7482-4FA9-86CE-CB503407CF36}</Project>

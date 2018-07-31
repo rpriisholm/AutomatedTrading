@@ -175,12 +175,29 @@ namespace StockSolution.Services.Optimizer
             return lengthIndicator;
         }
 
-        private List<IndicatorPair> InitializeIndicatorPairs(List<Candle> initialCandles, int minIndicatorLength, int maxIndicatorLength, int interval)
+        public LengthIndicator FindIndicator(string indicator, int minIndicatorLength, int maxIndicatorLength, int interval)
         {
-            List<IndicatorPair> indicatorPairs = new List<IndicatorPair>();
-            List<LengthIndicator<decimal>> indicators = new List<LengthIndicator<decimal>>();
+            LengthIndicator<decimal> lengthIndicator = null;
+            int differentIndicators;
+            List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
 
-            int differentIndicators = 0;
+            foreach (LengthIndicator<decimal> currentIndicator in indicators)
+            {
+                if (currentIndicator.ToString().Equals(indicator))
+                {
+                    lengthIndicator = currentIndicator;
+                    break;
+                }
+            }
+
+            return new LengthIndicator(lengthIndicator);
+        }
+
+        private List<LengthIndicator<decimal>> CreateIndicators(out int differentIndicators, int minIndicatorLength, int maxIndicatorLength, int interval)
+        {
+            List<LengthIndicator<decimal>> indicators = new List<LengthIndicator<decimal>>();
+            differentIndicators = 0;
+
             for (int length = minIndicatorLength; length < maxIndicatorLength; length += interval)
             {
                 //Should WORK
@@ -202,6 +219,15 @@ namespace StockSolution.Services.Optimizer
                     differentIndicators = indicators.Count;
                 }
             }
+
+            return indicators;
+        }
+
+        private List<IndicatorPair> InitializeIndicatorPairs(List<Candle> initialCandles, int minIndicatorLength, int maxIndicatorLength, int interval)
+        {
+            int differentIndicators;
+            List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
+            List<IndicatorPair> indicatorPairs = new List<IndicatorPair>();
 
             foreach (LengthIndicator<decimal> indicator in indicators)
             {

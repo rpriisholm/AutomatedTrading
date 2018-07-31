@@ -40,6 +40,7 @@ namespace StockSolution.ModelEntities.Models
             this.Connection.InitializeSecurityID(securityID);
             this.IsDisabled = false;
             this.LoseLimitConstant = loseLimitConstant;
+            this.LastExecution = DateTime.MinValue;
         }
 
         public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, longIndicator, shortIndicator, loseLimitConstant)

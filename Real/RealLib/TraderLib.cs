@@ -13,6 +13,9 @@ namespace RealLib
 {
     public class TraderLib
     {
+        public static IConnection emulationConnection = new EmulationConnection(1000000, OrderLimitType.Value, 5000, 5, 100);
+        public static Dictionary<string, StrategyGeneric> Strategies = new Dictionary<string, StrategyGeneric>();
+
         public static void StartTrading()
         {
             //LOAD Current Strategies
@@ -33,11 +36,11 @@ namespace RealLib
         public static void OnStart(string dataLocation)
         {
             CollectorLib.DataLocation = dataLocation;
-            CollectorLib.LoadStrategies();
+            Strategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily);
             // Load Others - Connection Is Important
         }
 
-        public static void OnExit(List<StrategyGeneric> strategies)
+        public static void OnExit(Dictionary<string,StrategyGeneric> strategies)
         {
             CollectorLib.SaveStrategies(strategies);
             // Save Others - Connection Is Important

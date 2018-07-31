@@ -8,7 +8,7 @@ using System.Text;
 
 namespace StockSolution.ModelEntities.Models
 {
-    public class EmulationConnection : AConnection
+    public class EmulationConnection : AConnection, IConnection
     {
         public virtual Dictionary<SecurityInfo, decimal> Profits { get; set; }
         public virtual Dictionary<SecurityInfo, decimal> AlltimeProfits { get; set; }

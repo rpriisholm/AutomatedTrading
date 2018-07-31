@@ -28,10 +28,11 @@ namespace TradingNotifierApp
             List<StrategyGeneric> strategies = new List<StrategyGeneric>();
             strategies.Add(strategy);
 
+            /*
             RealLib.CollectorLib.SaveStrategies(strategies);
 
             strategies = RealLib.CollectorLib.LoadStrategies();
-            //
+            */
         }
     }
 }

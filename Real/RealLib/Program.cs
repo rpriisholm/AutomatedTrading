@@ -15,23 +15,23 @@ namespace RealLib
     {
         static void Main(string[] args)
         {
+            #region Empty Console
+            TextWriter outTextWriter = Console.Out;
+            TextWriter errTextWriter = Console.Error;
             Console.SetOut(TextWriter.Null);
             Console.SetError(TextWriter.Null);
+            #endregion
 
-            string dataLocation = @"C:\StockHistory\TEST";
-            CollectorLib.DataLocation = dataLocation;
-            Dictionary<string, StrategyGeneric> strategies = new Dictionary<string, StrategyGeneric>();
-            LengthIndicator shortIndicator = new LengthIndicator(new SimpleMovingAverage() { Length = 5 });
-            LengthIndicator longIndicator = new LengthIndicator(new SimpleMovingAverage() { Length = 10 });
+            TraderLib.RunTradingProgram(TradingEnum.ContinueTrading);
 
-            strategies["AABA"] = new StrategyGeneric(TraderLib.emulationConnection, new SecurityInfo() { SecurityID = "AABA" }, longIndicator, shortIndicator, true, true, -0.12m);
-            strategies["ABMD"] = new StrategyGeneric(TraderLib.emulationConnection, new SecurityInfo() { SecurityID = "ABMD" }, longIndicator, shortIndicator, true, true, -0.12m);
+            //SimulateSaveOnStartAndOnExit();
+        }
 
-            CollectorLib.SaveStrategies(strategies);
 
-            TraderLib.OnStart(dataLocation);
-
-            TraderLib.OnExit(TraderLib.Strategies);
+        public static void FindAndSaveStratigies()
+        {
+            CollectorLib.DataLocation = @"c:\StockHistory\Real";
+            TraderLib.RunTradingProgram(TradingEnum.NewStrategies);
         }
     }
 }

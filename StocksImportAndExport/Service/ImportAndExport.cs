@@ -40,7 +40,7 @@ namespace Stocks.Service
         public static void CollectData(TickPeriod tickPeriod)
         {
             //string size = "full";
-            Parallel.ForEach(GetSymbols(), symbol =>
+            Parallel.ForEach(GetSymbols(), new ParallelOptions() {MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 CollectChoosenData(symbol, tickPeriod);
             });
@@ -98,18 +98,19 @@ namespace Stocks.Service
             //CSVToMySQL_Excel(url, path);
             bool hasCompleted = false;
             int count = 0;
-            int tries = 4;
+            int tries = 20;
             while (!hasCompleted && count < tries)
             {
                 try
                 {
                     Other.DownloadFile(url, path);
-                    hasCompleted = true;
+                    if (new FileInfo(path).Length != 0)
+                    {
+                        hasCompleted = true;
+                    }
                 }
-                catch
-                {
-                    count++;
-                }
+                catch { }
+                count++;
             }
 
             StreamReader streamReader = new StreamReader(path);

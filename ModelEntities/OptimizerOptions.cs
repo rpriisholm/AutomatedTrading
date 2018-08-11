@@ -88,10 +88,10 @@ namespace StockSolution.ModelEntities.Models
                         NrOfTestValues = 90,
                         IsSellEnabled = true,
                         IsBuyEnabled = true,
-                        MinOrders = 15,
+                        MinOrders = 20,
                         //MaxOrders = maxOrders,
                         PositiveOrderPct = 75,
-                        MinProfitPct = 55,
+                        MinProfitPct = 45,
                         LoseLimitConstant = -0.12m,
                         IndicatorLength = GetIndicatorLength(tickPeriod)
                     };
@@ -103,6 +103,12 @@ namespace StockSolution.ModelEntities.Models
 
         public static OptimizerOption<int> GetIndicatorLength(TickPeriod tickPeriod)
         {
+            switch (tickPeriod)
+            {
+                case TickPeriod.Daily:
+                    return new OptimizerOption<int>(4, 4, 64);
+            }
+
             return new OptimizerOption<int>(4, 4, 64);
         }
 

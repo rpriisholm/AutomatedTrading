@@ -1,4 +1,5 @@
-﻿using StockSolution.Entity.Models;
+﻿using SidesEnum;
+using StockSolution.Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +28,11 @@ namespace StockSolution.ModelEntities.Models
         public bool IsDisabled { get; set; }
         public decimal LoseLimitConstant { get; set; }
         public DateTime LastExecution { get; set; }
+        public bool IsStrategyExpiring = false;
+        public bool IsActive = true;
 
+        //Set when using OptimizerOptions
+        public decimal LastTestResult = decimal.MinValue;
 
         public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
         {
@@ -100,6 +105,12 @@ namespace StockSolution.ModelEntities.Models
         public decimal ConnectionSecurityIDProfit()
         {
             return Connection.Profit(this.SecurityID);
+        }
+
+        //IS Buy Or Sell Active
+        public Sides GetDirection()
+        {
+            return (ShortIndicator.GetCurrentValue() < LongIndicator.GetCurrentValue()) ? Sides.Sell : Sides.Buy;
         }
     }
 }

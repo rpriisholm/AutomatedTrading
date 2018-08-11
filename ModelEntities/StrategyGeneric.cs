@@ -18,7 +18,10 @@ namespace StockSolution.ModelEntities.Models
         public StrategyGeneric(IConnection connection, SecurityInfo securityID, OptimizerOptions optimizerOptions) : 
             base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant)
         {
-
+            this.LastTestResult = optimizerOptions.BestIndicatorPair.LastResult;
+            optimizerOptions.BestIndicatorPair.ShortIndicator.Candles = securityID.Candles;
+            optimizerOptions.BestIndicatorPair.LongIndicator.Candles = securityID.Candles;
+            this.LastExecution = securityID.Candles[securityID.Candles.Count - 1].CloseTime;
         }
 
         public override void ProcessCandle(Candle candle)
@@ -84,15 +87,6 @@ namespace StockSolution.ModelEntities.Models
                         // if short less than long, the sale, otherwise buy
                         Sides direction = isShortLessThenLong ? Sides.Sell : Sides.Buy;
 
-                        // calc size for open position or revert
-                        //var volume = Position == 0 ? Volume : Position.Abs() * 2;
-
-                        /*
-                         * Calc Limit or do it in strategy
-                        Portfolio portfolio = strategy.Connection.GetPortfolio();
-                        portfolio.LeverageLimit;
-                        */
-
                         decimal pieceValueShort = ShortIndicator.GetCurrentValue();
                         decimal pieceValueLong = LongIndicator.GetCurrentValue();
 
@@ -105,37 +99,43 @@ namespace StockSolution.ModelEntities.Models
                             closeOrderSell = Connection.CancelOrder(SecurityID, Sides.Sell, candle.ClosePrice);
                             closeOrderBuy  = Connection.CancelOrder(SecurityID, Sides.Buy, candle.ClosePrice);
 
-
-                            // Buy Order
-                            if (direction == Sides.Buy)
+                            if (this.IsStrategyExpiring == false)
                             {
-                                if (IsBuyEnabled)
+                                // Buy Order
+                                if (direction == Sides.Buy)
                                 {
-                                    Order order = Connection.MakeOrder(SecurityID, Sides.Buy, CalcLeverage(), candle.ClosePrice);
-                                    if (order != null)
+                                    if (IsBuyEnabled)
                                     {
-                                        this.OrderCount++;
+                                        Order order = Connection.MakeOrder(SecurityID, Sides.Buy, CalcLeverage(), candle.ClosePrice);
+                                        if (order != null)
+                                        {
+                                            this.OrderCount++;
+                                        }
                                     }
+
+                                    // Store current values for short and long
+                                    _isShortLessThenLong = isShortLessThenLong;
                                 }
 
-                                // Store current values for short and long
-                                _isShortLessThenLong = isShortLessThenLong;
+                                // Sell Order
+                                if (direction == Sides.Sell)
+                                {
+                                    if (IsSellEnabled)
+                                    {
+                                        Order order = Connection.MakeOrder(SecurityID, Sides.Sell, CalcLeverage(), candle.ClosePrice);
+                                        if (order != null)
+                                        {
+                                            this.OrderCount++;
+                                        }
+                                    }
+
+                                    // Store current values for short and long
+                                    _isShortLessThenLong = isShortLessThenLong;
+                                }
                             }
-
-                            // Sell Order
-                            if (direction == Sides.Sell)
+                            else
                             {
-                                if (IsSellEnabled)
-                                {
-                                    Order order = Connection.MakeOrder(SecurityID, Sides.Sell, CalcLeverage(), candle.ClosePrice);
-                                    if (order != null)
-                                    {
-                                        this.OrderCount++;
-                                    }
-                                }
-
-                                // Store current values for short and long
-                                _isShortLessThenLong = isShortLessThenLong;
+                                IsDisabled = true;
                             }
                         }
                     }

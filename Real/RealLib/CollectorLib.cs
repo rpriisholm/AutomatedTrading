@@ -16,9 +16,22 @@ using TickEnum;
 
 namespace RealLib
 {
-    public class  CollectorLib
+    public class CollectorLib
     {
         private static Dictionary<TickPeriod, IList<SecurityInfo>> SecurityInfos = new Dictionary<TickPeriod, IList<SecurityInfo>>();
+
+        public static SecurityInfo GetSecurityInfo(TickPeriod tickPeriod, string securityId)
+        {
+            foreach (SecurityInfo securityInfo in SecurityInfos[tickPeriod])
+            {
+                if (securityInfo.SecurityID.Equals(securityId))
+                {
+                    return securityInfo;
+                }
+            }
+
+            return null;
+        }
 
         public static string DataLocation { get; set; }
 
@@ -42,32 +55,30 @@ namespace RealLib
             */
         }
 
-        public static void LoadStrategiesAndOrders()
+        private static void LoadSecurityInfo(TickPeriod tickPeriod)
         {
+            switch (tickPeriod)
+            {
+                case TickPeriod.Daily:
+                    int minNrOfTestValues = 400;
+                    DateTimeOffset dateMayNotBeOlderThan = DateTimeOffset.UtcNow.AddDays(-(minNrOfTestValues * 1.7));
+                    DateTime lastDateTime = DateTime.Now;
+                    string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
 
+                    IList<SecurityInfo> securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, lastDateTime);
+
+                    SecurityInfos[TickPeriod.Daily] = securityInfos;
+                    break;
+            }
         }
 
-        private static void LoadDailyData()
-        {
-            int minNrOfTestValues = 766;
-            DateTimeOffset dateMayNotBeOlderThan = DateTimeOffset.UtcNow.AddDays(-(minNrOfTestValues * 1.7));
-            DateTime lastDateTime = DateTime.Now;
-            string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
-
-            IList<SecurityInfo> securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, lastDateTime);
-            Dictionary<SecurityInfo, List<Candle>> dailySecurityInfos = new Dictionary<SecurityInfo, List<Candle>>();
-
-            SecurityInfos[TickPeriod.Daily] = securityInfos;
-        }
-
-
-
-        public static void SaveStrategies(Dictionary<string, StrategyGeneric> strategyGenerics)
+        public static void SaveStrategies(string fileName, Dictionary<string, StrategyGeneric> strategyGenerics)
         {
             // Relocate old strategies csv using relocation date
             // Need One For Strategies which haven't expired yeat (Will expire on next change)
 
-            StreamWriter streamWriter = new StreamWriter($"{DataLocation}\\CurrentStrategies.csv");
+            Directory.CreateDirectory(DataLocation);
+            StreamWriter streamWriter = new StreamWriter($"{DataLocation}\\{fileName}");
             CsvWriter csvWriter = new CsvWriter(streamWriter);
 
             csvWriter.WriteField("Symbol");
@@ -75,17 +86,22 @@ namespace RealLib
             csvWriter.WriteField("Short Indicator");
             csvWriter.WriteField("Long Indicator");
             csvWriter.WriteField("Lose Limit Constant");
+
             //MAYBE PROFIT?
             csvWriter.NextRecord();
 
             foreach (string symbol in strategyGenerics.Keys)
             {
-                csvWriter.WriteField(symbol);
-                csvWriter.WriteField(strategyGenerics[symbol].LastExecution.ToString("yyyy-MM-dd hh-mm"));
-                csvWriter.WriteField(strategyGenerics[symbol].ShortIndicator.ToString());
-                csvWriter.WriteField(strategyGenerics[symbol].LongIndicator.ToString());
-                csvWriter.WriteField(strategyGenerics[symbol].LoseLimitConstant.ToString());
-                csvWriter.NextRecord();
+                //Don't Save Disabled Strategies
+                if (strategyGenerics[symbol].IsDisabled == false)
+                {
+                    csvWriter.WriteField(symbol);
+                    csvWriter.WriteField(strategyGenerics[symbol].LastExecution.ToString("yyyy-MM-dd hh-mm"));
+                    csvWriter.WriteField(strategyGenerics[symbol].ShortIndicator.ToString());
+                    csvWriter.WriteField(strategyGenerics[symbol].LongIndicator.ToString());
+                    csvWriter.WriteField(strategyGenerics[symbol].LoseLimitConstant.ToString());
+                    csvWriter.NextRecord();
+                }
             }
 
             csvWriter.Flush();
@@ -93,56 +109,66 @@ namespace RealLib
             //WriteToBinaryFile<List<StrategyGeneric>>(DataLocation, strategyGenerics);
         }
 
-        public static Dictionary<string, StrategyGeneric> LoadStrategies(ref IConnection connection, TickPeriod tickPeriod)
+        public static Dictionary<string, StrategyGeneric> LoadStrategies(ref IConnection connection, TickPeriod tickPeriod, string fileName, bool isExpiring)
         {
-            LoadDailyData();
+            LoadSecurityInfo(tickPeriod);
             Dictionary<string, StrategyGeneric> strategies = new Dictionary<string, StrategyGeneric>();
 
-            StreamReader streamReader = new StreamReader($"{DataLocation}\\CurrentStrategies.csv");
-            CachedCsvReader csvReader = new CachedCsvReader(streamReader);
-            Optimizer optimizer = new Optimizer();
-            OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(tickPeriod);
-
-            while (csvReader.ReadNextRecord())
+            if (File.Exists($"{DataLocation}\\{fileName}"))
             {
-                // Prepare Strategy For Symbol
-                // Need to load current candles up till last execution date
+                StreamReader streamReader = new StreamReader($"{DataLocation}\\{fileName}");
+                CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+                Optimizer optimizer = new Optimizer();
+                OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(tickPeriod);
 
-
-                string symbol = csvReader["Symbol"];
-                SecurityInfo securityInfo = null;
-
-                foreach(var security in SecurityInfos[TickPeriod.Daily])
+                while (csvReader.ReadNextRecord())
                 {
-                    if(security.SecurityID.Equals(symbol))
-                    {
-                        securityInfo = security;
-                        break;
-                    }
-                }
+                    // Prepare Strategy For Symbol
+                    // Need to load current candles up till last execution date
 
-                LengthIndicator longIndicator = optimizer.FindIndicator(csvReader["Long Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-                LengthIndicator shortIndicator = optimizer.FindIndicator(csvReader["Short Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-                bool isBuyEnabled = true;
-                bool isSellEnabled = true;
-                DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.CurrentCulture);
-                decimal loseLimitConstant = decimal.Parse(csvReader["Lose Limit Constant"]);
 
-                foreach (Candle candle in securityInfo.Candles)
-                {
-                    if (lastExecution.CompareTo(candle.CloseTime) <= 0)
+                    string symbol = csvReader["Symbol"];
+                    SecurityInfo securityInfo = null;
+
+                    foreach (var security in SecurityInfos[TickPeriod.Daily])
                     {
-                        break;
+                        if (security.SecurityID.Equals(symbol))
+                        {
+                            securityInfo = security;
+                            break;
+                        }
                     }
 
-                    longIndicator.Process(candle.ClosePrice, true);
-                    shortIndicator.Process(candle.ClosePrice, true);
+                    LengthIndicator longIndicator = optimizer.FindIndicator(csvReader["Long Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+                    LengthIndicator shortIndicator = optimizer.FindIndicator(csvReader["Short Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+                    bool isBuyEnabled = true;
+                    bool isSellEnabled = true;
+                    DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
+                    decimal loseLimitConstant = decimal.Parse(csvReader["Lose Limit Constant"]);
+
+                    foreach (Candle candle in securityInfo.Candles)
+                    {
+                        bool isNewerThanLastExecution = lastExecution.CompareTo(candle.CloseTime) < 0;
+
+                        if (isNewerThanLastExecution)
+                        {
+                            break;
+                        }
+
+                        longIndicator.Process(candle.ClosePrice, true);
+                        shortIndicator.Process(candle.ClosePrice, true);
+                    }
+
+                    StrategyGeneric strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+                    {
+                        LastExecution = lastExecution,
+                        IsActive = isExpiring
+                    };
+                    strategies[symbol] = strategy;
                 }
 
-                strategies[symbol] = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
+                streamReader.Close();
             }
-
-            streamReader.Close();
 
             return strategies;
         }

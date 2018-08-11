@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StockSolution.Services
 {
@@ -24,7 +25,8 @@ namespace StockSolution.Services
             IList<SecurityInfo> securityInfoes = new List<SecurityInfo>();
             List<string> failedSecurities = new List<string>();
 
-            foreach (string securityID in GetSecurityIDs(storagePath))
+            //foreach (string securityID in GetSecurityIDs(storagePath))
+            Parallel.ForEach(GetSecurityIDs(storagePath), securityID => 
             {
                 try
                 {
@@ -38,11 +40,12 @@ namespace StockSolution.Services
                     System.Console.WriteLine(new StackTrace(e, true).GetFrame(0).GetFileLineNumber());
                 }
             }
+            );
             failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
             return securityInfoes;
         }
 
-        private static IList<string> GetSecurityIDs(string storagePath)
+        public static IList<string> GetSecurityIDs(string storagePath)
         {
             string[] filePaths = Directory.GetFiles(storagePath, "*.csv");
             IEnumerable<string> IDs = filePaths.Select(Path.GetFileNameWithoutExtension);
@@ -55,10 +58,14 @@ namespace StockSolution.Services
         {
             //Create SecurityInfo
             SecurityInfo securityInfo = new SecurityInfo() { SecurityID = securityID };
-
+            
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
             CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+            //LumenWorks.Framework.IO.Csv.CsvReader csvReader = new CsvReader(streamReader);
+
+            //Way Faster But requiers more than 8gb ram
+            //CachedCsvReader csvReader = new CachedCsvReader(streamReader);
             //CsvReader csvReader = new CsvReader(streamReader);
 
             //Language Standard

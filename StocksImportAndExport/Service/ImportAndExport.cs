@@ -40,6 +40,16 @@ namespace Stocks.Service
         public static void CollectData(TickPeriod tickPeriod)
         {
             //string size = "full";
+            try
+            {
+                DirectoryInfo directory = new DirectoryInfo(GetFullPath(tickPeriod));
+                foreach (FileInfo file in directory.GetFiles())
+                {
+                    file.Delete();
+                }
+            }
+            catch(IOException e) { }
+
             Parallel.ForEach(GetSymbols(), new ParallelOptions() {MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 CollectChoosenData(symbol, tickPeriod);
@@ -52,7 +62,7 @@ namespace Stocks.Service
         public static void CollectChoosenData(string symbol, TickPeriod tickPeriod)
         {
             string url = null;
-            string path = $"{GetFullPath(TickPeriod.Daily)}{symbol}.csv";
+            string path = $"{GetFullPath(TickPeriod.Daily)}\\{symbol}.csv";
 
             // Get Information About Stock
             // https://api.iextrading.com/1.0/stock/aapl/quote
@@ -154,16 +164,16 @@ namespace Stocks.Service
             switch (tickPeriod)
             {
                 case TickPeriod.Daily:
-                    path += @"Daily\";
+                    path += @"Daily";
                     break;
                 case TickPeriod.SixMin:
-                    path += @"6Min\";
+                    path += @"6Min";
                     break;
                 case TickPeriod.ThreeMin:
-                    path += @"3Min\";
+                    path += @"3Min";
                     break;
                 case TickPeriod.OneMin:
-                    path += @"1Min\";
+                    path += @"1Min";
                     break;
             }
 

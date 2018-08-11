@@ -15,14 +15,22 @@ namespace RealLib
     {
         static void Main(string[] args)
         {
-            #region Empty Console
+            #region Empty Console  
             TextWriter outTextWriter = Console.Out;
             TextWriter errTextWriter = Console.Error;
             Console.SetOut(TextWriter.Null);
             Console.SetError(TextWriter.Null);
             #endregion
 
-            TraderLib.RunTradingProgram(TradingEnum.ContinueTrading);
+            if(args[0].ToLower().Equals("NewStrategies".ToLower()))
+            {
+                TraderLib.RunTradingProgram(TradingEnum.NewStrategies);
+            }
+
+            if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+            {
+                TraderLib.RunTradingProgram(TradingEnum.ContinueTrading);
+            }
 
             //SimulateSaveOnStartAndOnExit();
         }

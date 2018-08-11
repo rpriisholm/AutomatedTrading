@@ -122,8 +122,8 @@ namespace RealLib
 
         private static void NewStrategies()
         {
-            MoveStrategiesToExpiring("CurrentStrategies.csv", "ExpiringStrategies.csv");
-            Strategies = TraderLib.FindNewStrategies(300);
+            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300);
+            MoveStrategiesToExpiring(ref newStrategies, "CurrentStrategies.csv", "ExpiringStrategies.csv");
         }
 
         private static void ContinueTrading()
@@ -150,24 +150,76 @@ namespace RealLib
             }
         }
 
-        private static void MoveStrategiesToExpiring(string strategiesFilename, string expiredStrategiesFilename)
+        private static void MoveStrategiesToExpiring(ref Dictionary<string, StrategyGeneric> newStrategies, string strategiesFilename, string expiredStrategiesFilename)
         {
             string partialPath = CollectorLib.DataLocation;
             Dictionary<string, StrategyGeneric> strategies1 = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, strategiesFilename, true);
-            Dictionary<string, StrategyGeneric> mergedStrategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, expiredStrategiesFilename, true);
+            Dictionary<string, StrategyGeneric> expiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, expiredStrategiesFilename, true);
             
-            foreach(string key in strategies1.Keys)
+            foreach(string symbol in strategies1.Keys)
             { 
-                mergedStrategies[key] = strategies1[key];
+                expiringStrategies[symbol] = strategies1[symbol];
+            }
+
+            //If Same Symbol Exist Remove And Maybe Cancel Current Orders
+            List<string> symbols = newStrategies.Keys.ToList();
+            foreach (string symbol in newStrategies.Keys)
+            {
+                if(expiringStrategies.ContainsKey(symbol))
+                {
+                    OrderKeptOrCancled(symbol, newStrategies[symbol], expiringStrategies[symbol]);
+                    expiringStrategies.Remove(symbol);
+                }
             }
 
             CollectorLib.SaveStrategies(expiredStrategiesFilename, Strategies);
             Strategies = new Dictionary<string, StrategyGeneric>();
-            ExpiringStrategies = mergedStrategies;
+            ExpiringStrategies = expiringStrategies;
 
             if (File.Exists($"{CollectorLib.DataLocation}\\{strategiesFilename}"))
             {
                 File.Delete($"{CollectorLib.DataLocation}\\{strategiesFilename}");
+            }
+
+            //Add New Strategies
+            Strategies = newStrategies;
+        }
+
+        private static void OrderKeptOrCancled(string symbol, StrategyGeneric newStrategy, StrategyGeneric expiredStrategy)
+        {
+            Sides newDirection = newStrategy.GetDirection();
+            Sides expiredDirection = expiredStrategy.GetDirection();
+
+            SecurityInfo securityInfo = CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol);
+
+            Candle lastCandle = null;
+            foreach (Candle candle in securityInfo.Candles)
+            {
+                bool isNewerThanLastExecution = newStrategy.LastExecution.CompareTo(candle.CloseTime) < 0;
+
+                if (isNewerThanLastExecution)
+                {
+                    break;
+                }
+
+                newStrategy.LongIndicator.Process(candle.ClosePrice, true);
+                newStrategy.ShortIndicator.Process(candle.ClosePrice, true);
+                expiredStrategy.LongIndicator.Process(candle.ClosePrice, true);
+                expiredStrategy.ShortIndicator.Process(candle.ClosePrice, true);
+                lastCandle = candle;
+            }
+
+            if (newDirection != expiredDirection)
+            {
+                if (expiredDirection == Sides.Buy)
+                {
+                    TradingLogWriter.WriteLine($"{lastCandle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {symbol} - Cancel Orders (Order Type: Buy)");
+                }
+
+                if (expiredDirection == Sides.Sell)
+                {
+                    TradingLogWriter.WriteLine($"{lastCandle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {symbol} - Cancel Orders (Order Type: Sell)");
+                }
             }
         }
 
@@ -249,7 +301,7 @@ namespace RealLib
 
         private static Dictionary<string, StrategyGeneric> FindNewStrategies(int minNrOfTestValues)
         {
-            Dictionary<string, StrategyGeneric> NewStrategies = new Dictionary<string, StrategyGeneric>();
+            Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
             Optimizer optimizer = new Optimizer();
             OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
             int nrOfTestValues = 90;
@@ -304,7 +356,7 @@ namespace RealLib
                                     {
                                         try
                                         {
-                                            NewStrategies[securityInfo.SecurityID] = strategy;
+                                            newStrategies[securityInfo.SecurityID] = strategy;
                                         }
                                         catch
                                         {
@@ -343,7 +395,7 @@ namespace RealLib
             }
 
 
-            return NewStrategies;
+            return newStrategies;
         }
 
         private static StrategyGeneric FindStrategy(SecurityInfo securityInfo, Optimizer optimizer, OptimizerOptions optimizerOptions, int nrOfTestValues)

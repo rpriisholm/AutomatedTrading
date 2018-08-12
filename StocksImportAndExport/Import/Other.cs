@@ -12,7 +12,7 @@ namespace Stocks.Import
     {
         public static void DownloadFile(string url, string path, string start)
         {
-            WebClient client = new WebClient();          
+            WebClient client = new WebClient();
             string content = start + client.DownloadString(url);
             File.WriteAllText(path, content);
         }
@@ -21,6 +21,51 @@ namespace Stocks.Import
         {
             WebClient client = new WebClient();
             client.DownloadFile(url, path);
+        }
+
+        public static CsvContainer DownloadCSV(string url)
+        {
+            WebClient client = new WebClient();
+            string data = client.DownloadString(url);
+            return new CsvContainer(data);
+        }
+
+        public class CsvContainer
+        {
+            public List<string> Headers = new List<string>();
+            private Dictionary<string, List<string>> HeaderAndRows = new Dictionary<string, List<string>>();
+            public List<string> this[string header]
+            {
+                get
+                {
+                    return this.HeaderAndRows[header.ToLower()];
+                }
+            }
+
+            public CsvContainer(string data)
+            {
+                string[] rows = data.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                List<string> headers = new List<string>();
+                foreach (string header in rows[0].Split(','))
+                {
+                    headers.Add(header);
+                    this.HeaderAndRows[header.ToLower()] = new List<string>();
+                }
+                this.Headers = headers;
+
+                for (int i = 1; i < rows.Length; i++)
+                {
+                    string[] cells = rows[i].Split(',');
+
+                    //Add Row
+                    for (int j = 0; j < headers.Count; j++)
+                    {
+                        this.HeaderAndRows[headers[j].ToLower()].Add(cells[j]);
+                    }
+                }
+
+            }
         }
 
         public static StreamReader GetStreamReader(string url)

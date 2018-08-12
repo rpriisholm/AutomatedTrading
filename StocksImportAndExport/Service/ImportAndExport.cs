@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading;
 using LumenWorks.Framework.IO.Csv;
 using TickEnum;
+using static Stocks.Import.Other;
 
 namespace Stocks.Service
 {
@@ -148,13 +149,29 @@ namespace Stocks.Service
         {
             List<string> symbols = new List<string>();
 
+            CsvContainer CSV = Other.DownloadCSV("https://api.iextrading.com/1.0/ref-data/symbols?format=csv");
+
+            /* Legacy (very simpel)
             StreamReader streamReader = new StreamReader(@"C:\StockHistory\StockList");
             while (streamReader.Peek() >= 0)
             {
                 symbols.Add(streamReader.ReadLine().Trim());
             }
+            */
 
-            return symbols;
+            List<string> filteredSymbols = new List<string>();
+
+            //Filter Symbols
+            for(int i = 0; i < CSV["symbol"].Count; i++)
+            {
+                //Crypto is Disabled
+                if(!CSV["isEnabled"][i].Equals("false") && !CSV["type"][i].Equals("crypto"))
+                {
+                    filteredSymbols.Add(CSV["symbol"][i]);
+                }
+            }
+
+            return filteredSymbols;
         }
 
         public static string GetFullPath(TickPeriod tickPeriod)

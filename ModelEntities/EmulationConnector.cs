@@ -24,8 +24,8 @@ namespace StockSolution.ModelEntities.Models
         public EmulationConnection(decimal initialMoney, OrderLimitType orderLimitType, decimal orderLimit, int leverageLimit, int maxInvestedPct) : this()
         {
             this.RemainingValue = initialMoney;
-            
-            this.Portfolio = new Portfolio(this, orderLimitType, orderLimit, leverageLimit, maxInvestedPct);         
+
+            this.Portfolio = new Portfolio(this, orderLimitType, orderLimit, leverageLimit, maxInvestedPct);
         }
 
         public override decimal GetRemainingValue()
@@ -89,6 +89,12 @@ namespace StockSolution.ModelEntities.Models
             return order;
         }
 
+        public override Order CancelOrder(SecurityInfo securityCode)
+        {
+            //Not Possible Here Since There Is No Way To Get Order Current Piece Price 
+            throw new NotImplementedException();
+        }
+
         public override Dictionary<SecurityInfo, decimal> RealizedProfits()
         {
             return Profits;
@@ -102,9 +108,9 @@ namespace StockSolution.ModelEntities.Models
         public override decimal Profit(SecurityInfo securityID)
         {
             decimal profit = 0;
-            if(LoadOrders().ContainsKey(securityID) && LoadOrders()[securityID] != null)
+            if (LoadOrders().ContainsKey(securityID) && LoadOrders()[securityID] != null)
             {
-                profit += LoadOrders()[securityID].Profit;        
+                profit += LoadOrders()[securityID].Profit;
             }
             profit += RealizedProfits()[securityID];
 
@@ -130,17 +136,17 @@ namespace StockSolution.ModelEntities.Models
 
         public override void InitializeSecurityID(SecurityInfo securityID)
         {
-            if(!LoadOrders().ContainsKey(securityID))
+            if (!LoadOrders().ContainsKey(securityID))
             {
                 LoadOrders()[securityID] = null;
             }
 
-            if(!RealizedProfits().ContainsKey(securityID))
+            if (!RealizedProfits().ContainsKey(securityID))
             {
                 RealizedProfits()[securityID] = 0m;
             }
 
-            if(!AlltimeRealizedProfits().ContainsKey(securityID))
+            if (!AlltimeRealizedProfits().ContainsKey(securityID))
             {
                 AlltimeRealizedProfits()[securityID] = 0m;
             }

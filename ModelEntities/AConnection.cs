@@ -19,6 +19,7 @@ namespace StockSolution.ModelEntities.Models
         public abstract Dictionary<SecurityInfo, decimal> AlltimeRealizedProfits();
         public abstract decimal CalcPayment();
         public abstract Order CancelOrder(SecurityInfo securityCode, Sides direction, decimal piecePrice);
+        public abstract Order CancelOrder(SecurityInfo securityCode);
         public abstract decimal GetInvestedValue();
         public virtual Portfolio Portfolio { get; set; }
         public Portfolio GetPortfolio() { return Portfolio; }

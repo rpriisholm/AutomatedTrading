@@ -64,9 +64,9 @@ namespace RealLib
             {
                 string partialPath = @"C:\StockHistory\Real";
                 Directory.CreateDirectory(partialPath);
-                
+
                 string[] lines = File.ReadAllLines($"{partialPath}\\TradingLog");
-                string[] sortedLines = lines.OrderBy(line => DateTime.ParseExact(line.Substring(0,16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
+                string[] sortedLines = lines.OrderBy(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
                 File.WriteAllLines($"{partialPath}\\TradingLog", sortedLines);
             }
             catch { }
@@ -108,17 +108,16 @@ namespace RealLib
 
             switch (tradingEnum)
             {
-                case TradingEnum.NewStrategies :
+                case TradingEnum.NewStrategies:
                     NewStrategies();
                     break;
-                case TradingEnum.ContinueTrading :
+                case TradingEnum.ContinueTrading:
                     ContinueTrading();
                     break;
             }
 
             OnExit();
         }
-
 
         private static void NewStrategies()
         {
@@ -130,6 +129,60 @@ namespace RealLib
         {
             InvokeTrading(ref Strategies);
             InvokeTrading(ref ExpiringStrategies);
+        }
+
+        private static void OnStart(string dataLocation)
+        {
+            CollectorLib.DataLocation = dataLocation;
+            ImportAndExport.CollectData(TickPeriod.Daily);
+            Strategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, "CurrentStrategies.csv", false);
+            ExpiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, "ExpiringStrategies.csv", true);
+        }
+
+        private static void OnExit()
+        {
+            //Doesn't Save Disabled Values 
+            CollectorLib.SaveStrategies("CurrentStrategies.csv", Strategies);
+            CollectorLib.SaveStrategies("ExpiringStrategies.csv", ExpiringStrategies);
+
+            TradingLogWriter.Close();
+            _TradingLogWriter = null;
+            //Sort Log
+            SortTradingLog();
+        }
+
+        //Unused For Future Implementations (needs when automated)
+        private static void CancelNonActiveOrders(IConnection connection, List<string> activeSymbols, List<string> ignoreSymbols_Csv)
+        {
+            Dictionary<SecurityInfo, Order> orders = connection.LoadOrders();
+            //List without IgnoreSymbols
+            List<SecurityInfo> orderSecurityInfos = orders.Keys.Where(securityInfo => !ignoreSymbols_Csv.Any(ignoreSymbol => securityInfo.SecurityID.Equals(ignoreSymbol))).ToList();
+            
+            //Order SecurityInfos
+            foreach (SecurityInfo securityInfo in orderSecurityInfos)
+            {
+                bool isActive = false;
+                
+                //Active
+                foreach (string symbol in activeSymbols)
+                {
+                    if (securityInfo.SecurityID.ToLower().Equals(symbol.ToLower()))
+                    {
+                        isActive = true;
+                    }
+                }
+
+                if(isActive == false)
+                {
+                    connection.CancelOrder(securityInfo);
+                }
+            }
+        }
+
+        //Unused For Future Implementations (needs when automated)
+        private static void CleanupDisplacedOrders(IConnection connection, string symbol)
+        {
+
         }
 
         private static void InvokeTrading(ref Dictionary<string, StrategyGeneric> strategies)
@@ -155,9 +208,9 @@ namespace RealLib
             string partialPath = CollectorLib.DataLocation;
             Dictionary<string, StrategyGeneric> strategies1 = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, strategiesFilename, true);
             Dictionary<string, StrategyGeneric> expiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, expiredStrategiesFilename, true);
-            
-            foreach(string symbol in strategies1.Keys)
-            { 
+
+            foreach (string symbol in strategies1.Keys)
+            {
                 expiringStrategies[symbol] = strategies1[symbol];
             }
 
@@ -165,7 +218,7 @@ namespace RealLib
             List<string> symbols = newStrategies.Keys.ToList();
             foreach (string symbol in newStrategies.Keys)
             {
-                if(expiringStrategies.ContainsKey(symbol))
+                if (expiringStrategies.ContainsKey(symbol))
                 {
                     OrderKeptOrCancled(symbol, newStrategies[symbol], expiringStrategies[symbol]);
                     expiringStrategies.Remove(symbol);
@@ -223,26 +276,6 @@ namespace RealLib
             }
         }
 
-        private static void OnStart(string dataLocation)
-        {
-            CollectorLib.DataLocation = dataLocation;
-            ImportAndExport.CollectData(TickPeriod.Daily);
-            Strategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, "CurrentStrategies.csv", false);
-            ExpiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, "ExpiringStrategies.csv", true);
-        }
-
-        private static void OnExit()
-        {
-            //Doesn't Save Disabled Values 
-            CollectorLib.SaveStrategies("CurrentStrategies.csv", Strategies);
-            CollectorLib.SaveStrategies("ExpiringStrategies.csv", ExpiringStrategies);
-
-            TradingLogWriter.Close();
-            _TradingLogWriter = null;
-            //Sort Log
-            SortTradingLog();
-        }
-
         private static StrategyGeneric AddCandleToStrategy(StrategyGeneric strategy, Candle candle)
         {
             //Old Values
@@ -268,7 +301,7 @@ namespace RealLib
 
                 if (currentDirection == Sides.Sell)
                 {
-                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Sell - Current Price: {candle.ClosePrice}" );
+                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Sell - Current Price: {candle.ClosePrice}");
                 }
 
                 TradingLogWriter.Flush();
@@ -288,7 +321,7 @@ namespace RealLib
                 }
 
                 //Discontinue state
-                if(strategy.IsStrategyExpiring == true)
+                if (strategy.IsStrategyExpiring == true)
                 {
                     strategy.IsActive = false;
                 }

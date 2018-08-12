@@ -18,6 +18,7 @@ namespace StockSolution.ModelEntities.Models
         Dictionary<SecurityInfo, Order> LoadOrders();
         Order MakeOrder(SecurityInfo securityCode, Sides direction, int leverage, decimal piecePrice);
         Order CancelOrder(SecurityInfo securityCode, Sides direction, decimal piecePrice);
+        Order CancelOrder(SecurityInfo securityCode);
         void InitializeSecurityID(SecurityInfo securityID);
         decimal CalcPayment();
         //bool CancelOrder();

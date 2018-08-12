@@ -17,12 +17,14 @@ namespace Stocks
             //Services.Collector_DailyFull();
             //Services.Collector_DailyCompact();
 
-            //ImportAndExport.CollectData(TickPeriod.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily);
+            /*
             foreach(string s in ImportAndExport.GetSymbols())
             {
                 Console.WriteLine(s);
             }
             Console.ReadLine();
+            */
         }
     }
 }

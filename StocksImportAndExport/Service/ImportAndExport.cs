@@ -12,6 +12,10 @@ using System.Threading;
 using LumenWorks.Framework.IO.Csv;
 using TickEnum;
 using static Stocks.Import.Other;
+using CsvHelper;
+using System.Globalization;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace Stocks.Service
 {
@@ -38,29 +42,56 @@ namespace Stocks.Service
             }
         }
 
-        public static void CollectData(TickPeriod tickPeriod)
+        public static void ClearDataFolder(TickPeriod tickPeriod, List<string> excludeList)
         {
             //string size = "full";
             try
             {
                 DirectoryInfo directory = new DirectoryInfo(GetFullPath(tickPeriod));
+
                 foreach (FileInfo file in directory.GetFiles())
                 {
-                    file.Delete();
+                    try
+                    {
+                        string name = file.Name.Split('.')[0];
+                        bool isNotExcluded = excludeList.Contains(name);
+                        if (!excludeList.Contains(name))
+                        {
+                            file.Delete();
+                        }
+                    }
+                    catch
+                    {
+                        file.Delete();
+                    }
                 }
             }
-            catch(IOException e) { }
+            catch (IOException e) { }
+        }
 
-            Parallel.ForEach(GetSymbols(), new ParallelOptions() {MaxDegreeOfParallelism = 32 }, symbol =>
+        public static void CollectData(TickPeriod tickPeriod, List<string> symbols, bool appendSymbols, bool deleteSymbols)
+        {
+            if (deleteSymbols)
             {
-                CollectChoosenData(symbol, tickPeriod);
-            });
+                if (!appendSymbols)
+                {
+                    ClearDataFolder(tickPeriod, new List<string>());
+                }
+                else
+                {
+                    ClearDataFolder(tickPeriod, symbols);
+                }
+            }
 
+            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+             {
+                 CollectChoosenData(symbol, tickPeriod, appendSymbols);
+             });
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
         }
 
-        public static void CollectChoosenData(string symbol, TickPeriod tickPeriod)
+        public static void CollectChoosenData(string symbol, TickPeriod tickPeriod, bool append)
         {
             string url = null;
             string path = $"{GetFullPath(TickPeriod.Daily)}\\{symbol}.csv";
@@ -90,7 +121,7 @@ namespace Stocks.Service
                 }
 
                 //Start Collecting
-                SingleDataCollector(path, url);
+                SingleDataCollector(path, url, symbol, append);
 
                 // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,news,chart&range=1m&last=5
 
@@ -98,34 +129,55 @@ namespace Stocks.Service
                 // url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
                 // SingleDataCollector(path, url);
             }
+            finally { } /*
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-            }
+            }*/
         }
 
-        public static void SingleDataCollector(string path, string url)
+        public static void SingleDataCollector(string path, string url, string symbol, bool append)
         {
-            //CSVToMySQL_Excel(url, path);
-            bool hasCompleted = false;
-            int count = 0;
-            int tries = 20;
-            while (!hasCompleted && count < tries)
+            string csvContent = null;
+
+            if (!append || !File.Exists(path))
             {
-                try
+                //CSVToMySQL_Excel(url, path);
+                bool hasCompleted = false;
+                int count = 0;
+                int tries = 20;
+                while (!hasCompleted && count < tries)
                 {
-                    Other.DownloadFile(url, path);
-                    if (new FileInfo(path).Length != 0)
+                    try
                     {
-                        hasCompleted = true;
+                        csvContent = Other.Download(url);
+
+                        if (!string.IsNullOrWhiteSpace(csvContent))
+                        {
+                            hasCompleted = true;
+                        }
                     }
+                    catch { }
+                    count++;
                 }
-                catch { }
-                count++;
             }
 
-            StreamReader streamReader = new StreamReader(path);
-            CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+            StreamReader stream_Append = null;
+            StringReader stream_nonAppend = null;
+            CachedCsvReader csvReader = null;
+
+            if (append && File.Exists(path))
+            {
+                stream_Append = new StreamReader(path);
+                csvReader = new CachedCsvReader(stream_Append);
+            }
+            else
+            {
+                stream_nonAppend = new StringReader(csvContent);
+                csvReader = new CachedCsvReader(stream_nonAppend);
+            }
+
+
 
             int rows = 0;
             while (csvReader.ReadNextRecord())
@@ -137,15 +189,119 @@ namespace Stocks.Service
                     break;
                 }
             }
-            streamReader.Close();
+
+            if (stream_Append != null)
+            {
+                stream_Append.Close();
+            }
+            else
+            {
+                stream_nonAppend.Close();
+            }
+
 
             if (rows < 400)
             {
                 File.Delete(path);
             }
+            else
+            {
+                StringReader stringReader = null;
+                LumenWorks.Framework.IO.Csv.CsvReader csv = null;
+
+                if (csvContent != null)
+                {
+                    File.WriteAllLines(path, csvContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None));
+                    stringReader = new StringReader(csvContent);
+                    csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                }
+                else
+                {
+                    stringReader = new StringReader(File.ReadAllText(path));
+                    csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                }
+
+                string[] headerRow = csv.GetFieldHeaders();
+
+
+                /*Currently Used
+                string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
+                string lastPriceCsv = Other.Download(lastPriceUrl);
+                */
+                StreamWriter streamWriter = new StreamWriter(path, append);
+                CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+
+
+
+                //JSON TEST
+                JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
+                Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
+
+                foreach (string header in headerRow)
+                {
+                    bool isMatch = false;
+                    foreach (string header2 in dictObj.Keys)
+                    {
+                        if (header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime")))
+                        {
+                            string field = dictObj[header2].ToString();
+
+                            try
+                            {
+                                string[] array = field.Split(',');
+                                
+
+                                if (array.Length == 2)
+                                {
+                                    field = field.Replace(',','.');
+                                }
+                            }
+                            catch { }
+
+                            if (header2.Equals("closeTime"))
+                            {
+                                field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"MM/dd/yyyy");
+                            }
+                            isMatch = true;
+                            csvWriter.WriteField(field);
+                        }
+                    }
+
+                    if (!isMatch)
+                    {
+                        csvWriter.WriteField("");
+                    }
+                }
+                csvWriter.NextRecord();
+                csvWriter.Flush();
+                streamWriter.Flush();
+                stringReader.Close();
+                streamWriter.Close();
+            }
         }
 
-        public static List<string> GetSymbols()
+        public static List<string> LoadStrategiesSymbols(string dataLocation, string fileName)
+        {
+            List<string> symbols = new List<string>();
+
+            if (File.Exists($"{dataLocation}\\{fileName}"))
+            {
+                StreamReader streamReader = new StreamReader($"{dataLocation}\\{fileName}");
+                CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+                while (csvReader.ReadNextRecord())
+                {
+                    string symbol = csvReader["Symbol"];
+                    symbols.Add(symbol);
+                }
+
+                streamReader.Close();
+            }
+
+            return symbols;
+        }
+
+        public static List<string> GetAllSymbols()
         {
             List<string> symbols = new List<string>();
 
@@ -162,10 +318,10 @@ namespace Stocks.Service
             List<string> filteredSymbols = new List<string>();
 
             //Filter Symbols
-            for(int i = 0; i < CSV["symbol"].Count; i++)
+            for (int i = 0; i < CSV["symbol"].Count; i++)
             {
                 //Crypto is Disabled
-                if(!CSV["isEnabled"][i].Equals("false") && !CSV["type"][i].Equals("crypto"))
+                if (!CSV["isEnabled"][i].Equals("false") && !CSV["type"][i].Equals("crypto"))
                 {
                     filteredSymbols.Add(CSV["symbol"][i]);
                 }

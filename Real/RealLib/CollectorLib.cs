@@ -37,7 +37,7 @@ namespace RealLib
 
         public static void DownloadHistoricalData()
         {
-            ImportAndExport.CollectData(TickPeriod.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             /*
             ImportAndExport.CollectData(TickPeriod.SixMin);
             ImportAndExport.CollectData(TickPeriod.ThreeMin);
@@ -47,7 +47,7 @@ namespace RealLib
 
         public static void DownloadCurrentData()
         {
-            ImportAndExport.CollectData(TickPeriod.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             /*
             ImportAndExport.CollectData(TickPeriod.SixMin);
             ImportAndExport.CollectData(TickPeriod.ThreeMin);
@@ -125,7 +125,7 @@ namespace RealLib
                 {
                     // Prepare Strategy For Symbol
                     // Need to load current candles up till last execution date
-
+                    StrategyGeneric strategy = null;
 
                     string symbol = csvReader["Symbol"];
                     SecurityInfo securityInfo = null;
@@ -139,31 +139,47 @@ namespace RealLib
                         }
                     }
 
-                    LengthIndicator longIndicator = optimizer.FindIndicator(csvReader["Long Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-                    LengthIndicator shortIndicator = optimizer.FindIndicator(csvReader["Short Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+                    LengthIndicator longIndicator = null;
+                    LengthIndicator shortIndicator = null;
                     bool isBuyEnabled = true;
                     bool isSellEnabled = true;
                     DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
                     decimal loseLimitConstant = decimal.Parse(csvReader["Lose Limit Constant"]);
 
-                    foreach (Candle candle in securityInfo.Candles)
+                    if (!(securityInfo != null) || !(securityInfo.Candles != null))
                     {
-                        bool isNewerThanLastExecution = lastExecution.CompareTo(candle.CloseTime) < 0;
-
-                        if (isNewerThanLastExecution)
+                        securityInfo = new SecurityInfo() { SecurityID = symbol };
+                        strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
                         {
-                            break;
+                            LastExecution = lastExecution,
+                            IsActive = isExpiring,
+                            IsDisabled = true
+                        };
+                    }
+                    else
+                    {
+                        longIndicator = optimizer.FindIndicator(csvReader["Long Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+                        shortIndicator = optimizer.FindIndicator(csvReader["Short Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+
+                        foreach (Candle candle in securityInfo.Candles)
+                        {
+                            bool isNewerThanLastExecution = lastExecution.CompareTo(candle.CloseTime) < 0;
+
+                            if (isNewerThanLastExecution)
+                            {
+                                break;
+                            }
+
+                            longIndicator.Process(candle.ClosePrice, true);
+                            shortIndicator.Process(candle.ClosePrice, true);
                         }
 
-                        longIndicator.Process(candle.ClosePrice, true);
-                        shortIndicator.Process(candle.ClosePrice, true);
+                        strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+                        {
+                            LastExecution = lastExecution,
+                            IsActive = isExpiring
+                        };
                     }
-
-                    StrategyGeneric strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
-                    {
-                        LastExecution = lastExecution,
-                        IsActive = isExpiring
-                    };
                     strategies[symbol] = strategy;
                 }
 
@@ -172,26 +188,5 @@ namespace RealLib
 
             return strategies;
         }
-
-        /*
-            private static void WriteToBinaryFile<T>(string filePath, T objectToWrite, bool append = false)
-            {
-                using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
-                {
-                    var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                    binaryFormatter.Serialize(stream, objectToWrite);
-                }
-            }
-
-            //Muligt at et id kan blive nødvendigt til referencer (sættes i public set metoder) 
-            private static T ReadFromBinaryFile<T>(string filePath)
-            {
-                using (Stream stream = File.Open(filePath, FileMode.Open))
-                {
-                    var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                    return (T)binaryFormatter.Deserialize(stream);
-                }
-            }
-            */
     }
 }

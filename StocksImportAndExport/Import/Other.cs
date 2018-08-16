@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,15 +32,36 @@ namespace Stocks.Import
             return new CsvContainer(data);
         }
 
+        public static string Download(string url)
+        {
+            WebClient client = new WebClient();
+            return client.DownloadString(url);
+        }
+
+        public static CsvContainer JsonUrlToCSV(string url)
+        {
+            WebClient client = new WebClient();
+            string data = client.DownloadString(url);
+            var jsonContent = (JArray)JsonConvert.DeserializeObject(data);
+            var csv = ServiceStack.Text.CsvSerializer.SerializeToCsv(jsonContent);
+            return new CsvContainer(csv);
+        }
+
         public class CsvContainer
         {
             public List<string> Headers = new List<string>();
             private Dictionary<string, List<string>> HeaderAndRows = new Dictionary<string, List<string>>();
+
             public List<string> this[string header]
             {
                 get
                 {
                     return this.HeaderAndRows[header.ToLower()];
+                }
+
+                set
+                {
+                    this.HeaderAndRows[header.ToLower()] = value;
                 }
             }
 

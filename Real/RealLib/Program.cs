@@ -22,16 +22,22 @@ namespace RealLib
             Console.SetError(TextWriter.Null);
             #endregion
 
-            if(args[0].ToLower().Equals("NewStrategies".ToLower()))
+            if (args.Length != 0)
             {
-                TraderLib.RunTradingProgram(TradingEnum.NewStrategies);
-            }
+                if (args[0].ToLower().Equals("NewStrategies".ToLower()))
+                {
+                    TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                }
 
-            if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+                if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+                {
+                    TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                }
+            }
+            else
             {
-                TraderLib.RunTradingProgram(TradingEnum.ContinueTrading);
+                TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
             }
-
             //SimulateSaveOnStartAndOnExit();
         }
 
@@ -39,7 +45,7 @@ namespace RealLib
         public static void FindAndSaveStratigies()
         {
             CollectorLib.DataLocation = @"c:\StockHistory\Real";
-            TraderLib.RunTradingProgram(TradingEnum.NewStrategies);
+            TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
         }
     }
 }

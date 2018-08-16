@@ -66,7 +66,7 @@ namespace RealLib
                 Directory.CreateDirectory(partialPath);
 
                 string[] lines = File.ReadAllLines($"{partialPath}\\TradingLog");
-                string[] sortedLines = lines.OrderBy(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
+                string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
                 File.WriteAllLines($"{partialPath}\\TradingLog", sortedLines);
             }
             catch { }
@@ -102,9 +102,9 @@ namespace RealLib
             }
         }
 
-        public static void RunTradingProgram(TradingEnum tradingEnum)
+        public static void RunTradingProgram(TickPeriod tickPeriod, TradingEnum tradingEnum)
         {
-            OnStart(@"C:\StockHistory\Real");
+            OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum);
 
             switch (tradingEnum)
             {
@@ -131,12 +131,25 @@ namespace RealLib
             InvokeTrading(ref ExpiringStrategies);
         }
 
-        private static void OnStart(string dataLocation)
+        private static void OnStart(string dataLocation, TickPeriod tickPeriod, TradingEnum tradingEnumn)
         {
             CollectorLib.DataLocation = dataLocation;
-            ImportAndExport.CollectData(TickPeriod.Daily);
-            Strategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, "CurrentStrategies.csv", false);
-            ExpiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, TickPeriod.Daily, "ExpiringStrategies.csv", true);
+
+            if (TradingEnum.NewStrategies == tradingEnumn)
+            {
+                ImportAndExport.CollectData(tickPeriod, ImportAndExport.GetAllSymbols(), false, true);
+            }
+
+            if (TradingEnum.ContinueTrading == tradingEnumn)
+            {
+                List<string> symbols = ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "CurrentStrategies.csv");
+
+                symbols.AddRange(ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "ExpiringStrategies.csv"));
+                ImportAndExport.CollectData(TickPeriod.Daily, symbols, true, true);
+            }
+
+            Strategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "CurrentStrategies.csv", false);
+            ExpiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "ExpiringStrategies.csv", true);
         }
 
         private static void OnExit()
@@ -191,15 +204,30 @@ namespace RealLib
 
             foreach (string symbol in symbols)
             {
-                foreach (Candle candle in CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles)
+                List<Candle> candles = CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles;
+
+                if (candles != null)
                 {
-                    bool isNewerThanLastExecution = Strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
-                    if (isNewerThanLastExecution)
+                    //Could OtherWise Cause Troubles With Disabling Strategies, should add another date to strategies instead of this
+                    DateTime executionStart = Strategies[symbol].LastExecution;
+
+                    foreach (Candle candle in CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles)
                     {
-                        //Simulate Real Values
-                        strategies[symbol] = AddCandleToStrategy(strategies[symbol], candle);
+                        bool isNewerThanLastExecution = Strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
+                        if (isNewerThanLastExecution)
+                        {
+                            //Simulate Real Values
+                            strategies[symbol] = AddCandleToStrategy(strategies[symbol], candle);
+                        }
                     }
+
+                    Strategies[symbol].LastExecution = executionStart;
                 }
+                else
+                {
+                    strategies[symbol] = AddCandleToStrategy(strategies[symbol], null);
+                }
+
             }
         }
 
@@ -278,54 +306,63 @@ namespace RealLib
 
         private static StrategyGeneric AddCandleToStrategy(StrategyGeneric strategy, Candle candle)
         {
-            //Old Values
-            bool previousDisabled = strategy.IsDisabled;
-            Sides previousDirection = strategy.GetDirection();
-
-            //Process Candle
-            strategy.Start();
-            strategy.ProcessCandle(candle);
-            strategy.Stop();
-
-            //New Values
-            bool currentDisabled = strategy.IsDisabled;
-            Sides currentDirection = strategy.GetDirection();
-
-            //Create New Order And Cancel Old
-            if (!previousDisabled && !currentDisabled && previousDirection != currentDirection && strategy.IsStrategyExpiring == false)
+            if (candle != null)
             {
-                if (currentDirection == Sides.Buy)
+                //Old Values
+                bool previousDisabled = strategy.IsDisabled;
+                Sides previousDirection = strategy.GetDirection();
+
+                //Process Candle
+                strategy.Start();
+                strategy.ProcessCandle(candle);
+                strategy.Stop();
+
+                //New Values
+                bool currentDisabled = strategy.IsDisabled;
+                Sides currentDirection = strategy.GetDirection();
+
+                //Create New Order And Cancel Old
+                if (!previousDisabled && !currentDisabled && previousDirection != currentDirection && strategy.IsStrategyExpiring == false)
                 {
-                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Buy - Current Price: {candle.ClosePrice}");
+                    if (currentDirection == Sides.Buy)
+                    {
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Buy - Current Price: {candle.ClosePrice}");
+                    }
+
+                    if (currentDirection == Sides.Sell)
+                    {
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Sell - Current Price: {candle.ClosePrice}");
+                    }
+
+                    TradingLogWriter.Flush();
                 }
 
-                if (currentDirection == Sides.Sell)
+                //Cancel Current Orders
+                if (!previousDisabled && currentDisabled)
                 {
-                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Sell - Current Price: {candle.ClosePrice}");
-                }
+                    if (previousDirection == Sides.Buy)
+                    {
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Buy)");
+                    }
 
-                TradingLogWriter.Flush();
+                    if (previousDirection == Sides.Sell)
+                    {
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Sell)");
+                    }
+
+                    //Discontinue state
+                    if (strategy.IsStrategyExpiring == true)
+                    {
+                        strategy.IsActive = false;
+                    }
+
+                    TradingLogWriter.Flush();
+                }
             }
-
-            //Cancel Current Orders
-            if (!previousDisabled && currentDisabled)
+            else
             {
-                if (previousDirection == Sides.Buy)
-                {
-                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Buy)");
-                }
-
-                if (previousDirection == Sides.Sell)
-                {
-                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Sell)");
-                }
-
-                //Discontinue state
-                if (strategy.IsStrategyExpiring == true)
-                {
-                    strategy.IsActive = false;
-                }
-
+                strategy.IsActive = false;
+                TradingLogWriter.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Candles Invalied - Cancel Orders If Connection Valied");
                 TradingLogWriter.Flush();
             }
 

@@ -538,10 +538,6 @@
       <HintPath>..\..\packages\StockSharp.4.4.13\lib\net45\NetProtocol.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\StockSharp.4.4.13\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Northwoods.GoWPF, Version=2.1.1.4, Culture=neutral, PublicKeyToken=616e2dc80068a33d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.13\lib\net45\Northwoods.GoWPF.dll</HintPath>
       <Private>True</Private>

@@ -17,7 +17,7 @@ namespace Stocks
             //Services.Collector_DailyFull();
             //Services.Collector_DailyCompact();
 
-            ImportAndExport.CollectData(TickPeriod.Daily);
+            ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             /*
             foreach(string s in ImportAndExport.GetSymbols())
             {

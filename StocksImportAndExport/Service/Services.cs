@@ -1,5 +1,4 @@
 ﻿using GenericTypes;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,12 +11,14 @@ namespace Stocks
 {
     public static partial class Services
     {
+        /*
         public static Stocks_AlphaVantage ExtractDaily_AlphaVantage(string symbol, ColloctorType type)
         {
             string function = $"TIME_SERIES_DAILY_ADJUSTED";
             return ExtractStocks_AlphaVantage(function, symbol, type);
         }
-
+*/
+/*
         public static Stocks_AlphaVantage ExtractStocks_AlphaVantage(string function, string symbol, ColloctorType type)
         {
             Stocks_AlphaVantage stocks = null;
@@ -54,11 +55,14 @@ namespace Stocks
                     stocks.StockEntities = InitializeList_AlphaVantage(tk.Children(), intervalSec);
                 }
                 */
+
+        /*
             }
 
             return stocks;
         }
-
+*/
+/*
         //Accepts JToken For Multiple Instances
         private static List<StockEntity_AlphaVantage> InitializeList_AlphaVantage(JEnumerable<JToken> tokens, int intervalSec)
         {
@@ -116,5 +120,6 @@ namespace Stocks
 
             return seav;
         }
-    }
+*/    }
+    
 }

@@ -15,6 +15,7 @@ namespace StockSolution.Services
 {
     public class LoaderService
     {
+        public static List<string> FailedSecurities = new List<string>();
         public static SecurityInfo LoadLocalCandles(TimeSpan timeFrame, string storagePath, string securityID, DateTime startTime, DateTime stopTime)
         {
             return ConvertCsvToCandles(timeFrame, storagePath, securityID);
@@ -26,22 +27,34 @@ namespace StockSolution.Services
             List<string> failedSecurities = new List<string>();
 
             //foreach (string securityID in GetSecurityIDs(storagePath))
-            Parallel.ForEach(GetSecurityIDs(storagePath), securityID => 
+            Parallel.ForEach(GetSecurityIDs(storagePath), securityID =>
             {
-                try
+                // try
                 {
                     SecurityInfo securityInfo = LoadLocalCandles(timeFrame, storagePath, securityID, startTime, stopTime);
-                    securityInfoes.Add(securityInfo);
+
+                    if (securityInfo != null)
+                    {
+                        securityInfoes.Add(securityInfo);
+                    }
+                    else
+                    {
+                        throw new InvalidDataException("Security Info Is Null");
+                    }
+
                 }
+                /*
                 catch (Exception e)
                 {
                     failedSecurities.Add(securityID);
                     System.Console.WriteLine(e.ToString());
                     System.Console.WriteLine(new StackTrace(e, true).GetFrame(0).GetFileLineNumber());
                 }
+                */
             }
             );
             failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
+            FailedSecurities = failedSecurities;
             return securityInfoes;
         }
 
@@ -58,7 +71,7 @@ namespace StockSolution.Services
         {
             //Create SecurityInfo
             SecurityInfo securityInfo = new SecurityInfo() { SecurityID = securityID };
-            
+
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
             CachedCsvReader csvReader = new CachedCsvReader(streamReader);
@@ -69,42 +82,47 @@ namespace StockSolution.Services
             //CsvReader csvReader = new CsvReader(streamReader);
 
             //Language Standard
-            CultureInfo cultureInfo = new CultureInfo("en-US");
+            CultureInfo cultureInfo = CultureInfo.InvariantCulture;
 
-
-            // Generate Candles
-            while (csvReader.ReadNextRecord())
+            try
             {
-                DateTime openTime = new DateTime();
+                // Generate Candles
+                while (csvReader.ReadNextRecord())
+                {
+                    DateTime openTime = new DateTime();
 
-                if (csvReader.HasHeader("timestamp"))
-                {
-                    openTime = DateTime.Parse(csvReader["timestamp"]);
-                }
-                else
-                {
-                    if (csvReader.HasHeader("date"))
+                    if (csvReader.HasHeader("timestamp"))
                     {
-                        openTime = DateTime.Parse(csvReader["date"]);
+                        openTime = DateTime.Parse(csvReader["timestamp"]);
                     }
+                    else
+                    {
+                        if (csvReader.HasHeader("date"))
+                        {
+                            openTime = DateTime.Parse(csvReader["date"]);
+                        }
+                    }
+
+                    Candle candle = new Candle();
+                    candle.TimeFrame = timeFrame;
+                    candle.OpenTime = openTime;
+                    candle.CloseTime = openTime.Add(timeFrame);
+                    candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
+                    candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
+                    candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
+                    candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
+                    //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
+
+
+                    securityInfo.Candles.Add(candle);
+                    securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
                 }
-
-                Candle candle = new Candle
-                {
-                    TimeFrame = timeFrame,
-                    OpenTime = openTime,
-                    CloseTime = openTime.Add(timeFrame),
-                    OpenPrice = decimal.Parse(csvReader["open"], cultureInfo),
-                    ClosePrice = decimal.Parse(csvReader["close"], cultureInfo),
-                    HighPrice = decimal.Parse(csvReader["high"], cultureInfo),
-                    LowPrice = decimal.Parse(csvReader["low"], cultureInfo),
-                    TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
-                };
-
-                securityInfo.Candles.Add(candle);
+            }
+            catch(System.FormatException e)
+            {
+                securityInfo.Candles = null;
             }
 
-            securityInfo.Candles = (List<Candle>) SortingAlgorithm.MergeSort(securityInfo.Candles);
             return securityInfo;
         }
     }

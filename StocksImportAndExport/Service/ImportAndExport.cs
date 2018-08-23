@@ -84,9 +84,11 @@ namespace Stocks.Service
             }
 
             Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
-             {
-                 CollectChoosenData(symbol, tickPeriod, appendSymbols);
-             });
+            //foreach(var symbol in symbols)
+            {
+                CollectChoosenData(symbol, tickPeriod, appendSymbols);
+            }
+            );
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
         }
@@ -243,18 +245,18 @@ namespace Stocks.Service
                     bool isMatch = false;
                     foreach (string header2 in dictObj.Keys)
                     {
-                        if (header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime")))
+                        if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime"))) && dictObj[header2] != null)
                         {
                             string field = dictObj[header2].ToString();
 
                             try
                             {
                                 string[] array = field.Split(',');
-                                
+
 
                                 if (array.Length == 2)
                                 {
-                                    field = field.Replace(',','.');
+                                    field = field.Replace(',', '.');
                                 }
                             }
                             catch { }

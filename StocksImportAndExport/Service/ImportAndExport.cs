@@ -261,7 +261,7 @@ namespace Stocks.Service
 
                             if (header2.Equals("closeTime"))
                             {
-                                field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"MM/dd/yyyy");
+                                field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
                             }
                             isMatch = true;
                             csvWriter.WriteField(field);

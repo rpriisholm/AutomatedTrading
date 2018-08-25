@@ -77,12 +77,12 @@ namespace Stocks.Service
                 }
             }
 
-            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
-            //foreach (var symbol in symbols)
+            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+            foreach (var symbol in symbols)
             {
                 CollectChoosenData(symbol, tickPeriod, appendSymbols);
             }
-            );
+            //);
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
         }
@@ -250,7 +250,7 @@ namespace Stocks.Service
                         string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
                         string lastPriceCsv = Other.Download(lastPriceUrl);
                         */
-                        StreamWriter streamWriter = new StreamWriter(path, append);
+                        StreamWriter streamWriter = new StreamWriter(path, true);
                         CsvWriter csvWriter = new CsvWriter(streamWriter);
 
 

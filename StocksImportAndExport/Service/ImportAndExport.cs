@@ -1,21 +1,14 @@
-﻿using MySql.Data.MySqlClient;
+﻿using CsvHelper;
+using LumenWorks.Framework.IO.Csv;
+using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
 using Stocks.Export;
 using Stocks.Import;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Office.Interop.Excel;
 using System.IO;
-using System.Threading;
-using LumenWorks.Framework.IO.Csv;
 using TickEnum;
 using static Stocks.Import.Other;
-using CsvHelper;
-using System.Globalization;
-using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
 
 namespace Stocks.Service
 {
@@ -83,12 +76,12 @@ namespace Stocks.Service
                 }
             }
 
-            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
-            //foreach(var symbol in symbols)
+            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+            foreach (var symbol in symbols)
             {
                 CollectChoosenData(symbol, tickPeriod, appendSymbols);
             }
-            );
+            //);
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
         }
@@ -122,14 +115,9 @@ namespace Stocks.Service
                         break;
                 }
 
-                // Special Signs Not Allowed
-                // These: \ / : * " < > |
-                bool isStringInvalied = (new Regex("["+ Regex.Escape(new string(System.IO.Path.GetInvalidPathChars())) + "]")).IsMatch(Path.GetFileNameWithoutExtension(path));
-                if (!isStringInvalied)
-                {
-                    //Start Collecting
-                    SingleDataCollector(path, url, symbol, append);
-                }
+                //Start Collecting
+                SingleDataCollector(path, url, symbol, append);
+
                 // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,news,chart&range=1m&last=5
 
                 // Daily 5 Years
@@ -149,146 +137,158 @@ namespace Stocks.Service
          * */
         public static void SingleDataCollector(string path, string url, string symbol, bool append)
         {
-            string csvContent = null;
+            bool isPathValied = true;
 
-            if (!append || !File.Exists(path))
+            try
             {
-                //CSVToMySQL_Excel(url, path);
-                bool hasCompleted = false;
-                int count = 0;
-                int tries = 20;
-                while (!hasCompleted && count < tries)
+                Path.GetFullPath(path);
+            }
+            catch (System.ArgumentException e)
+            {
+                isPathValied = false;
+            }
+
+            if (isPathValied)
+            {
+
+                string csvContent = null;
+
+                if (!append || !File.Exists(path))
                 {
-                    try
+                    //CSVToMySQL_Excel(url, path);
+                    bool hasCompleted = false;
+                    int count = 0;
+                    int tries = 20;
+                    while (!hasCompleted && count < tries)
                     {
-                        csvContent = Other.Download(url);
-
-                        if (!string.IsNullOrWhiteSpace(csvContent))
+                        try
                         {
-                            hasCompleted = true;
+                            csvContent = Other.Download(url);
+
+                            if (!string.IsNullOrWhiteSpace(csvContent))
+                            {
+                                hasCompleted = true;
+                            }
                         }
+                        catch { }
+                        count++;
                     }
-                    catch { }
-                    count++;
                 }
-            }
 
-            StreamReader stream_Append = null;
-            StringReader stream_nonAppend = null;
-            CachedCsvReader csvReader = null;
+                StreamReader stream_Append = null;
+                StringReader stream_nonAppend = null;
+                CachedCsvReader csvReader = null;
 
-            if (append && File.Exists(path))
-            {
-                stream_Append = new StreamReader(path);
-                csvReader = new CachedCsvReader(stream_Append);
-            }
-            else
-            {
-                stream_nonAppend = new StringReader(csvContent);
-                csvReader = new CachedCsvReader(stream_nonAppend);
-            }
-
-
-
-            int rows = 0;
-            while (csvReader.ReadNextRecord())
-            {
-                rows++;
-
-                if (rows >= 400)
+                if (append && File.Exists(path))
                 {
-                    break;
-                }
-            }
-
-            if (stream_Append != null)
-            {
-                stream_Append.Close();
-            }
-            else
-            {
-                stream_nonAppend.Close();
-            }
-
-
-            if (rows < 400)
-            {
-                File.Delete(path);
-            }
-            else
-            {
-                StringReader stringReader = null;
-                LumenWorks.Framework.IO.Csv.CsvReader csv = null;
-
-                if (csvContent != null)
-                {
-                    File.WriteAllLines(path, csvContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None));
-                    stringReader = new StringReader(csvContent);
-                    csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                    stream_Append = new StreamReader(path);
+                    csvReader = new CachedCsvReader(stream_Append);
                 }
                 else
                 {
-                    stringReader = new StringReader(File.ReadAllText(path));
-                    csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                    stream_nonAppend = new StringReader(csvContent);
+                    csvReader = new CachedCsvReader(stream_nonAppend);
                 }
 
-                string[] headerRow = csv.GetFieldHeaders();
 
-
-                /*Currently Used
-                string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
-                string lastPriceCsv = Other.Download(lastPriceUrl);
-                */
-                StreamWriter streamWriter = new StreamWriter(path, append);
-                CsvWriter csvWriter = new CsvWriter(streamWriter);
-
-
-
-
-                //JSON TEST
-                JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
-                Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
-
-                foreach (string header in headerRow)
+                int rows = 0;
+                while (csvReader.ReadNextRecord())
                 {
-                    bool isMatch = false;
-                    foreach (string header2 in dictObj.Keys)
+                    rows++;
+
+                    if (rows >= 400)
                     {
-                        if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime"))) && dictObj[header2] != null)
+                        break;
+                    }
+                }
+
+                if (stream_Append != null)
+                {
+                    stream_Append.Close();
+                }
+                else
+                {
+                    stream_nonAppend.Close();
+                }
+
+
+                if (rows < 400)
+                {
+                    File.Delete(path);
+                }
+                else
+                {
+                    StringReader stringReader = null;
+                    LumenWorks.Framework.IO.Csv.CsvReader csv = null;
+
+                    if (csvContent != null)
+                    {
+                        File.WriteAllLines(path, csvContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None));
+                        stringReader = new StringReader(csvContent);
+                        csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                    }
+                    else
+                    {
+                        stringReader = new StringReader(File.ReadAllText(path));
+                        csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                    }
+
+                    string[] headerRow = csv.GetFieldHeaders();
+
+
+                    /*Currently Used
+                    string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
+                    string lastPriceCsv = Other.Download(lastPriceUrl);
+                    */
+                    StreamWriter streamWriter = new StreamWriter(path, append);
+                    CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+
+                    //JSON TEST
+                    JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
+                    Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
+
+                    foreach (string header in headerRow)
+                    {
+                        bool isMatch = false;
+                        foreach (string header2 in dictObj.Keys)
                         {
-                            string field = dictObj[header2].ToString();
-
-                            try
+                            if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime"))) && dictObj[header2] != null)
                             {
-                                string[] array = field.Split(',');
+                                string field = dictObj[header2].ToString();
 
-
-                                if (array.Length == 2)
+                                try
                                 {
-                                    field = field.Replace(',', '.');
-                                }
-                            }
-                            catch { }
+                                    string[] array = field.Split(',');
 
-                            if (header2.Equals("closeTime"))
-                            {
-                                field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
+
+                                    if (array.Length == 2)
+                                    {
+                                        field = field.Replace(',', '.');
+                                    }
+                                }
+                                catch { }
+
+                                if (header2.Equals("closeTime"))
+                                {
+                                    field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
+                                }
+                                isMatch = true;
+                                csvWriter.WriteField(field);
                             }
-                            isMatch = true;
-                            csvWriter.WriteField(field);
+                        }
+
+                        if (!isMatch)
+                        {
+                            csvWriter.WriteField("");
                         }
                     }
-
-                    if (!isMatch)
-                    {
-                        csvWriter.WriteField("");
-                    }
+                    csvWriter.NextRecord();
+                    csvWriter.Flush();
+                    streamWriter.Flush();
+                    stringReader.Close();
+                    streamWriter.Close();
                 }
-                csvWriter.NextRecord();
-                csvWriter.Flush();
-                streamWriter.Flush();
-                stringReader.Close();
-                streamWriter.Close();
             }
         }
 

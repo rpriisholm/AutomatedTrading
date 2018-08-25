@@ -29,7 +29,7 @@ namespace StockSolution.Services
             //foreach (string securityID in GetSecurityIDs(storagePath))
             Parallel.ForEach(GetSecurityIDs(storagePath), securityID =>
             {
-                // try
+                //try
                 {
                     SecurityInfo securityInfo = LoadLocalCandles(timeFrame, storagePath, securityID, startTime, stopTime);
 
@@ -43,6 +43,7 @@ namespace StockSolution.Services
                     }
 
                 }
+                
                 /*
                 catch (Exception e)
                 {
@@ -51,6 +52,7 @@ namespace StockSolution.Services
                     System.Console.WriteLine(new StackTrace(e, true).GetFrame(0).GetFileLineNumber());
                 }
                 */
+                
             }
             );
             failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
@@ -75,11 +77,6 @@ namespace StockSolution.Services
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
             CachedCsvReader csvReader = new CachedCsvReader(streamReader);
-            //LumenWorks.Framework.IO.Csv.CsvReader csvReader = new CsvReader(streamReader);
-
-            //Way Faster But requiers more than 8gb ram
-            //CachedCsvReader csvReader = new CachedCsvReader(streamReader);
-            //CsvReader csvReader = new CsvReader(streamReader);
 
             //Language Standard
             CultureInfo cultureInfo = CultureInfo.InvariantCulture;
@@ -107,10 +104,26 @@ namespace StockSolution.Services
                     candle.TimeFrame = timeFrame;
                     candle.OpenTime = openTime;
                     candle.CloseTime = openTime.Add(timeFrame);
-                    candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
+
                     candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
-                    candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
-                    candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
+
+                    try
+                    {
+                        candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
+                    }
+                    catch { }
+
+                    try
+                    {
+                        candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
+                    }
+                    catch { }
+                    
+                    try
+                    {
+                        candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
+                    }
+                    catch { }
                     //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
 
 

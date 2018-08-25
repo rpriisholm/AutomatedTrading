@@ -221,74 +221,84 @@ namespace Stocks.Service
                 {
                     StringReader stringReader = null;
                     LumenWorks.Framework.IO.Csv.CsvReader csv = null;
+                    bool hasArgumentException = false;
 
-                    if (csvContent != null)
+                    try
                     {
-                        File.WriteAllLines(path, csvContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None));
-                        stringReader = new StringReader(csvContent);
-                        csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
-                    }
-                    else
-                    {
-                        stringReader = new StringReader(File.ReadAllText(path));
-                        csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
-                    }
-
-                    string[] headerRow = csv.GetFieldHeaders();
-
-
-                    /*Currently Used
-                    string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
-                    string lastPriceCsv = Other.Download(lastPriceUrl);
-                    */
-                    StreamWriter streamWriter = new StreamWriter(path, append);
-                    CsvWriter csvWriter = new CsvWriter(streamWriter);
-
-
-                    //JSON TEST
-                    JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
-                    Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
-
-                    foreach (string header in headerRow)
-                    {
-                        bool isMatch = false;
-                        foreach (string header2 in dictObj.Keys)
+                        if (csvContent != null)
                         {
-                            if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime"))) && dictObj[header2] != null)
+                            File.WriteAllLines(path, csvContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None));
+                            stringReader = new StringReader(csvContent);
+                            csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                        }
+                        else
+                        {
+                            stringReader = new StringReader(File.ReadAllText(path));
+                            csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+                        }
+                    }
+                    catch (System.ArgumentException e)
+                    {
+                        hasArgumentException = true;
+                    }
+
+                    if (!hasArgumentException)
+                    {
+                        string[] headerRow = csv.GetFieldHeaders();
+
+                        /*Currently Used
+                        string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
+                        string lastPriceCsv = Other.Download(lastPriceUrl);
+                        */
+                        StreamWriter streamWriter = new StreamWriter(path, append);
+                        CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+
+                        //JSON TEST
+                        JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
+                        Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
+
+                        foreach (string header in headerRow)
+                        {
+                            bool isMatch = false;
+                            foreach (string header2 in dictObj.Keys)
                             {
-                                string field = dictObj[header2].ToString();
-
-                                try
+                                if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("closeTime"))) && dictObj[header2] != null)
                                 {
-                                    string[] array = field.Split(',');
+                                    string field = dictObj[header2].ToString();
 
-
-                                    if (array.Length == 2)
+                                    try
                                     {
-                                        field = field.Replace(',', '.');
-                                    }
-                                }
-                                catch { }
+                                        string[] array = field.Split(',');
 
-                                if (header2.Equals("closeTime"))
-                                {
-                                    field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
+
+                                        if (array.Length == 2)
+                                        {
+                                            field = field.Replace(',', '.');
+                                        }
+                                    }
+                                    catch { }
+
+                                    if (header2.Equals("closeTime"))
+                                    {
+                                        field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
+                                    }
+                                    isMatch = true;
+                                    csvWriter.WriteField(field);
                                 }
-                                isMatch = true;
-                                csvWriter.WriteField(field);
+                            }
+
+                            if (!isMatch)
+                            {
+                                csvWriter.WriteField("");
                             }
                         }
-
-                        if (!isMatch)
-                        {
-                            csvWriter.WriteField("");
-                        }
+                        csvWriter.NextRecord();
+                        csvWriter.Flush();
+                        streamWriter.Flush();
+                        stringReader.Close();
+                        streamWriter.Close();
                     }
-                    csvWriter.NextRecord();
-                    csvWriter.Flush();
-                    streamWriter.Flush();
-                    stringReader.Close();
-                    streamWriter.Close();
                 }
             }
         }

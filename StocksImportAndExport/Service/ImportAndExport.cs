@@ -122,9 +122,14 @@ namespace Stocks.Service
                         break;
                 }
 
-                //Start Collecting
-                SingleDataCollector(path, url, symbol, append);
-
+                // Special Signs Not Allowed
+                // These: \ / : * " < > |
+                bool isStringInvalied = (new Regex("["+ Regex.Escape(new string(System.IO.Path.GetInvalidPathChars())) + "]")).IsMatch(Path.GetFileNameWithoutExtension(path));
+                if (!isStringInvalied)
+                {
+                    //Start Collecting
+                    SingleDataCollector(path, url, symbol, append);
+                }
                 // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,news,chart&range=1m&last=5
 
                 // Daily 5 Years
@@ -138,6 +143,10 @@ namespace Stocks.Service
             }*/
         }
 
+        /* *
+         * Special Signs Not Allowed
+         * These: \ / : * " < > |
+         * */
         public static void SingleDataCollector(string path, string url, string symbol, bool append)
         {
             string csvContent = null;

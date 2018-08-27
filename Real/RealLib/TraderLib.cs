@@ -209,11 +209,11 @@ namespace RealLib
                 if (candles != null)
                 {
                     //Could OtherWise Cause Troubles With Disabling Strategies, should add another date to strategies instead of this
-                    DateTime executionStart = Strategies[symbol].LastExecution;
+                    DateTime executionStart = strategies[symbol].LastExecution;
 
                     foreach (Candle candle in CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles)
                     {
-                        bool isNewerThanLastExecution = Strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
+                        bool isNewerThanLastExecution = strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
                         if (isNewerThanLastExecution)
                         {
                             //Simulate Real Values
@@ -221,7 +221,7 @@ namespace RealLib
                         }
                     }
 
-                    Strategies[symbol].LastExecution = executionStart;
+                    strategies[symbol].LastExecution = executionStart;
                 }
                 else
                 {

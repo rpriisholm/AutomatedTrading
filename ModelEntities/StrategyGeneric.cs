@@ -135,7 +135,7 @@ namespace StockSolution.ModelEntities.Models
                             }
                             else
                             {
-                                IsDisabled = true;
+                                this.IsDisabled = true;
                             }
                         }
                     }

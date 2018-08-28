@@ -67,7 +67,38 @@ namespace RealLib
 
                 string[] lines = File.ReadAllLines($"{partialPath}\\TradingLog");
                 string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
-                File.WriteAllLines($"{partialPath}\\TradingLog", sortedLines);
+                List<string> noDuplicates = new List<string>();
+
+                foreach(string line in sortedLines)
+                {
+                    int lastIndex = noDuplicates.Count - 1;
+
+                    if(lastIndex != -1)
+                    {
+                        noDuplicates.Add(line);
+                        string lastLine = noDuplicates[lastIndex];
+                        int lastLength = lastLine.Length;
+
+                        if(lastLength >= line.Length)
+                        {
+                            lastLine = lastLine.Substring(0, line.Length);
+                            if (lastLine.Equals(line))
+                            {
+                                noDuplicates[lastIndex] = $"{lastLine} - Duplicate";
+                            }
+                            else
+                            {
+                                noDuplicates.Add(line);
+                            }
+                        }
+                        else
+                        {
+                            noDuplicates.Add(line);
+                        }
+                    }
+                }
+
+                File.WriteAllLines($"{partialPath}\\TradingLog", noDuplicates);
             }
             catch { }
         }
@@ -266,6 +297,9 @@ namespace RealLib
             Strategies = newStrategies;
         }
 
+        /**
+         * This is for strategies where new and expired contains same symbol
+         * */ 
         private static void OrderKeptOrCancled(string symbol, StrategyGeneric newStrategy, StrategyGeneric expiredStrategy)
         {
             Sides newDirection = newStrategy.GetDirection();

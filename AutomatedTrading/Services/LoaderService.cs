@@ -86,8 +86,6 @@ namespace StockSolution.Services
                 // Generate Candles
                 while (csvReader.ReadNextRecord())
                 {
-                    csvReader.ReadNextRecord()
-
                     DateTime openTime = new DateTime();
 
                     if (csvReader.HasHeader("timestamp"))

@@ -308,13 +308,14 @@ namespace Stocks.Service
         private static void RemoveDuplicates(string path)
         {
             List<string> output = new List<string>();
+            HashSet<string> dates = new HashSet<string>();
             StringReader stringReader = new StringReader(File.ReadAllText(path));
             LumenWorks.Framework.IO.Csv.CsvReader csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
             string[] headers = csv.GetFieldHeaders();
-            string lastCloseTime = null;
             string newCsvContent = "";
 
-            foreach(string header in headers)
+
+            foreach (string header in headers)
             {
                 newCsvContent += header + ',';
             }
@@ -324,31 +325,9 @@ namespace Stocks.Service
             while (csv.ReadNextRecord())
             {
                 newCsvContent = "";
-                if (!string.IsNullOrEmpty(lastCloseTime))
+                if (!dates.Contains(csv["date"]))
                 {
-                    if (!lastCloseTime.Equals(csv["date"]))
-                    {
-                        lastCloseTime = csv["date"];
-                        foreach (string header in headers)
-                        {
-                            try
-                            {
-                                if(!string.IsNullOrEmpty(csv[header]))
-                                {
-                                    newCsvContent += csv[header] + ',';
-                                }
-                                else { newCsvContent += "-1" + ','; }  
-                            }
-                            catch { newCsvContent += "-1" + ','; }
-
-                            
-                        }
-                        newCsvContent = newCsvContent.TrimEnd(',');
-                        output.Add(newCsvContent);
-                    }
-                } else
-                {
-                    lastCloseTime = csv["date"];
+                    dates.Add(csv["date"]);
                     foreach (string header in headers)
                     {
                         try
@@ -358,7 +337,6 @@ namespace Stocks.Service
                                 newCsvContent += csv[header] + ',';
                             }
                             else { newCsvContent += "-1" + ','; }
-
                         }
                         catch { newCsvContent += "-1" + ','; }
                     }

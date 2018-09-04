@@ -76,7 +76,7 @@ namespace StockSolution.Services
 
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
-            CachedCsvReader csvReader = new CachedCsvReader(streamReader);
+            CachedCsvReader csvReader = new CachedCsvReader(streamReader, true);
 
             //Language Standard
             CultureInfo cultureInfo = CultureInfo.InvariantCulture;
@@ -86,6 +86,8 @@ namespace StockSolution.Services
                 // Generate Candles
                 while (csvReader.ReadNextRecord())
                 {
+                    csvReader.ReadNextRecord()
+
                     DateTime openTime = new DateTime();
 
                     if (csvReader.HasHeader("timestamp"))

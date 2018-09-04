@@ -331,9 +331,14 @@ namespace Stocks.Service
                         {
                             try
                             {
-                                newCsvContent += csv[header] + ',';
+                                if(csv[header] != null)
+                                {
+                                    newCsvContent += csv[header] + ',';
+                                }
+                                else { newCsvContent += "-1" + ','; }
+                                
                             }
-                            catch { }
+                            catch { newCsvContent += "-1" + ','; }
                         }
                         newCsvContent = newCsvContent.TrimEnd(',');
                         newCsvContent += Environment.NewLine;
@@ -343,7 +348,16 @@ namespace Stocks.Service
                     lastCloseTime = csv["date"];
                     foreach (string header in headers)
                     {
-                        newCsvContent += csv[header] + ',';
+                        try
+                        {
+                            if (csv[header] != null)
+                            {
+                                newCsvContent += csv[header] + ',';
+                            }
+                            else { newCsvContent += "-1" + ','; }
+
+                        }
+                        catch { newCsvContent += "-1" + ','; }
                     }
                     newCsvContent = newCsvContent.TrimEnd(',');
                     newCsvContent += Environment.NewLine;

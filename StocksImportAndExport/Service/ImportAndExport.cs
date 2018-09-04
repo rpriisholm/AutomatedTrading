@@ -299,8 +299,59 @@ namespace Stocks.Service
                         stringReader.Close();
                         streamWriter.Close();
                     }
+
+                    RemoveDuplicates(path);
                 }
             }
+        }
+
+        private static void RemoveDuplicates(string path)
+        {
+            StringReader stringReader = new StringReader(File.ReadAllText(path));
+            LumenWorks.Framework.IO.Csv.CsvReader csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
+            string[] headers = csv.GetFieldHeaders();
+            string lastCloseTime = null;
+            string newCsvContent = "";
+
+            foreach(string header in headers)
+            {
+                newCsvContent += header + ',';
+            }
+            newCsvContent = newCsvContent.TrimEnd(',');
+            newCsvContent += Environment.NewLine;
+
+            while (csv.ReadNextRecord())
+            {
+                if (!string.IsNullOrEmpty(lastCloseTime))
+                {
+                    if (!lastCloseTime.Equals(csv["date"]))
+                    {
+                        lastCloseTime = csv["date"];
+                        foreach (string header in headers)
+                        {
+                            try
+                            {
+                                newCsvContent += csv[header] + ',';
+                            }
+                            catch { }
+                        }
+                        newCsvContent = newCsvContent.TrimEnd(',');
+                        newCsvContent += Environment.NewLine;
+                    }
+                } else
+                {
+                    lastCloseTime = csv["date"];
+                    foreach (string header in headers)
+                    {
+                        newCsvContent += csv[header] + ',';
+                    }
+                    newCsvContent = newCsvContent.TrimEnd(',');
+                    newCsvContent += Environment.NewLine;
+                }
+            }
+            stringReader.Close();
+
+            File.WriteAllText(path, newCsvContent);
         }
 
         public static List<string> LoadStrategiesSymbols(string dataLocation, string fileName)

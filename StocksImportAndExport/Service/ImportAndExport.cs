@@ -307,6 +307,7 @@ namespace Stocks.Service
 
         private static void RemoveDuplicates(string path)
         {
+            List<string> output = new List<string>();
             StringReader stringReader = new StringReader(File.ReadAllText(path));
             LumenWorks.Framework.IO.Csv.CsvReader csv = new LumenWorks.Framework.IO.Csv.CsvReader(stringReader, true);
             string[] headers = csv.GetFieldHeaders();
@@ -318,10 +319,11 @@ namespace Stocks.Service
                 newCsvContent += header + ',';
             }
             newCsvContent = newCsvContent.TrimEnd(',');
-            newCsvContent += Environment.NewLine;
+            output.Add(newCsvContent);
 
             while (csv.ReadNextRecord())
             {
+                newCsvContent = "";
                 if (!string.IsNullOrEmpty(lastCloseTime))
                 {
                     if (!lastCloseTime.Equals(csv["date"]))
@@ -331,17 +333,18 @@ namespace Stocks.Service
                         {
                             try
                             {
-                                if(csv[header] != null)
+                                if(!string.IsNullOrEmpty(csv[header]))
                                 {
                                     newCsvContent += csv[header] + ',';
                                 }
-                                else { newCsvContent += "-1" + ','; }
-                                
+                                else { newCsvContent += "-1" + ','; }  
                             }
                             catch { newCsvContent += "-1" + ','; }
+
+                            
                         }
                         newCsvContent = newCsvContent.TrimEnd(',');
-                        newCsvContent += Environment.NewLine;
+                        output.Add(newCsvContent);
                     }
                 } else
                 {
@@ -350,7 +353,7 @@ namespace Stocks.Service
                     {
                         try
                         {
-                            if (csv[header] != null)
+                            if (!string.IsNullOrEmpty(csv[header]))
                             {
                                 newCsvContent += csv[header] + ',';
                             }
@@ -360,12 +363,12 @@ namespace Stocks.Service
                         catch { newCsvContent += "-1" + ','; }
                     }
                     newCsvContent = newCsvContent.TrimEnd(',');
-                    newCsvContent += Environment.NewLine;
+                    output.Add(newCsvContent);
                 }
             }
             stringReader.Close();
-
-            File.WriteAllText(path, newCsvContent);
+            output.Add("");
+            File.WriteAllLines(path, output.ToArray());
         }
 
         public static List<string> LoadStrategiesSymbols(string dataLocation, string fileName)

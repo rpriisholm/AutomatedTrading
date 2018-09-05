@@ -60,47 +60,46 @@ namespace RealLib
 
         private static void SortTradingLog()
         {
-            try
+            string partialPath = @"C:\StockHistory\Real";
+            Directory.CreateDirectory(partialPath);
+
+            string[] lines = File.ReadAllLines($"{partialPath}\\TradingLog");
+            string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
+            List<string> noDuplicates = new List<string>();
+
+            foreach (string line in sortedLines)
             {
-                string partialPath = @"C:\StockHistory\Real";
-                Directory.CreateDirectory(partialPath);
+                int lastIndex = noDuplicates.Count - 1;
 
-                string[] lines = File.ReadAllLines($"{partialPath}\\TradingLog");
-                string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
-                List<string> noDuplicates = new List<string>();
-
-                foreach(string line in sortedLines)
+                if (lastIndex != -1)
                 {
-                    int lastIndex = noDuplicates.Count - 1;
+                    string lastLine = noDuplicates[lastIndex];
+                    int lastLength = lastLine.Length;
 
-                    if(lastIndex != -1)
+                    if (lastLength >= line.Length)
                     {
-                        noDuplicates.Add(line);
-                        string lastLine = noDuplicates[lastIndex];
-                        int lastLength = lastLine.Length;
-
-                        if(lastLength >= line.Length)
+                        lastLine = lastLine.Substring(0, line.Length);
+                        if (lastLine.Equals(line))
                         {
-                            lastLine = lastLine.Substring(0, line.Length);
-                            if (lastLine.Equals(line))
-                            {
-                                noDuplicates[lastIndex] = $"{lastLine} - Duplicate";
-                            }
-                            else
-                            {
-                                noDuplicates.Add(line);
-                            }
+                            noDuplicates[lastIndex] = $"{lastLine} - Duplicate";
                         }
                         else
                         {
                             noDuplicates.Add(line);
                         }
                     }
+                    else
+                    {
+                        noDuplicates.Add(line);
+                    }
                 }
-
-                File.WriteAllLines($"{partialPath}\\TradingLog", noDuplicates);
+                else
+                {
+                    noDuplicates.Add(line);
+                }
             }
-            catch { }
+
+            File.WriteAllLines($"{partialPath}\\TradingLog", noDuplicates);
         }
 
         private static StreamWriter _ErrorWriter = null;
@@ -189,6 +188,7 @@ namespace RealLib
             CollectorLib.SaveStrategies("CurrentStrategies.csv", Strategies);
             CollectorLib.SaveStrategies("ExpiringStrategies.csv", ExpiringStrategies);
 
+            TradingLogWriter.Flush();
             TradingLogWriter.Close();
             _TradingLogWriter = null;
             //Sort Log
@@ -201,12 +201,12 @@ namespace RealLib
             Dictionary<SecurityInfo, Order> orders = connection.LoadOrders();
             //List without IgnoreSymbols
             List<SecurityInfo> orderSecurityInfos = orders.Keys.Where(securityInfo => !ignoreSymbols_Csv.Any(ignoreSymbol => securityInfo.SecurityID.Equals(ignoreSymbol))).ToList();
-            
+
             //Order SecurityInfos
             foreach (SecurityInfo securityInfo in orderSecurityInfos)
             {
                 bool isActive = false;
-                
+
                 //Active
                 foreach (string symbol in activeSymbols)
                 {
@@ -216,7 +216,7 @@ namespace RealLib
                     }
                 }
 
-                if(isActive == false)
+                if (isActive == false)
                 {
                     connection.CancelOrder(securityInfo);
                 }
@@ -299,7 +299,7 @@ namespace RealLib
 
         /**
          * This is for strategies where new and expired contains same symbol
-         * */ 
+         * */
         private static void OrderKeptOrCancled(string symbol, StrategyGeneric newStrategy, StrategyGeneric expiredStrategy)
         {
             Sides newDirection = newStrategy.GetDirection();

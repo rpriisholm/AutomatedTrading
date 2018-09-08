@@ -167,7 +167,7 @@ namespace RealLib
 
             if (TradingEnum.NewStrategies == tradingEnumn)
             {
-                //ImportAndExport.CollectData(tickPeriod, ImportAndExport.GetAllSymbols(), false, true);
+                ImportAndExport.CollectData(tickPeriod, ImportAndExport.GetAllSymbols(), false, true);
             }
 
             if (TradingEnum.ContinueTrading == tradingEnumn)

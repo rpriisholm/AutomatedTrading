@@ -151,7 +151,7 @@ namespace RealLib
 
         private static void NewStrategies()
         {
-            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300);
+            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300, 6.25m);
             MoveStrategiesToExpiring(ref newStrategies, "CurrentStrategies.csv", "ExpiringStrategies.csv");
         }
 
@@ -403,7 +403,13 @@ namespace RealLib
             return strategy;
         }
 
-        private static Dictionary<string, StrategyGeneric> FindNewStrategies(int minNrOfTestValues)
+        private static Dictionary<string, StrategyGeneric> FindNewStrategies(int minNrOfTestValues, decimal minStockValue)
+        {
+            DateTime currentDateTime = DateTime.Now;
+            return FindNewStrategies(minNrOfTestValues, minStockValue, currentDateTime);
+        }
+
+        public static Dictionary<string, StrategyGeneric> FindNewStrategies(int minNrOfTestValues, decimal minStockValue, DateTime endDate)
         {
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
             Optimizer optimizer = new Optimizer();
@@ -411,8 +417,8 @@ namespace RealLib
             int nrOfTestValues = 90;
             int testMoney = 100000;
             int orderLimit = testMoney / 10;
-            DateTime currentDateTime = DateTime.Now;
-            DateTimeOffset dateMayNotBeOlderThan = DateTimeOffset.UtcNow.AddDays(-(minNrOfTestValues * 1.7));
+            DateTime currentDateTime = endDate;
+            DateTimeOffset dateMayNotBeOlderThan = DateTime.SpecifyKind(currentDateTime, DateTimeKind.Utc).AddDays(-(minNrOfTestValues * 1.7));
 
             try
             {
@@ -438,33 +444,36 @@ namespace RealLib
 
                         if (securityInfo.Candles.Count >= minNrOfTestValues)
                         {
-                            int firstTestIndex = securityInfo.Candles.Count - minNrOfTestValues;
-                            DateTimeOffset startDateTest = securityInfo.Candles[firstTestIndex].CloseTime;
-                            if (startDateTest.CompareTo(dateMayNotBeOlderThan) >= 0)
+                            if (securityInfo.Candles[securityInfo.Candles.Count -1].ClosePrice > minStockValue)
                             {
-                                //Restrict Candle Size
-                                List<Candle> candles = new List<Candle>();
-                                for (int j = securityInfo.Candles.Count - minNrOfTestValues; j < securityInfo.Candles.Count; j++)
+                                int firstTestIndex = securityInfo.Candles.Count - minNrOfTestValues;
+                                DateTimeOffset startDateTest = securityInfo.Candles[firstTestIndex].CloseTime;
+                                if (startDateTest.CompareTo(dateMayNotBeOlderThan) >= 0)
                                 {
-                                    candles.Add(securityInfo.Candles[j]);
-                                }
-                                //BEGIN
-                                securityInfo.Candles = candles;
-                                StrategyGeneric strategy = FindStrategy(securityInfo, optimizer, optimizerOptions, nrOfTestValues);
-
-
-                                //Try To Add Strategy
-                                if (strategy != null)
-                                {
-                                    for (int trie = 0; trie < 5; trie++)
+                                    //Restrict Candle Size
+                                    List<Candle> candles = new List<Candle>();
+                                    for (int j = securityInfo.Candles.Count - minNrOfTestValues; j < securityInfo.Candles.Count; j++)
                                     {
-                                        try
+                                        candles.Add(securityInfo.Candles[j]);
+                                    }
+                                    //BEGIN
+                                    securityInfo.Candles = candles;
+                                    StrategyGeneric strategy = FindStrategy(securityInfo, optimizer, optimizerOptions, nrOfTestValues);
+
+
+                                    //Try To Add Strategy
+                                    if (strategy != null)
+                                    {
+                                        for (int trie = 0; trie < 5; trie++)
                                         {
-                                            newStrategies[securityInfo.SecurityID] = strategy;
-                                        }
-                                        catch
-                                        {
-                                            Thread.Sleep(50);
+                                            try
+                                            {
+                                                newStrategies[securityInfo.SecurityID] = strategy;
+                                            }
+                                            catch
+                                            {
+                                                Thread.Sleep(50);
+                                            }
                                         }
                                     }
                                 }

@@ -18,7 +18,7 @@ using static Stocks.Services;
 
 namespace StockSolution
 {
-    class Program
+    public class Program
     {
         private static StreamWriter ErrorWriter = null;
         private static bool RaceCondition = false;
@@ -56,7 +56,7 @@ namespace StockSolution
 
                 //Should Amount To A Little More Than Two Years (Only Weekend Removed)
                 int minNrOfTestValues = 766;
-
+                bool isSellEnabled = true;
                 //?;
                 //int minNrOfTestValues = 514;
 
@@ -68,98 +68,98 @@ namespace StockSolution
                 int positiveOrderPct = 75;
                 int minProfitPct = 55;
                 decimal loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 55 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 70;
                 minProfitPct = 55;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 60 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 70;
                 minProfitPct = 60;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 65;
                 minProfitPct = 60;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 40 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 75;
                 minProfitPct = 40;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 75;
                 minProfitPct = 45;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 50 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 75;
                 minProfitPct = 50;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 70;
                 minProfitPct = 50;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 60 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 65;
                 minProfitPct = 60;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 65;
                 minProfitPct = 55;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 70 - Min Profit Pct: 50 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 70;
                 minProfitPct = 50;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 20 - Positive Order Pct: 75 - Min Profit Pct: 35 - LLC: -0.12
                 minOrders = 20;
                 positiveOrderPct = 75;
                 minProfitPct = 35;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 75 - Min Profit Pct: 45 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 75;
                 minProfitPct = 45;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //Test Values - Min Orders: 15 - Positive Order Pct: 65 - Min Profit Pct: 55 - LLC: -0.12
                 minOrders = 15;
                 positiveOrderPct = 65;
                 minProfitPct = 55;
                 loseLimitConstant = -0.12m;
-                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant);
+                TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
 
                 //SingleTest();
                 //BIGTest();
@@ -189,7 +189,7 @@ namespace StockSolution
         }
 
         //Simulate Real Trades Using Specificed Strategy
-        public static void TestSelectedValuesAllData(DateTime startTime, int minNrOfTestValues, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant)
+        public static void TestSelectedValuesAllData(DateTime startTime, int minNrOfTestValues, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, bool isSellEnabled)
         {
             int nrOfTestValues = 90;
             int realValues = 30;
@@ -282,14 +282,14 @@ namespace StockSolution
                     {
                         TestSelectedValuesOnce(ref streamWriter, ref csvWriter,
                             securityInfos, optimizer, minOrders,
-                            positiveOrderPct, minProfitPct, loseLimitConstant,
+                            positiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled,
                             indicatorLength, realValues, nrOfTestValues, nrOfTests,
                             currentTestNr, orderLimit, initialMoney, TestCandleDates);
                     }
                 }
                 else
                 {
-                    csvWriter.WriteField("No Enough Candles");
+                    csvWriter.WriteField("Not Enough Candles");
                     if (TestCandleDates)
                     {
                         csvWriter.WriteField("THIS IS A CANDLE TEST - DISABLE TestCandlesDates");
@@ -317,7 +317,7 @@ namespace StockSolution
         }
 
         // TODO TEST - private static void TestSelectedValuesOnce(ref StreamWriter streamWriter, ref CsvWriter csvWriter, ref IDictionary<SecurityInfo, IList<Candle>> candlesDictionary, ref Optimizer optimizer, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, int indicatorLength, int realValues, int nrOfTestValues, int nrOfTests, int currentTestNr, int orderLimit, int initialMoney, bool testCandleDates)
-        private static void TestSelectedValuesOnce(ref StreamWriter streamWriter, ref CsvWriter csvWriter, IList<SecurityInfo> securityInfoes, Optimizer optimizer, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, int indicatorLength, int realValues, int nrOfTestValues, int nrOfTests, int currentTestNr, int orderLimit, int initialMoney, bool testCandleDates)
+        private static void TestSelectedValuesOnce(ref StreamWriter streamWriter, ref CsvWriter csvWriter, IList<SecurityInfo> securityInfoes, Optimizer optimizer, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, bool isSellEnabled, int indicatorLength, int realValues, int nrOfTestValues, int nrOfTests, int currentTestNr, int orderLimit, int initialMoney, bool testCandleDates)
         {
             int successfulSecurityIDs = 0;
             decimal profitPctTotal = 0m;
@@ -341,6 +341,7 @@ namespace StockSolution
                     optimizerOptions.MinOrders = minOrders;
                     optimizerOptions.PositiveOrderPct = positiveOrderPct;
                     optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                    optimizerOptions.IsSellEnabled = false;
                     #endregion
 
 

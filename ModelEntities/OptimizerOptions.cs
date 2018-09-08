@@ -96,6 +96,23 @@ namespace StockSolution.ModelEntities.Models
                         IndicatorLength = GetIndicatorLength(tickPeriod)
                     };
                     break;
+                    /*
+                case TickPeriod.Daily:
+                    optimizerOptions = new OptimizerOptions()
+                    {
+                        RecursiveTests = 2,
+                        NrOfTestValues = 90,
+                        IsSellEnabled = false,
+                        IsBuyEnabled = true,
+                        MinOrders = 10,
+                        //MaxOrders = maxOrders,
+                        PositiveOrderPct = 75,
+                        MinProfitPct = 23,
+                        LoseLimitConstant = -0.12m,
+                        IndicatorLength = GetIndicatorLength(tickPeriod)
+                    };
+                    break;
+                    */
             }
             
             return optimizerOptions;

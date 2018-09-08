@@ -290,7 +290,7 @@ namespace Stocks.Service
                                     
                                     if (header2.Equals("close"))
                                     {
-                                        decimal closePrice = decimal.Parse(field);
+                                        closePrice = decimal.Parse(field);
                                     }
                                 }
                             }

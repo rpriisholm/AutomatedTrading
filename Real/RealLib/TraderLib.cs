@@ -134,6 +134,7 @@ namespace RealLib
 
         public static void RunTradingProgram(TickPeriod tickPeriod, TradingEnum tradingEnum)
         {
+            ImportAndExport.MinStockPrice = 6m;
             OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum);
 
             switch (tradingEnum)

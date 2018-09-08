@@ -32,10 +32,11 @@ namespace Simulator
             OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
             bool isSellEnabled = false;
             //Legacy Test Should Be Moved And Needs Disable/Enable Sell
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders/2, optimizerOptions.PositiveOrderPct, optimizerOptions.MinProfitPct/2, optimizerOptions.LoseLimitConstant, isSellEnabled);
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders / 2, optimizerOptions.PositiveOrderPct, (int)(optimizerOptions.MinProfitPct * 1.5), optimizerOptions.LoseLimitConstant, isSellEnabled);
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders / 2, optimizerOptions.PositiveOrderPct, (int) (optimizerOptions.MinProfitPct * 0.66m) , optimizerOptions.LoseLimitConstant, isSellEnabled);
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders, optimizerOptions.PositiveOrderPct, optimizerOptions.MinProfitPct, optimizerOptions.LoseLimitConstant, isSellEnabled);
+            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders / 2, optimizerOptions.PositiveOrderPct, (int)(optimizerOptions.MinProfitPct / 2), optimizerOptions.LoseLimitConstant, isSellEnabled);
+            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders, optimizerOptions.PositiveOrderPct, (int)(optimizerOptions.MinProfitPct / 2), optimizerOptions.LoseLimitConstant, isSellEnabled);
+
+            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders/2, optimizerOptions.PositiveOrderPct, (int) (optimizerOptions.MinProfitPct/2*0.80m), optimizerOptions.LoseLimitConstant, isSellEnabled);
+            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders/2, optimizerOptions.PositiveOrderPct, (int)(optimizerOptions.MinProfitPct / 2 * 1.25m), optimizerOptions.LoseLimitConstant, isSellEnabled);
 
             /*
             DateTime now = DateTime.Now;

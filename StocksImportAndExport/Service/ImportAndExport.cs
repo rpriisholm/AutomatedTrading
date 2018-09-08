@@ -16,6 +16,7 @@ namespace Stocks.Service
     public static class ImportAndExport
     {
         public static string PartialPath = @"C:\StockHistory\Active\";
+        public static decimal MinStockPrice = -1;
 
         public static void CSVToMySQL_Excel(string url, string path)
         {
@@ -257,6 +258,7 @@ namespace Stocks.Service
                         //JSON TEST
                         JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
                         Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
+                        decimal closePrice = -1;
 
                         foreach (string header in headerRow)
                         {
@@ -285,6 +287,11 @@ namespace Stocks.Service
                                     }
                                     isMatch = true;
                                     csvWriter.WriteField(field);
+                                    
+                                    if (header2.Equals("close"))
+                                    {
+                                        decimal closePrice = decimal.Parse(field);
+                                    }
                                 }
                             }
 
@@ -298,6 +305,11 @@ namespace Stocks.Service
                         streamWriter.Flush();
                         stringReader.Close();
                         streamWriter.Close();
+
+                        if(closePrice < MinStockPrice && append == false)
+                        {
+                            File.Delete(path);
+                        }
                     }
 
                     RemoveDuplicates(path);

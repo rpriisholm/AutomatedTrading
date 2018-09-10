@@ -35,7 +35,8 @@ namespace Stocks.Import
         public static string Download(string url)
         {
             WebClient client = new WebClient();
-            return client.DownloadString(url);
+            string download = client.DownloadString(url);
+            return download;
         }
 
         public static CsvContainer JsonUrlToCSV(string url)

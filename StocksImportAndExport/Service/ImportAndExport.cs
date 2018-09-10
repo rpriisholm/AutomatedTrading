@@ -422,6 +422,9 @@ namespace Stocks.Service
                 case TickPeriod.Daily:
                     path += @"Daily";
                     break;
+                case TickPeriod.DailySimulation:
+                    path += @"DailySimulation";
+                    break;
                 case TickPeriod.SixMin:
                     path += @"6Min";
                     break;

@@ -216,7 +216,7 @@ namespace StockSolution
                 #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
                 //var startTime = DateTime.Now;
                 System.Console.WriteLine(startTime);
-                string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+                string fullPath = ImportAndExport.GetFullPath(TickPeriod.DailySimulation);
                 securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, startTime);
 
                 //Remove Candle Values If To Few

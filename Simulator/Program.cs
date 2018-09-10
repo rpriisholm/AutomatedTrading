@@ -27,15 +27,30 @@ namespace Simulator
 
             DateTime startTime = DateTime.Now;
             //Should Amount To A Little More Than Two Years (Only Weekend Removed)
-            int minNrOfTestValues = 766;
+            int minNrOfTestValues = 290;
 
             OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
             bool isSellEnabled = false;
             //Legacy Test Should Be Moved And Needs Disable/Enable Sell
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders/2, optimizerOptions.PositiveOrderPct, optimizerOptions.MinProfitPct/2, optimizerOptions.LoseLimitConstant, isSellEnabled);
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders / 2, optimizerOptions.PositiveOrderPct, (int)(optimizerOptions.MinProfitPct * 1.5), optimizerOptions.LoseLimitConstant, isSellEnabled);
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders / 2, optimizerOptions.PositiveOrderPct, (int) (optimizerOptions.MinProfitPct * 0.66m) , optimizerOptions.LoseLimitConstant, isSellEnabled);
-            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, optimizerOptions.MinOrders, optimizerOptions.PositiveOrderPct, optimizerOptions.MinProfitPct, optimizerOptions.LoseLimitConstant, isSellEnabled);
+
+            
+
+            for (decimal loseLimitConstant = -0.10m; loseLimitConstant <= -0.06m; loseLimitConstant += 0.02m)
+            {
+                for (int minOrders = 8; minOrders <= 12; minOrders += 2)
+                {
+                    for (int minPositiveOrderPct = 65; minPositiveOrderPct <= 80; minPositiveOrderPct += 5)
+                    {
+                        for(int minProfitPct = 25; minProfitPct <= 40; minProfitPct += 5)
+                        {
+                            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, minPositiveOrderPct, minProfitPct, optimizerOptions.LoseLimitConstant, isSellEnabled);
+                        }
+                    }
+                }
+            }
+
+
+
 
             /*
             DateTime now = DateTime.Now;

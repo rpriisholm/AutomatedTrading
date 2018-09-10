@@ -10,6 +10,7 @@ namespace TickEnum
     public enum TickPeriod
     {
         Daily,
+        DailySimulation,
         SixMin,
         ThreeMin,
         OneMin

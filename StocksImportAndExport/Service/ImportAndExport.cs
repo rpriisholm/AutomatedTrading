@@ -265,7 +265,7 @@ namespace Stocks.Service
                             bool isMatch = false;
                             foreach (string header2 in dictObj.Keys)
                             {
-                                if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("delayedPriceTime"))) && dictObj[header2] != null)
+                                if ((header.Equals(header2) || (header.Equals("date") && header2.Equals("latestTime")) || (header.Equals("close") && header2.Equals("calculationPrice"))) && dictObj[header2] != null)
                                 {
                                     string field = dictObj[header2].ToString();
 
@@ -288,7 +288,7 @@ namespace Stocks.Service
                                     }
                                     */
 
-                                    if (header2.Equals("delayedPriceTime"))
+                                    if (header2.Equals("latestTime"))
                                     {
                                         field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
                                     }
@@ -302,7 +302,7 @@ namespace Stocks.Service
                                     }
                                     */
 
-                                    if (header2.Equals("delayedPrice"))
+                                    if (header2.Equals("calculationPrice"))
                                     {
                                         closePrice = decimal.Parse(field);
                                     }

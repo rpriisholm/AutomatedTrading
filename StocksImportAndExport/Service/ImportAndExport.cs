@@ -265,7 +265,7 @@ namespace Stocks.Service
                             bool isMatch = false;
                             foreach (string header2 in dictObj.Keys)
                             {
-                                if ((header.Equals(header2) && !header2.Equals("date") || (header.Equals("date") && header2.Equals("latestTime")) || (header.Equals("close") && header2.Equals("extendedPriceTime"))) && dictObj[header2] != null)
+                                if (((header.Equals(header2) && !header2.Equals("date") && !header2.Equals("close")) || (header.Equals("date") && header2.Equals("extendedPriceTime")) || (header.Equals("close") && header2.Equals("latestPrice"))) && dictObj[header2] != null)
                                 {
                                     string field = dictObj[header2].ToString();
 
@@ -302,7 +302,7 @@ namespace Stocks.Service
                                     }
                                     */
 
-                                    if (header2.Equals("calculationPrice"))
+                                    if (header2.Equals("latestPrice"))
                                     {
                                         closePrice = decimal.Parse(field);
                                     }

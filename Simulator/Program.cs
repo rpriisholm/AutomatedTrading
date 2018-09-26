@@ -33,17 +33,17 @@ namespace Simulator
             bool isSellEnabled = false;
             //Legacy Test Should Be Moved And Needs Disable/Enable Sell
 
-            
 
-            for (decimal loseLimitConstant = -0.10m; loseLimitConstant <= -0.06m; loseLimitConstant += 0.02m)
+
+            for (int minOrders = 8; minOrders <= 12; minOrders += 2)
             {
-                for (int minOrders = 8; minOrders <= 12; minOrders += 2)
+                for (int minPositiveOrderPct = 65; minPositiveOrderPct <= 75; minPositiveOrderPct += 5)
                 {
-                    for (int minPositiveOrderPct = 65; minPositiveOrderPct <= 80; minPositiveOrderPct += 5)
+                    for (int minProfitPct = 20; minProfitPct <= 35; minProfitPct += 5)
                     {
-                        for(int minProfitPct = 25; minProfitPct <= 40; minProfitPct += 5)
+                        for (decimal loseLimitConstant = -0.09m; loseLimitConstant <= -0.04m; loseLimitConstant += 0.01m)
                         {
-                            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, minPositiveOrderPct, minProfitPct, optimizerOptions.LoseLimitConstant, isSellEnabled);
+                            StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, minPositiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
                         }
                     }
                 }

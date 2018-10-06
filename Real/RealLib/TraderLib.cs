@@ -134,7 +134,7 @@ namespace RealLib
 
         public static void RunTradingProgram(TickPeriod tickPeriod, TradingEnum tradingEnum)
         {
-            ImportAndExport.MinStockPrice = 6m;
+            ImportAndExport.MinStockPrice = 3m;
             OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum);
 
             switch (tradingEnum)
@@ -174,13 +174,14 @@ namespace RealLib
             if (TradingEnum.ContinueTrading == tradingEnumn)
             {
                 List<string> symbols = ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "CurrentStrategies.csv");
-
                 symbols.AddRange(ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "ExpiringStrategies.csv"));
+
                 ImportAndExport.CollectData(TickPeriod.Daily, symbols, true, true);
             }
 
             Strategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "CurrentStrategies.csv", false);
             ExpiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "ExpiringStrategies.csv", true);
+            int possibleBreak = 0;
         }
 
         private static void OnExit()
@@ -373,7 +374,7 @@ namespace RealLib
                 }
 
                 //Cancel Current Orders
-                if (!previousDisabled && currentDisabled)
+                if ((!previousDisabled && currentDisabled) || (strategy.IsStrategyExpiring && previousDirection != currentDirection))
                 {
                     if (previousDirection == Sides.Buy)
                     {

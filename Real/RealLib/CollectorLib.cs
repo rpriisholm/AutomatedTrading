@@ -152,7 +152,7 @@ namespace RealLib
                         strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
                         {
                             LastExecution = lastExecution,
-                            IsActive = isExpiring,
+                            IsStrategyExpiring = isExpiring,
                             IsDisabled = true
                         };
                     }
@@ -177,7 +177,7 @@ namespace RealLib
                         strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
                         {
                             LastExecution = lastExecution,
-                            IsActive = isExpiring
+                            IsStrategyExpiring = isExpiring
                         };
                     }
                     strategies[symbol] = strategy;

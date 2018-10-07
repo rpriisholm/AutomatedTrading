@@ -82,8 +82,8 @@ namespace Stocks.Service
             //foreach (var symbol in symbols)
             {
                 CollectChoosenData(symbol, tickPeriod, appendSymbols);
-            //}
-            );
+                //}
+            });
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
         }

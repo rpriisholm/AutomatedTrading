@@ -9,8 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using StockSolution.Services;
+using TickEnum;
+using Stocks.Service;
 
-namespace StockSolution.Services.Optimizer
+namespace StockSolution.Services
 {
     public class Optimizer
     {
@@ -34,196 +37,117 @@ namespace StockSolution.Services.Optimizer
             set { this._LoseLimitConstant = value; }
         }
 
-        public OptimizerOptions FindBestOptions(OptimizerOptions optimizerOptions, List<Candle> candles, int nrOfTestValues, int leverage)
+        //Might Need Dual Run To Check Test Values - Ex. Every 30-45 or 90
+        public void SimulationIndicatorPairsAndSave(int nrOfRuns, int nrOfCandles, int minIndicatorLength, int maxIndicatorLength, int indicatorInterval, bool isSellEnabled, bool isBuyEnabled)
         {
-            int minCandles = (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests);
-            if (candles.Count < minCandles)
+            string fullPath = ImportAndExport.GetFullPath(TickPeriod.DailySimulation);
+            int minCandles = (maxIndicatorLength + nrOfCandles * nrOfRuns);
+            Dictionary<SecurityInfo, List<IndicatorPair>> symbolsAndIndicatorPairs = new Dictionary<SecurityInfo, List<IndicatorPair>>();
+
+            DateTimeOffset dateMayNotBeOlderThan = DateTimeOffset.UtcNow.AddDays(-(nrOfRuns * nrOfCandles * 1.7 + maxIndicatorLength));
+            DateTime startTime = DateTime.Now;
+            IList<SecurityInfo> securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, startTime);
+
+            //Remove Candle Values If To Few
+            for (int i = 0; i < securityInfos.Count; i++)
             {
-                throw new InvalidDataException();
+                if (securityInfos[i].Candles.Count < minCandles)
+                {
+                    securityInfos.RemoveAt(i);
+                    i -= 1;
+                }
             }
-            int initIndex = candles.Count - (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests);
-            List<Candle> initialCandles = candles.GetRange(initIndex, optimizerOptions.IndicatorLength.Max);
-            List<IndicatorPair> indicatorPairs = InitializeIndicatorPairs(initialCandles, optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
 
-            for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
+            //Initiate Symbols
+            foreach (SecurityInfo securityInfo in securityInfos)
             {
-                Task[] tasks = new Task[indicatorPairs.Count];
-                //List<Task> tasks = new List<Task>();
-                int pointer = 0;
+                List<Candle> initialCandles = securityInfo.Candles.GetRange(minCandles - 1, maxIndicatorLength);
 
-                //bool raceCondition = false;
-                Parallel.ForEach(indicatorPairs, indicatorPair =>
-                //foreach (IndicatorPair indicatorPair in indicatorPairs)
+                //Create Indicators 
+                List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
+                symbolsAndIndicatorPairs[securityInfo] = indicatorPairs;
+            }
+
+            #region Simulate
+            //Run Simulation
+            for (int i = 0; i > nrOfRuns; i++)
+            {
+                foreach (SecurityInfo securityInfo in securityInfos)
                 {
-                    //var t = new Task(() => { });
-
-                   
-                    //Task t = new Task(() =>
-                    //ThreadPool.QueueUserWorkItem((Object stateInfo) =>
+                    //Find Candles
+                    if (securityInfo.Candles.Count < minCandles)
                     {
-                        int initialMoney = 100000;
-                        int orderLimit = initialMoney / 10;
-                        int maxInvestedPct = 80;
-                        SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
-
-                        List<Candle> currentCandles = candles.GetRange(candles.Count - (1 + nrOfTestValues * (optimizerOptions.RecursiveTests - recursiveTests)), nrOfTestValues);
-
-                        EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, leverage, maxInvestedPct);
-                        StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
-
-                        strategyGeneric.Start();
-                        //Process Candles
-                        for (int i = 0; i < currentCandles.Count; i++)
-                        {
-                            strategyGeneric.ProcessCandle(currentCandles[i]);
-                        }
-                        strategyGeneric.Stop();
-                        //Set LastResult
-                        indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
-                        //SET ORDERS OG POSITIVE ORDER PCT
-                        indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
-                        indicatorPair.Orders = strategyGeneric.OrderCount;
-                    }
-                    
-
-                    //tasks[pointer] = t;
-                    //tasks[pointer].Start();
-                    //pointer++;
-                    //t.Start();
-                    //tasks.Add(t);
-                    
-                });
-
-                //Task.WaitAll(tasks);
-                
-                /*
-                int maxThreads = 32;
-                int counter = 0;
-                while (tasks.Count > maxThreads)
-                {
-                    if (counter == maxThreads)
-                    {
-                        for (int threadNr = 0; counter == maxThreads; threadNr++)
-                        {
-                            //Reset And Sleep
-                            if (threadNr == maxThreads) { threadNr = 0; Thread.Sleep(1000); }
-
-                            //Remove finished thread
-                            if (tasks[threadNr].Status != TaskStatus.Created &&
-                                tasks[threadNr].Status != TaskStatus.Running &&
-                                tasks[threadNr].Status != TaskStatus.WaitingForActivation &&
-                                tasks[threadNr].Status != TaskStatus.WaitingForChildrenToComplete &&
-                                tasks[threadNr].Status != TaskStatus.WaitingToRun)
-                            {
-                                tasks.RemoveAt(threadNr);
-                                counter--;
-                            }
-                        }
+                        throw new InvalidDataException();
                     }
 
-                    tasks[counter].Start();
-                    counter++;
-                }
-
-                //Rest Start
-                foreach (Task task in tasks)
-                {
-                    task.Start();
-                }
-
-                //Rest Wait
-                foreach (Task task in tasks)
-                {
-                    task.Wait();
-                }
-                */
-
-                //tasks[pointer].Start();
-                //pointer++;
-
-
-                //Task.WaitAll(tasks);
-                //);
-
-                //Missing Recursive AND FILTER
-                List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();
-                for (int i = 0; i < indicatorPairs.Count; i++)
-                {
-                    if (optimizerOptions.MinOrders <= indicatorPairs[i].Orders && optimizerOptions.MinProfitPct <= indicatorPairs[i].LastResult && optimizerOptions.PositiveOrderPct <= indicatorPairs[i].PositiveOrderPct)
+                    //Simulate Strategies/IndicatorPairs
+                    for (int j = 0; j < symbolsAndIndicatorPairs[securityInfo].Count; j++)
                     {
-                        filteredIndicatorPairs.Add(indicatorPairs[i]);
+
+                        List<IndicatorPair> indicatorPairs = symbolsAndIndicatorPairs[securityInfo];
+
+                        int index = securityInfo.Candles.Count - (1 + i * nrOfCandles);
+                        List<Candle> simulateCandles = securityInfo.Candles.GetRange(index, nrOfCandles);
+
+                        //Simulation
+                        SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled);
+
+                        //Update Indicator Pairs
+                        symbolsAndIndicatorPairs[securityInfo] = indicatorPairs;
                     }
                 }
-
-                indicatorPairs = filteredIndicatorPairs;
+                //SAVE CURRENT INDICATORPAIRS - VALUES
             }
+            #endregion
 
-            optimizerOptions.BestIndicatorPair = indicatorPairs.Count > 0 ? SortingAlgorithm.MergeSort(indicatorPairs)[0] : null;
-            return optimizerOptions;
+
         }
 
 
-        //public int RecursiveTests { get; set; }
-
-        private LengthIndicator<decimal> InitializeIndicator(ref List<Candle> initialCandles, LengthIndicator<decimal> lengthIndicator)
+        // Simulate Indicator Pairs No loseLimitConstant
+        public void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled)
         {
-            foreach (Candle candle in initialCandles)
-            {
-                lengthIndicator.Process(candle.ClosePrice);
-            }
-
-            return lengthIndicator;
+            //IGNORES loseLimitConstant
+            SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled, -10000m);
         }
 
-        public LengthIndicator FindIndicator(string indicator, int minIndicatorLength, int maxIndicatorLength, int interval)
+        // Simulate IndicatorPairs
+        private void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant)
         {
-            LengthIndicator<decimal> lengthIndicator = null;
-            int differentIndicators;
-            List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
-
-            foreach (LengthIndicator<decimal> currentIndicator in indicators)
+            Parallel.ForEach(indicatorPairs, indicatorPair =>
+            //foreach (IndicatorPair indicatorPair in indicatorPairs)
             {
-                if (currentIndicator.ToString().Equals(indicator))
                 {
-                    lengthIndicator = currentIndicator;
-                    break;
-                }
-            }
+                    int initialMoney = 100000;
+                    int orderLimit = initialMoney / 10;
+                    int maxInvestedPct = 80;
+                    SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
 
-            return new LengthIndicator(lengthIndicator);
+                    EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, maxInvestedPct);
+                    StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
+
+                    strategyGeneric.Start();
+                    //Process Candles
+                    for (int i = 0; i < simulateCandles.Count; i++)
+                    {
+                        strategyGeneric.ProcessCandle(simulateCandles[i]);
+                    }
+                    strategyGeneric.Stop();
+
+                    //Set LastResult
+                    indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
+                    indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
+                    indicatorPair.Orders = strategyGeneric.OrderCount;
+                    indicatorPair.PositiveOrderPct = (strategyGeneric.PositiveOrderCount*100/strategyGeneric.OrderCount);
+
+                    //SET ORDERS OG POSITIVE ORDER PCT
+                    indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
+                    indicatorPair.Orders = strategyGeneric.OrderCount;
+                }
+            });
         }
 
-        private List<LengthIndicator<decimal>> CreateIndicators(out int differentIndicators, int minIndicatorLength, int maxIndicatorLength, int interval)
-        {
-            List<LengthIndicator<decimal>> indicators = new List<LengthIndicator<decimal>>();
-            differentIndicators = 0;
-
-            for (int length = minIndicatorLength; length < maxIndicatorLength; length += interval)
-            {
-                //Should WORK
-                indicators.Add(new SimpleMovingAverage() { Length = length });
-                //TEST
-                indicators.Add(new SmoothedMovingAverage() { Length = length });
-                indicators.Add(new ExponentialMovingAverage() { Length = length });
-                indicators.Add(new Highest() { Length = length });
-                indicators.Add(new HullMovingAverage() { Length = length });
-                indicators.Add(new JurikMovingAverage() { Length = length });
-                indicators.Add(new KaufmannAdaptiveMovingAverage() { Length = length });
-                indicators.Add(new LinearReg() { Length = length });
-                indicators.Add(new Lowest() { Length = length });
-                indicators.Add(new MeanDeviation() { Length = length });
-                indicators.Add(new Momentum() { Length = length });
-
-                if (length == minIndicatorLength)
-                {
-                    differentIndicators = indicators.Count;
-                }
-            }
-
-            return indicators;
-        }
-
-        private List<IndicatorPair> InitializeIndicatorPairs(List<Candle> initialCandles, int minIndicatorLength, int maxIndicatorLength, int interval)
+        private List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles, int minIndicatorLength, int maxIndicatorLength, int interval)
         {
             int differentIndicators;
             List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
@@ -264,36 +188,103 @@ namespace StockSolution.Services.Optimizer
                     shortIndicator++;
                 }
             }
-
-
-            /*       
-            baseIndicators[i].Add(new LinearRegSlope() { Length = i });
-            baseIndicators[i].Add(new IchimokuChinkouLine() { Length = i });
-            baseIndicators[i].Add(new DoubleExponentialMovingAverage() { Length = i });
-            baseIndicators[i].Add(new DetrendedPriceOscillator() { Length = i });
-            baseIndicators[i].Add(new CommodityChannelIndex() { Length = i });
-            baseIndicators[i].Add(new ChandeMomentumOscillator() { Length = i });
-            baseIndicators[i].Add(new AlligatorLine() { Length = i });
-            baseIndicators[i].Add(new MoneyFlowIndex() { Length = i });
-            baseIndicators[i].Add(new NickRypockTrailingReverse() { Length = i });
-            baseIndicators[i].Add(new OptimalTracking() { Length = i });
-            baseIndicators[i].Add(new RelativeStrengthIndex() { Length = i });
-            baseIndicators[i].Add(new RelativeVigorIndexAverage() { Length = i });
-            baseIndicators[i].Add(new RelativeVigorIndexSignal() { Length = i });
-            baseIndicators[i].Add(new RSquared() { Length = i });
-            baseIndicators[i].Add(new StandardDeviation() { Length = i });
-            baseIndicators[i].Add(new StandardError() { Length = i });
-            baseIndicators[i].Add(new StochasticK() { Length = i });
-            baseIndicators[i].Add(new Sum() { Length = i });
-            baseIndicators[i].Add(new TripleExponentialMovingAverage() { Length = i });
-            baseIndicators[i].Add(new VerticalHorizontalFilter() { Length = i });
-            baseIndicators[i].Add(new Vidya() { Length = i });
-            baseIndicators[i].Add(new VolumeWeightedMovingAverage() { Length = i });
-            baseIndicators[i].Add(new WeightedMovingAverage() { Length = i });
-            baseIndicators[i].Add(new WilliamsR() { Length = i });
-            */
-
             return indicatorPairs;
+        }
+
+        private List<LengthIndicator<decimal>> CreateIndicators(out int differentIndicators, int minIndicatorLength, int maxIndicatorLength, int interval)
+        {
+            List<LengthIndicator<decimal>> indicators = new List<LengthIndicator<decimal>>();
+            differentIndicators = 0;
+
+            for (int length = minIndicatorLength; length < maxIndicatorLength; length += interval)
+            {
+                //Should WORK
+                indicators.Add(new SimpleMovingAverage() { Length = length });
+                //TEST
+                indicators.Add(new SmoothedMovingAverage() { Length = length });
+                indicators.Add(new ExponentialMovingAverage() { Length = length });
+                indicators.Add(new Highest() { Length = length });
+                indicators.Add(new HullMovingAverage() { Length = length });
+                indicators.Add(new JurikMovingAverage() { Length = length });
+                indicators.Add(new KaufmannAdaptiveMovingAverage() { Length = length });
+                indicators.Add(new LinearReg() { Length = length });
+                indicators.Add(new Lowest() { Length = length });
+                indicators.Add(new MeanDeviation() { Length = length });
+                indicators.Add(new Momentum() { Length = length });
+
+                if (length == minIndicatorLength)
+                {
+                    differentIndicators = indicators.Count;
+                }
+            }
+
+            return indicators;
+        }
+
+        public OptimizerOptions FindBestOptions(OptimizerOptions optimizerOptions, List<Candle> candles, int nrOfTestValues, int leverage)
+        {
+            int minCandles = (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests);
+            if (candles.Count < minCandles)
+            {
+                throw new InvalidDataException();
+            }
+            int initIndex = candles.Count - (optimizerOptions.IndicatorLength.Max + nrOfTestValues * optimizerOptions.RecursiveTests);
+            List<Candle> initialCandles = candles.GetRange(initIndex, optimizerOptions.IndicatorLength.Max);
+            List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
+
+            //START SIMULATION - RUN X TIMES
+            for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
+            {
+                List<Candle> currentCandles = candles.GetRange(candles.Count - (1 + nrOfTestValues * (optimizerOptions.RecursiveTests - recursiveTests)), nrOfTestValues);
+
+                //Simulate IndicatorPairs With CurrentCandles
+                SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
+
+                //Missing Recursive AND FILTER USING CHOOSEN SETTINGS
+                List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();
+                for (int i = 0; i < indicatorPairs.Count; i++)
+                {
+                    if (optimizerOptions.MinOrders <= indicatorPairs[i].Orders && optimizerOptions.MinProfitPct <= indicatorPairs[i].LastResult && optimizerOptions.PositiveOrderPct <= indicatorPairs[i].PositiveOrderPct)
+                    {
+                        filteredIndicatorPairs.Add(indicatorPairs[i]);
+                    }
+                }
+
+                //Replace Found Pairs Whith Filtered Pairs - Reduces Test Time
+                indicatorPairs = filteredIndicatorPairs;
+            }
+
+            //FIND BestIndicatorPair 
+            optimizerOptions.BestIndicatorPair = indicatorPairs.Count > 0 ? SortingAlgorithm.MergeSort(indicatorPairs)[0] : null;
+            return optimizerOptions;
+        }
+
+        private LengthIndicator<decimal> InitializeIndicator(ref List<Candle> initialCandles, LengthIndicator<decimal> lengthIndicator)
+        {
+            foreach (Candle candle in initialCandles)
+            {
+                lengthIndicator.Process(candle.ClosePrice);
+            }
+
+            return lengthIndicator;
+        }
+
+        public LengthIndicator FindIndicator(string indicator, int minIndicatorLength, int maxIndicatorLength, int interval)
+        {
+            LengthIndicator<decimal> lengthIndicator = null;
+            int differentIndicators;
+            List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
+
+            foreach (LengthIndicator<decimal> currentIndicator in indicators)
+            {
+                if (currentIndicator.ToString().Equals(indicator))
+                {
+                    lengthIndicator = currentIndicator;
+                    break;
+                }
+            }
+
+            return new LengthIndicator(lengthIndicator);
         }
 
         private bool IsIndicatorPairDisabled(LengthIndicator<decimal> shortIndicator, LengthIndicator<decimal> longIndicator)

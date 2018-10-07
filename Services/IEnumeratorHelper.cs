@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockSolution.ModelEntities.Models
+namespace StockSolution.Services
 {
     [Serializable]
     public static class IEnumeratorHelper

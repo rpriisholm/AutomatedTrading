@@ -3,7 +3,6 @@ using Stocks.Service;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using StockSolution.Services;
-using StockSolution.Services.Optimizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

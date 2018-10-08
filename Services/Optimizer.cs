@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using StockSolution.Services;
 using TickEnum;
 using Stocks.Service;
+using CsvHelper;
 
 namespace StockSolution.Services
 {
@@ -72,6 +73,18 @@ namespace StockSolution.Services
             //Run Simulation
             for (int i = 0; i > nrOfRuns; i++)
             {
+                StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\StrategyResults\Strategies_"+ (nrOfRuns-i) + "_" + nrOfCandles + ".csv");
+                CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+                csvWriter.WriteField("SecurityId");
+                csvWriter.WriteField("ShortIndicator");
+                csvWriter.WriteField("LongIndicator");
+                csvWriter.WriteField("LoseLimitMin");
+                csvWriter.WriteField("Orders");
+                csvWriter.WriteField("PositiveOrderPct");
+                csvWriter.WriteField("LastResult");
+                csvWriter.NextRecord();
+
                 foreach (SecurityInfo securityInfo in securityInfos)
                 {
                     //Find Candles
@@ -95,12 +108,26 @@ namespace StockSolution.Services
                         //Update Indicator Pairs
                         symbolsAndIndicatorPairs[securityInfo] = indicatorPairs;
                     }
+
+                    //Write To CSV File
+                    foreach(IndicatorPair indicatorPair in symbolsAndIndicatorPairs[securityInfo])
+                    {
+                        csvWriter.WriteField(securityInfo.SecurityID);
+                        csvWriter.WriteField(indicatorPair.ShortIndicator);
+                        csvWriter.WriteField(indicatorPair.LongIndicator);
+                        csvWriter.WriteField(indicatorPair.LoseLimitMin);
+                        csvWriter.WriteField(indicatorPair.Orders);
+                        csvWriter.WriteField(indicatorPair.PositiveOrderPct);
+                        csvWriter.WriteField(indicatorPair.LastResult);
+                        csvWriter.NextRecord();
+                    }
+
+                    csvWriter.Flush();
+                    //SAVE CURRENT INDICATORPAIRS - VALUES
                 }
-                //SAVE CURRENT INDICATORPAIRS - VALUES
+                
             }
             #endregion
-
-
         }
 
 
@@ -138,11 +165,7 @@ namespace StockSolution.Services
                     indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
                     indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
                     indicatorPair.Orders = strategyGeneric.OrderCount;
-                    indicatorPair.PositiveOrderPct = (strategyGeneric.PositiveOrderCount*100/strategyGeneric.OrderCount);
-
-                    //SET ORDERS OG POSITIVE ORDER PCT
                     indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
-                    indicatorPair.Orders = strategyGeneric.OrderCount;
                 }
             });
         }

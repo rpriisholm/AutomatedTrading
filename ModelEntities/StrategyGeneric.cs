@@ -67,16 +67,6 @@ namespace StockSolution.ModelEntities.Models
                     this.IsDisabled = true;
                     closeOrderSell = Connection.CancelOrder(SecurityID, Sides.Sell, candle.ClosePrice);
                     closeOrderBuy  = Connection.CancelOrder(SecurityID, Sides.Buy, candle.ClosePrice);
-                    /*
-                    if (IsSellEnabled)
-                    {
-                        Connection.CancelOrder(SecurityID, Sides.Sell, candle.ClosePrice);
-                    }
-                    if (IsBuyEnabled)
-                    {
-                        Connection.CancelOrder(SecurityID, Sides.Buy, candle.ClosePrice);
-                    }
-                    */
                 }
                 else
                 {

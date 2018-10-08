@@ -2,7 +2,6 @@ using RealLib;
 using Stocks.Service;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
-using StockSolution.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,13 +34,13 @@ namespace Simulator
 
 
 
-            for (int minOrders = 8; minOrders <= 12; minOrders += 2)
+            for (int minOrders = 8; minOrders <= 14; minOrders += 2)
             {
-                for (int minPositiveOrderPct = 65; minPositiveOrderPct <= 75; minPositiveOrderPct += 5)
+                for (int minPositiveOrderPct = 60; minPositiveOrderPct <= 75; minPositiveOrderPct += 5)
                 {
-                    for (int minProfitPct = 20; minProfitPct <= 35; minProfitPct += 5)
+                    for (int minProfitPct = 15; minProfitPct <= 35; minProfitPct += 5)
                     {
-                        for (decimal loseLimitConstant = -0.09m; loseLimitConstant <= -0.04m; loseLimitConstant += 0.01m)
+                        for (decimal loseLimitConstant = -0.08m; loseLimitConstant <= -0.04m; loseLimitConstant += 0.01m)
                         {
                             StockSolution.Program.TestSelectedValuesAllData(startTime, minNrOfTestValues, minOrders, minPositiveOrderPct, minProfitPct, loseLimitConstant, isSellEnabled);
                         }
@@ -50,65 +49,25 @@ namespace Simulator
             }
 
 
-
-
+            // SKIP SYMBOL
             /*
-            DateTime now = DateTime.Now;
-            List<DateTime> endDates = new List<DateTime>();
-            for (int i = 7; i >= 0; i--)
+            if (!IsSkipped(skipSecurityIDs, securityID, loseLimitConstant, minOrders, positiveOrderPct, minProfitPct))
             {
-                //About 90 Trading Days // Need Better Calc?
-                endDates.Add(now.AddDays(-i*(18*5+18*2))); 
-            }
 
-            foreach (DateTime endDate in endDates)
-            {
-                Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300, 6.25m, endDate);
-
-                foreach (string symbol in newStrategies.Keys)
-                {
-                    StrategyGeneric strategyGeneric = newStrategies[symbol];
-                    
-                    //Run Simulation And Collect values
-                }
-            }
-            
-
-            Console.ReadLine();
-            */
+            } */
         }
 
-        /*
-        private static IList<SecurityInfo> LoadCandles(int minNrOfTestValues, DateTimeOffset dateMayNotBeOlderThan, )
+        private static bool IsSkipped(Dictionary<SecurityInfo, decimal[]> skipSecurityIDs, SecurityInfo securityId, decimal loseLimitConstant, int minOrders, int positiveOrderPct, int minProfitPct)
         {
-            #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
-            //var startTime = DateTime.Now;
-            string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
-            IList<SecurityInfo> securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, startTime);
+            bool isSkipped = false;
 
-            //Remove Candle Values If To Few
-            for (int i = 0; i < securityInfos.Count; i++)
+            if (skipSecurityIDs.ContainsKey(securityId) && loseLimitConstant >= skipSecurityIDs[securityId][0] && minOrders >= skipSecurityIDs[securityId][1] && positiveOrderPct >= skipSecurityIDs[securityId][2] && minProfitPct >= skipSecurityIDs[securityId][3])
             {
-                if (securityInfos[i].Candles.Count < minNrOfTestValues)
-                {
-                    securityInfos.RemoveAt(i);
-                    i -= 1;
-                }
-                else
-                {
-                    int firstTestIndex = securityInfos[i].Candles.Count - minNrOfTestValues;
-                    DateTimeOffset startDateTest = securityInfos[i].Candles[firstTestIndex].CloseTime;
-                    if (startDateTest.CompareTo(dateMayNotBeOlderThan) < 0)
-                    {
-                        securityInfos.RemoveAt(i);
-                        i -= 1;
-                    }
-                }
+                isSkipped = true;
             }
-            #endregion
 
-            return securityInfos;
+            return isSkipped;
         }
-        */
+
     }
 }

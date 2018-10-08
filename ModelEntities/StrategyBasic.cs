@@ -27,6 +27,7 @@ namespace StockSolution.ModelEntities.Models
         public int PositiveOrderCount { get; set; }
         public bool IsDisabled { get; set; }
         public decimal LoseLimitConstant { get; set; }
+        public decimal LoseLimitMin = decimal.MaxValue;
         public DateTime LastExecution { get; set; }
         public bool IsStrategyExpiring = false;
         public bool IsActive = true;
@@ -104,6 +105,12 @@ namespace StockSolution.ModelEntities.Models
 
         public decimal ConnectionSecurityIDProfit()
         {
+            decimal currentLosePct = Connection.Profit(this.SecurityID) / this.Connection.CalcPayment();
+            if (currentLosePct < LoseLimitMin)
+            {
+                this.LoseLimitMin = currentLosePct;
+            }
+
             return Connection.Profit(this.SecurityID);
         }
 

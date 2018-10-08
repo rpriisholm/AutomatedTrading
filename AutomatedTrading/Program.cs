@@ -3,7 +3,6 @@ using Stocks.Service;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using StockSolution.Services;
-using StockSolution.Services.Optimizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +22,7 @@ namespace StockSolution
         private static StreamWriter ErrorWriter = null;
         private static bool RaceCondition = false;
         private readonly static bool TestCandleDates = false;
+        private static Dictionary<SecurityInfo, decimal[]> SkipSecurityIDs = new Dictionary<SecurityInfo, decimal[]>();
 
         static void Main(string[] args)
         {
@@ -52,7 +52,7 @@ namespace StockSolution
 
             //Parallel.For(0, 15, prlNumber =>
             {
-				DateTime startTime = DateTime.Now;
+                DateTime startTime = DateTime.Now;
 
                 //Should Amount To A Little More Than Two Years (Only Weekend Removed)
                 int minNrOfTestValues = 766;
@@ -344,80 +344,98 @@ namespace StockSolution
                     optimizerOptions.IsSellEnabled = false;
                     #endregion
 
-
-                    #region Set Candles
-                    //Get Test Candles
-                    List<Candle> candles = securityInfoes[index].Candles.ToList();
-                    int keyCount = securityInfoes[index].Candles.Count;
-                    int beginIndexTest = keyCount - (optimizer.RecursiveTests * nrOfTestValues + realValues * (nrOfTests - currentTestNr) + indicatorLength);
-                    int testCount = indicatorLength + optimizer.RecursiveTests * nrOfTestValues;
-                    int beginIndexReal = beginIndexTest + testCount;
-
-                    List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
-                    List<Candle> realCandles = candles.GetRange(beginIndexReal, realValues);
-
-                    //if (start != null && end != null) { }
-                    if ((start < realCandles[0].CloseTime && end > realCandles[realCandles.Count - 1].CloseTime)) { }
-                    else
+                    // TODO IGNORE INDIVUDAL SYMBOLS securityInfoes[index].SecurityID
+                    if (!IsSkipped(SkipSecurityIDs, securityInfoes[index], loseLimitConstant, minOrders, positiveOrderPct, minProfitPct))
                     {
-                        start = realCandles[0].CloseTime;
-                        end = realCandles[realCandles.Count - 1].CloseTime;
-                    }
-                    #endregion
+                        #region Set Candles
+                        //Get Test Candles
+                        List<Candle> candles = securityInfoes[index].Candles.ToList();
+                        int keyCount = securityInfoes[index].Candles.Count;
+                        int beginIndexTest = keyCount - (optimizer.RecursiveTests * nrOfTestValues + realValues * (nrOfTests - currentTestNr) + indicatorLength);
+                        int testCount = indicatorLength + optimizer.RecursiveTests * nrOfTestValues;
+                        int beginIndexReal = beginIndexTest + testCount;
 
-                    try
-                    {
-                        if (!testCandleDates)
+                        List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
+                        List<Candle> realCandles = candles.GetRange(beginIndexReal, realValues);
+
+                        //if (start != null && end != null) { }
+                        if ((start < realCandles[0].CloseTime && end > realCandles[realCandles.Count - 1].CloseTime)) { }
+                        else
                         {
-                            #region Find Strategy
-
-                            optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
-                            #endregion
-
-                            #region Simulate Real Values
-                            EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
-                            decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
-                            StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityInfoes[index], optimizerOptions);
-                            strategy.Start();
-                            //Candle Simulation Still Fake
-                            for (int i = 0; i < realCandles.Count; i++)
-                            {
-                                strategy.ProcessCandle(realCandles[i]);
-                            }
-                            strategy.Stop();
-                            #endregion
-
-                            while (RaceCondition) { Thread.Sleep(5); }
-                            RaceCondition = true;
-
-                            //Calc Result
-                            decimal profit = emulationConnection.GetTotalValue() - initialMoney;
-                            profitPctTotal += (profit / orderLimit * 100);
-                            successfulSecurityIDs += 1;
+                            start = realCandles[0].CloseTime;
+                            end = realCandles[realCandles.Count - 1].CloseTime;
                         }
-                    }
-                    catch (System.NullReferenceException)
-                    {
-                        Console.WriteLine("NullReferenceException - No Strategy Found - " + securityInfoes[index]);
-                    }
+                        #endregion
 
-                    RaceCondition = false;
-                }
-                catch (Exception e)
-                {
-                    while (RaceCondition) { Thread.Sleep(5); }
-                    RaceCondition = true;
-                    try
-                    {
-                        ErrorWriter.WriteLineAsync(e.ToString()).Wait();
-                        ErrorWriter.WriteLineAsync(e.Message).Wait();
-                        ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
-                        ErrorWriter.WriteLineAsync(new StackTrace(e, true).GetFrame(0).GetFileLineNumber().ToString());
-                        ErrorWriter.FlushAsync().Wait();
+                        try
+                        {
+                            if (!testCandleDates)
+                            {
+                                #region Find Strategy
+
+                                optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
+                                #endregion
+
+                                #region Simulate Real Values
+                                EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
+                                decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
+                                StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityInfoes[index], optimizerOptions);
+                                strategy.Start();
+                                //Candle Simulation Still Fake
+                                for (int i = 0; i < realCandles.Count; i++)
+                                {
+                                    strategy.ProcessCandle(realCandles[i]);
+                                }
+                                strategy.Stop();
+                                #endregion
+
+                                while (RaceCondition) { Thread.Sleep(5); }
+                                RaceCondition = true;
+
+                                //Calc Result
+                                decimal profit = emulationConnection.GetTotalValue() - initialMoney;
+                                profitPctTotal += (profit / orderLimit * 100);
+                                successfulSecurityIDs += 1;
+                            }
+                        }
+                        catch (System.NullReferenceException)
+                        {
+                            Console.WriteLine("NullReferenceException - No Strategy Found - " + securityInfoes[index]);
+                            SkipSecurityIDs[securityInfoes[index]] = new decimal[]
+                            {
+                                            loseLimitConstant,
+                                            minOrders,
+                                            positiveOrderPct,
+                                            minProfitPct
+                            };
+                        }
+                        catch (Exception e)
+                        {
+                            int maxWaitCount = 50000;
+                            int count = 0;
+
+                            while (RaceCondition && count < maxWaitCount)
+                            {
+                                Thread.Sleep(5); count += 1;
+                            }
+
+                            RaceCondition = true;
+                            try
+                            {
+                                ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                                ErrorWriter.WriteLineAsync(e.Message).Wait();
+                                ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                                ErrorWriter.WriteLineAsync(new StackTrace(e, true).GetFrame(0).GetFileLineNumber().ToString());
+                                ErrorWriter.FlushAsync().Wait();
+                            }
+                            catch { }
+                            finally { RaceCondition = false; }
+                        }
+                        finally { RaceCondition = false; }
                     }
-                    catch { }
-                    finally { RaceCondition = false; }
                 }
+                catch { }
+                finally { RaceCondition = false; }
             }
             //);
 

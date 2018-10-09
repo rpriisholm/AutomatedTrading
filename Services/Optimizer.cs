@@ -69,43 +69,49 @@ namespace StockSolution.Services
             {
                 SecurityInfo securityInfo = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, securityID, startTime, dateMayNotBeOlderThan.DateTime);
 
-                for (int i = 0; i < nrOfRuns; i++)
+                if (securityInfo.Candles != null)
                 {
-                    string path = @"C:\StockHistory\StrategyResults\Strategies_" + (nrOfRuns - i) + "_" + nrOfCandles + ".csv";
-                    StreamWriter streamWriter = new StreamWriter(path, true);
-                    CsvWriter csvWriter = new CsvWriter(streamWriter);
-
-                    List<Candle> initialCandles = securityInfo.Candles.GetRange(i * nrOfCandles, maxIndicatorLength);
-                    List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
-
-                    //Create Indicators 
-                    int index = i * nrOfCandles + maxIndicatorLength;
-                    List<Candle> simulateCandles = securityInfo.Candles.GetRange(index, nrOfCandles);
-
-                    //Simulation
-                    SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled);
-
-                    //Parallel.ForEach(indicatorPairs, indicatorPair =>
-                    foreach (IndicatorPair indicatorPair in indicatorPairs)
+                    if (securityInfo.Candles.Count >= minCandles)
                     {
-                        //Write TO CSV File
-                        csvWriter.WriteField(securityInfo.SecurityID);
-                        csvWriter.WriteField(indicatorPair.ShortIndicator);
-                        csvWriter.WriteField(indicatorPair.LongIndicator);
-                        csvWriter.WriteField(indicatorPair.LoseLimitMin);
-                        csvWriter.WriteField(indicatorPair.Orders);
-                        csvWriter.WriteField(indicatorPair.PositiveOrderPct);
-                        csvWriter.WriteField(indicatorPair.LastResult);
-                        csvWriter.WriteField(simulateCandles[0].ClosePrice);
-                        csvWriter.WriteField(simulateCandles[0].CloseTime);
+                        for (int i = 0; i < nrOfRuns; i++)
+                        {
+                            string path = @"C:\StockHistory\StrategyResults\Strategies_" + (nrOfRuns - i) + "_" + nrOfCandles + ".csv";
+                            StreamWriter streamWriter = new StreamWriter(path, true);
+                            CsvWriter csvWriter = new CsvWriter(streamWriter);
 
-                        csvWriter.NextRecord();
+                            List<Candle> initialCandles = securityInfo.Candles.GetRange(i * nrOfCandles, maxIndicatorLength);
+                            List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
+
+                            //Create Indicators 
+                            int index = i * nrOfCandles + maxIndicatorLength;
+                            List<Candle> simulateCandles = securityInfo.Candles.GetRange(index, nrOfCandles);
+
+                            //Simulation
+                            SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled);
+
+                            //Parallel.ForEach(indicatorPairs, indicatorPair =>
+                            foreach (IndicatorPair indicatorPair in indicatorPairs)
+                            {
+                                //Write TO CSV File
+                                csvWriter.WriteField(securityInfo.SecurityID);
+                                csvWriter.WriteField(indicatorPair.ShortIndicator);
+                                csvWriter.WriteField(indicatorPair.LongIndicator);
+                                csvWriter.WriteField(indicatorPair.LoseLimitMin);
+                                csvWriter.WriteField(indicatorPair.Orders);
+                                csvWriter.WriteField(indicatorPair.PositiveOrderPct);
+                                csvWriter.WriteField(indicatorPair.LastResult);
+                                csvWriter.WriteField(simulateCandles[0].ClosePrice);
+                                csvWriter.WriteField(simulateCandles[0].CloseTime);
+
+                                csvWriter.NextRecord();
+                            }
+
+                            csvWriter.Flush();
+                            streamWriter.Flush();
+                            streamWriter.Close();
+                            //);
+                        }
                     }
-
-                    csvWriter.Flush();
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                    //);
                 }
             }
         }

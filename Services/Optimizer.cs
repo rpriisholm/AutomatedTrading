@@ -52,11 +52,20 @@ namespace StockSolution.Services
             //Remove Candle Values If To Few
             for (int i = 0; i < securityInfos.Count; i++)
             {
-                if (securityInfos[i].Candles.Count < minCandles)
+                if(securityInfos[i] != null && securityInfos[i].Candles != null)
+                {
+                    if (securityInfos[i].Candles.Count < minCandles)
+                    {
+                        securityInfos.RemoveAt(i);
+                        i -= 1;
+                    }
+                }
+                else
                 {
                     securityInfos.RemoveAt(i);
                     i -= 1;
                 }
+                
             }
 
             //Initiate Symbols
@@ -199,7 +208,7 @@ namespace StockSolution.Services
                             {
                                 LengthIndicator<decimal> shortIndicatorClone = indicators[shortIndicator].Clone() as LengthIndicator<decimal>;
                                 LengthIndicator<decimal> longIndicatorClone = indicators[longIndicator].Clone() as LengthIndicator<decimal>;
-                                LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
+                                LengthIndicator shortIndicatorAdapter = new Entity.Models.LengthIndicator(shortIndicatorClone);
                                 LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
 
                                 indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter));

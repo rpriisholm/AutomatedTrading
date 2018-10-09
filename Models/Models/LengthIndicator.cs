@@ -58,7 +58,7 @@ namespace StockSolution.Entity.Models
     };
 
 
-        public virtual List<Candle> Candles { get; set; }
+        //public virtual List<Candle> Candles { get; set; }
 
         [NotMapped]
         public LengthIndicator<decimal> Indicator { get; set; }
@@ -97,7 +97,7 @@ namespace StockSolution.Entity.Models
 
         public LengthIndicator()
         {
-            this.Candles = new List<Candle>();
+            //this.Candles = new List<Candle>();
         }
 
         public LengthIndicator(LengthIndicator<decimal> indicator) : this()
@@ -109,7 +109,7 @@ namespace StockSolution.Entity.Models
         {
             foreach(var candle in candles)
             {
-                this.Candles.Add(candle);
+                //this.Candles.Add(candle);
                 this.Process(candle.ClosePrice, true);
             }
         }

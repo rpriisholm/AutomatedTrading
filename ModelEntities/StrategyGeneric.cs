@@ -19,8 +19,8 @@ namespace StockSolution.ModelEntities.Models
             base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant)
         {
             this.LastTestResult = optimizerOptions.BestIndicatorPair.LastResult;
-            optimizerOptions.BestIndicatorPair.ShortIndicator.Candles = securityID.Candles;
-            optimizerOptions.BestIndicatorPair.LongIndicator.Candles = securityID.Candles;
+            //optimizerOptions.BestIndicatorPair.ShortIndicator.Candles = securityID.Candles;
+            //optimizerOptions.BestIndicatorPair.LongIndicator.Candles = securityID.Candles;
             this.LastExecution = securityID.Candles[securityID.Candles.Count - 1].CloseTime;
         }
 

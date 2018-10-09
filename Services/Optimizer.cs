@@ -1,18 +1,14 @@
-﻿using SandS.Algorithm.Library.SortNamespace;
+﻿using CsvHelper;
+using SandS.Algorithm.Library.SortNamespace;
+using Stocks.Service;
 using StockSharp.Algo.Indicators;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using StockSolution.Services;
 using TickEnum;
-using Stocks.Service;
-using CsvHelper;
 
 namespace StockSolution.Services
 {
@@ -43,46 +39,15 @@ namespace StockSolution.Services
         {
             string fullPath = ImportAndExport.GetFullPath(TickPeriod.DailySimulation);
             int minCandles = (maxIndicatorLength + nrOfCandles * nrOfRuns);
-            Dictionary<SecurityInfo, List<IndicatorPair>> symbolsAndIndicatorPairs = new Dictionary<SecurityInfo, List<IndicatorPair>>();
-
             DateTimeOffset dateMayNotBeOlderThan = DateTimeOffset.UtcNow.AddDays(-(nrOfRuns * nrOfCandles * 1.7 + maxIndicatorLength));
             DateTime startTime = DateTime.Now;
-            IList<SecurityInfo> securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, startTime);
+            //IList<SecurityInfo> securityInfos = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, dateMayNotBeOlderThan.DateTime, startTime);
 
-            //Remove Candle Values If To Few
-            for (int i = 0; i < securityInfos.Count; i++)
-            {
-                if(securityInfos[i] != null && securityInfos[i].Candles != null)
-                {
-                    if (securityInfos[i].Candles.Count < minCandles)
-                    {
-                        securityInfos.RemoveAt(i);
-                        i -= 1;
-                    }
-                }
-                else
-                {
-                    securityInfos.RemoveAt(i);
-                    i -= 1;
-                }
-                
-            }
-
-            //Initiate Symbols
-            foreach (SecurityInfo securityInfo in securityInfos)
-            {
-                List<Candle> initialCandles = securityInfo.Candles.GetRange(minCandles - 1, maxIndicatorLength);
-
-                //Create Indicators 
-                List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
-                symbolsAndIndicatorPairs[securityInfo] = indicatorPairs;
-            }
-
-            #region Simulate
             //Run Simulation
-            for (int i = 0; i > nrOfRuns; i++)
+            for (int i = 0; i < nrOfRuns; i++)
             {
-                StreamWriter streamWriter = new StreamWriter(@"C:\StockHistory\StrategyResults\Strategies_"+ (nrOfRuns-i) + "_" + nrOfCandles + ".csv");
+                string path = @"C:\StockHistory\StrategyResults\Strategies_" + (nrOfRuns - i) + "_" + nrOfCandles + ".csv";
+                StreamWriter streamWriter = new StreamWriter(path, false);
                 CsvWriter csvWriter = new CsvWriter(streamWriter);
 
                 csvWriter.WriteField("SecurityId");
@@ -92,35 +57,38 @@ namespace StockSolution.Services
                 csvWriter.WriteField("Orders");
                 csvWriter.WriteField("PositiveOrderPct");
                 csvWriter.WriteField("LastResult");
+                csvWriter.WriteField("ClosePrice");
+                csvWriter.WriteField("CloseTime");
                 csvWriter.NextRecord();
+                csvWriter.Flush();
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
 
-                foreach (SecurityInfo securityInfo in securityInfos)
+            foreach (string securityID in LoaderService.GetSecurityIDs(fullPath))
+            {
+                SecurityInfo securityInfo = LoaderService.LoadLocalCandles(TimeSpan.FromDays(1), fullPath, securityID, startTime, dateMayNotBeOlderThan.DateTime);
+
+                for (int i = 0; i < nrOfRuns; i++)
                 {
-                    //Find Candles
-                    if (securityInfo.Candles.Count < minCandles)
+                    string path = @"C:\StockHistory\StrategyResults\Strategies_" + (nrOfRuns - i) + "_" + nrOfCandles + ".csv";
+                    StreamWriter streamWriter = new StreamWriter(path, true);
+                    CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+                    List<Candle> initialCandles = securityInfo.Candles.GetRange(i * nrOfCandles, maxIndicatorLength);
+                    List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
+
+                    //Create Indicators 
+                    int index = i * nrOfCandles + maxIndicatorLength;
+                    List<Candle> simulateCandles = securityInfo.Candles.GetRange(index, nrOfCandles);
+
+                    //Simulation
+                    SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled);
+
+                    //Parallel.ForEach(indicatorPairs, indicatorPair =>
+                    foreach (IndicatorPair indicatorPair in indicatorPairs)
                     {
-                        throw new InvalidDataException();
-                    }
-
-                    //Simulate Strategies/IndicatorPairs
-                    for (int j = 0; j < symbolsAndIndicatorPairs[securityInfo].Count; j++)
-                    {
-
-                        List<IndicatorPair> indicatorPairs = symbolsAndIndicatorPairs[securityInfo];
-
-                        int index = securityInfo.Candles.Count - (1 + i * nrOfCandles);
-                        List<Candle> simulateCandles = securityInfo.Candles.GetRange(index, nrOfCandles);
-
-                        //Simulation
-                        SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled);
-
-                        //Update Indicator Pairs
-                        symbolsAndIndicatorPairs[securityInfo] = indicatorPairs;
-                    }
-
-                    //Write To CSV File
-                    foreach(IndicatorPair indicatorPair in symbolsAndIndicatorPairs[securityInfo])
-                    {
+                        //Write TO CSV File
                         csvWriter.WriteField(securityInfo.SecurityID);
                         csvWriter.WriteField(indicatorPair.ShortIndicator);
                         csvWriter.WriteField(indicatorPair.LongIndicator);
@@ -128,15 +96,18 @@ namespace StockSolution.Services
                         csvWriter.WriteField(indicatorPair.Orders);
                         csvWriter.WriteField(indicatorPair.PositiveOrderPct);
                         csvWriter.WriteField(indicatorPair.LastResult);
+                        csvWriter.WriteField(simulateCandles[0].ClosePrice);
+                        csvWriter.WriteField(simulateCandles[0].CloseTime);
+
                         csvWriter.NextRecord();
                     }
 
                     csvWriter.Flush();
-                    //SAVE CURRENT INDICATORPAIRS - VALUES
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    //);
                 }
-                
             }
-            #endregion
         }
 
 
@@ -152,31 +123,31 @@ namespace StockSolution.Services
         {
             Parallel.ForEach(indicatorPairs, indicatorPair =>
             //foreach (IndicatorPair indicatorPair in indicatorPairs)
+            //for(int i = 0; i < indicatorPairs.Count; i++)
             {
+                int initialMoney = 100000;
+                int orderLimit = initialMoney / 10;
+                int maxInvestedPct = 80;
+                SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
+
+                EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, maxInvestedPct);
+                StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
+
+                strategyGeneric.Start();
+                //Process Candles
+                foreach (Candle candle in simulateCandles)
                 {
-                    int initialMoney = 100000;
-                    int orderLimit = initialMoney / 10;
-                    int maxInvestedPct = 80;
-                    SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
-
-                    EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, maxInvestedPct);
-                    StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
-
-                    strategyGeneric.Start();
-                    //Process Candles
-                    for (int i = 0; i < simulateCandles.Count; i++)
-                    {
-                        strategyGeneric.ProcessCandle(simulateCandles[i]);
-                    }
-                    strategyGeneric.Stop();
-
-                    //Set LastResult
-                    indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
-                    indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
-                    indicatorPair.Orders = strategyGeneric.OrderCount;
-                    indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
+                    strategyGeneric.ProcessCandle(candle);
                 }
-            });
+                strategyGeneric.Stop();
+
+                //Set LastResult
+                indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
+                indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
+                indicatorPair.Orders = strategyGeneric.OrderCount;
+                indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
+            }
+            );
         }
 
         private List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles, int minIndicatorLength, int maxIndicatorLength, int interval)
@@ -208,8 +179,8 @@ namespace StockSolution.Services
                             {
                                 LengthIndicator<decimal> shortIndicatorClone = indicators[shortIndicator].Clone() as LengthIndicator<decimal>;
                                 LengthIndicator<decimal> longIndicatorClone = indicators[longIndicator].Clone() as LengthIndicator<decimal>;
-                                LengthIndicator shortIndicatorAdapter = new Entity.Models.LengthIndicator(shortIndicatorClone);
-                                LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
+                                Entity.Models.LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
+                                Entity.Models.LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
 
                                 indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter));
                             }

@@ -1,4 +1,4 @@
-using StockSolution.Services;
+﻿using StockSolution.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CalcStrategies
+namespace CalcStrategies2
 {
     class Program
     {
@@ -20,7 +20,8 @@ namespace CalcStrategies
             #endregion
 
             Optimizer optimizer = new Optimizer();
-            optimizer.SimulationIndicatorPairsAndSave(8, 90, 2, 48, 2, false, true);
-       }
+            optimizer.SimulationIndicatorPairsAndSave(16, 45, 2, 48, 2, false, true);
+
+        }
     }
 }

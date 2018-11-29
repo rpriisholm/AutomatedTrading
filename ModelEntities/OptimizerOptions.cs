@@ -38,11 +38,14 @@ namespace StockSolution.ModelEntities.Models
         public bool IsSellEnabled { get; set; }
         public bool IsBuyEnabled { get; set; }
         public int MinOrders { get; set; }
-        public int PositiveOrderPct { get; set; }
+        public int MaxOrders { get; set; }
+        //public int PositiveOrderPct { get; set; }
         //public OptimizerOption<int> MaxOrders { get; set; }
         public int MinProfitPct { get; set; }
-        public decimal LoseLimitConstant { get; set; }
-        public virtual OptimizerOption<int> IndicatorLength { get; set; }
+        public decimal LoseLimitMin { get; set; }
+        public int IndicatorMaxLength { get; set; }
+        //public decimal LoseLimitConstant { get; set; }
+        //public virtual OptimizerOption<int> IndicatorLength { get; set; }
 
 
         private OptimizerOptions()
@@ -56,11 +59,14 @@ namespace StockSolution.ModelEntities.Models
             bool isSellEnabled,
             bool isBuyEnabled,
             int minOrders,
-            int positiveOrderPct,
+            int maxOrders,
+            //int positiveOrderPct,
             //OptimizerOption<int> maxOrders,
             int minProfitPct,
-            decimal loseLimitConstant,
-            OptimizerOption<int> indicatorLength
+            decimal loseLimitMin
+            //decimal loseLimitConstant,
+            //int IndicatorMaxLength
+            //OptimizerOption<int> indicatorLength
             )
         {
             this.RecursiveTests = recursiveTests;
@@ -68,11 +74,12 @@ namespace StockSolution.ModelEntities.Models
             this.IsSellEnabled = isSellEnabled;
             this.IsBuyEnabled = isBuyEnabled;
             this.MinOrders = minOrders;
-            this.PositiveOrderPct = positiveOrderPct;
-            //this.MaxOrders = maxOrders;
+            this.MaxOrders = maxOrders;
+            //this.PositiveOrderPct = positiveOrderPct;
             this.MinProfitPct = minProfitPct;
-            this.LoseLimitConstant = loseLimitConstant;
-            this.IndicatorLength = indicatorLength;
+            this.LoseLimitMin = loseLimitMin;
+            //this.LoseLimitConstant = loseLimitConstant;
+            //this.IndicatorMaxLength = indicatorLength;
         }
 
         public static OptimizerOptions GetInstance(TickPeriod tickPeriod)
@@ -86,14 +93,16 @@ namespace StockSolution.ModelEntities.Models
                     {
                         RecursiveTests = 2,
                         NrOfTestValues = 90,
-                        IsSellEnabled = true,
+                        IsSellEnabled = false,
                         IsBuyEnabled = true,
-                        MinOrders = 20,
+                        MinOrders = 5,
+                        MaxOrders = 8,
                         //MaxOrders = maxOrders,
-                        PositiveOrderPct = 75,
-                        MinProfitPct = 45,
-                        LoseLimitConstant = -0.12m,
-                        IndicatorLength = GetIndicatorLength(tickPeriod)
+                        //PositiveOrderPct = 75,
+                        MinProfitPct = 13,
+                        LoseLimitMin = -0.21m,
+                        //LoseLimitConstant = -0.12m,
+                        //IndicatorLength = GetIndicatorLength(tickPeriod)
                     };
                     break;
                     /*

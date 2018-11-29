@@ -151,7 +151,7 @@ namespace RealLib
 
         private static void NewStrategies()
         {
-            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300, 6.25m);
+            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300, 2.00m);
             MoveStrategiesToExpiring(ref newStrategies, "CurrentStrategies.csv", "ExpiringStrategies.csv");
         }
 
@@ -459,7 +459,7 @@ namespace RealLib
                                     }
                                     //BEGIN
                                     securityInfo.Candles = candles;
-                                    StrategyGeneric strategy = FindStrategy(securityInfo, optimizer, optimizerOptions, nrOfTestValues);
+                                    StrategyGeneric strategy = FindStrategy(securityInfo, optimizer, optimizerOptions);
 
 
                                     //Try To Add Strategy
@@ -512,7 +512,7 @@ namespace RealLib
             return newStrategies;
         }
 
-        private static StrategyGeneric FindStrategy(SecurityInfo securityInfo, Optimizer optimizer, OptimizerOptions optimizerOptions, int nrOfTestValues)
+        private static StrategyGeneric FindStrategy(SecurityInfo securityInfo, Optimizer optimizer, OptimizerOptions optimizerOptions)
         {
             try
             {
@@ -520,8 +520,8 @@ namespace RealLib
                 //Get Test Candles
                 List<Candle> candles = securityInfo.Candles.ToList();
                 int keyCount = securityInfo.Candles.Count;
-                int beginIndexTest = keyCount - (optimizer.RecursiveTests * nrOfTestValues + optimizerOptions.IndicatorLength.Max);
-                int testCount = optimizerOptions.IndicatorLength.Max + optimizer.RecursiveTests * nrOfTestValues;
+                int beginIndexTest = keyCount - (optimizer.RecursiveTests * optimizerOptions.NrOfTestValues + optimizer.GetMaxIndicatorLength());
+                int testCount = optimizer.GetMaxIndicatorLength() + optimizer.RecursiveTests * optimizerOptions.NrOfTestValues;
 
 
                 List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
@@ -532,7 +532,7 @@ namespace RealLib
                 {
                     #region Find Strategy / Best Indicator Pairs + Its options
 
-                    optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
+                    optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, optimizerOptions.NrOfTestValues, 1);
                     #endregion
 
                     #region Create The Strategy

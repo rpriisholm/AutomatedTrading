@@ -415,7 +415,7 @@ namespace RealLib
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
             Optimizer optimizer = new Optimizer();
             OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
-            int nrOfTestValues = 90;
+            //int nrOfTestValues = 90;
             int testMoney = 100000;
             int orderLimit = testMoney / 10;
             DateTime currentDateTime = endDate;
@@ -512,6 +512,7 @@ namespace RealLib
             return newStrategies;
         }
 
+        /* TODO 06/12/2018 */
         private static StrategyGeneric FindStrategy(SecurityInfo securityInfo, Optimizer optimizer, OptimizerOptions optimizerOptions)
         {
             try

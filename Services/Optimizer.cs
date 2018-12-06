@@ -35,7 +35,8 @@ namespace StockSolution.Services
             set { this._LoseLimitConstant = value; }
         }
 
-        //Might Need Dual Run To Check Test Values - Ex. Every 30-45 or 90
+        /* Simulate IndicatorPairs And Save
+         * Might Need Dual Run To Check Test Values - Ex. Every 30-45 or 90
         public void SimulationIndicatorPairsAndSave(int nrOfRuns, int nrOfCandles, int minIndicatorLength, int maxIndicatorLength, int indicatorInterval, bool isSellEnabled, bool isBuyEnabled)
         {
             string fullPath = ImportAndExport.GetFullPath(TickPeriod.DailySimulation);
@@ -54,6 +55,7 @@ namespace StockSolution.Services
                 csvWriter.WriteField("SecurityId");
                 csvWriter.WriteField("ShortIndicator");
                 csvWriter.WriteField("LongIndicator");
+                csvWriter.WriteField("LoseLimit");
                 csvWriter.WriteField("LoseLimitMin");
                 csvWriter.WriteField("Orders");
                 csvWriter.WriteField("PositiveOrderPct");
@@ -81,8 +83,8 @@ namespace StockSolution.Services
                             CsvWriter csvWriter = new CsvWriter(streamWriter);
 
                             List<Candle> initialCandles = securityInfo.Candles.GetRange(i * nrOfCandles, maxIndicatorLength);
-                            List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
-
+                            //List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength, maxIndicatorLength, indicatorInterval);
+                            List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, minIndicatorLength);
                             //Create Indicators 
                             int index = i * nrOfCandles + maxIndicatorLength;
                             List<Candle> simulateCandles = securityInfo.Candles.GetRange(index, nrOfCandles);
@@ -97,6 +99,7 @@ namespace StockSolution.Services
                                 csvWriter.WriteField(securityInfo.SecurityID);
                                 csvWriter.WriteField(indicatorPair.ShortIndicator);
                                 csvWriter.WriteField(indicatorPair.LongIndicator);
+                                csvWriter.WriteField(indicatorPair.LoseLimit);
                                 csvWriter.WriteField(indicatorPair.LoseLimitMin);
                                 csvWriter.WriteField(indicatorPair.Orders);
                                 csvWriter.WriteField(indicatorPair.PositiveOrderPct);
@@ -116,17 +119,19 @@ namespace StockSolution.Services
                 }
             }
         }
+        */
 
-
-        // Simulate Indicator Pairs No loseLimitConstant
+        /* Simulate Indicator Pairs No loseLimitConstant
         public void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled)
         {
             //IGNORES loseLimitConstant
             SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled, -10000m);
         }
+        */ 
 
         // Simulate IndicatorPairs
-        private void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant)
+        /* TODO 06/12/2018 */
+        private void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, bool isRealTime)
         {
             Parallel.ForEach(indicatorPairs, indicatorPair =>
             //foreach (IndicatorPair indicatorPair in indicatorPairs)
@@ -138,7 +143,16 @@ namespace StockSolution.Services
                 SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
 
                 EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, maxInvestedPct);
-                StrategyGeneric strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant);
+                StrategyGeneric strategyGeneric = null;
+
+                if (isRealTime)
+                {
+                    strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, indicatorPair.LoseLimit);
+                }
+                else
+                {
+                    strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair.LongIndicator, indicatorPair.ShortIndicator, isSellEnabled, isBuyEnabled, indicatorPair.LoseLimitMin);
+                }
 
                 strategyGeneric.Start();
                 //Process Candles
@@ -157,6 +171,7 @@ namespace StockSolution.Services
             );
         }
 
+        /* CREATEINDICATORSOLD
         private List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles, int minIndicatorLength, int maxIndicatorLength, int interval)
         {
             int differentIndicators;
@@ -200,6 +215,7 @@ namespace StockSolution.Services
             }
             return indicatorPairs;
         }
+        */
 
         private List<LengthIndicator<decimal>> CreateIndicators(out int differentIndicators, int minIndicatorLength, int maxIndicatorLength, int interval)
         {
@@ -231,6 +247,7 @@ namespace StockSolution.Services
             return indicators;
         }
 
+        /* TODO 06/12/2018 */
         public OptimizerOptions FindBestOptions(OptimizerOptions optimizerOptions, List<Candle> candles, int leverage)
         {
             int minCandles = (this.GetMaxIndicatorLength() + optimizerOptions.NrOfTestValues * optimizerOptions.RecursiveTests);
@@ -241,21 +258,26 @@ namespace StockSolution.Services
             int initIndex = candles.Count - (this.GetMaxIndicatorLength() + optimizerOptions.NrOfTestValues * optimizerOptions.RecursiveTests);
             List<Candle> initialCandles = candles.GetRange(initIndex, this.GetMaxIndicatorLength());
             //List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-            List<IndicatorPair> indicatorPairs = this.CreateIndicatorPairs(initialCandles);
+            List<IndicatorPair> indicatorPairs = this.CreateIndicatorPairs(initialCandles, optimizerOptions.LoseLimitMin);
 
             //START SIMULATION - RUN X TIMES
             for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
             {
                 List<Candle> currentCandles = candles.GetRange(candles.Count - (1 + optimizerOptions.NrOfTestValues * (optimizerOptions.RecursiveTests - recursiveTests)), optimizerOptions.NrOfTestValues);
+                bool isReal = false;
 
+                /* TODO 06/12/2018 */
                 //Simulate IndicatorPairs With CurrentCandles
-                SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant);
+                SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, isReal);
 
                 //Missing Recursive AND FILTER USING CHOOSEN SETTINGS
                 List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();
                 for (int i = 0; i < indicatorPairs.Count; i++)
                 {
-                    if (optimizerOptions.MinOrders <= indicatorPairs[i].Orders && optimizerOptions.MinProfitPct <= indicatorPairs[i].LastResult && optimizerOptions.PositiveOrderPct <= indicatorPairs[i].PositiveOrderPct)
+                    if (optimizerOptions.MinOrders <= indicatorPairs[i].Orders &&
+                        optimizerOptions.MaxOrders >= indicatorPairs[i].Orders &&
+                        optimizerOptions.MinProfitPct <= indicatorPairs[i].LastResult &&
+                        optimizerOptions.LoseLimitMin <= indicatorPairs[i].LoseLimit)
                     {
                         filteredIndicatorPairs.Add(indicatorPairs[i]);
                     }
@@ -338,10 +360,10 @@ namespace StockSolution.Services
 
 
         private int _MaxIndicatorLength = -1;
-        
+
         public int GetMaxIndicatorLength()
         {
-            if(_MaxIndicatorLength <= 0)
+            if (_MaxIndicatorLength <= 0)
             {
                 StringReader strReader = new StringReader(this._EnabledPairs);
                 while (strReader.Peek() >= 0)
@@ -349,7 +371,7 @@ namespace StockSolution.Services
                     string enabledIndicatorPair = strReader.ReadLine();
                     string[] numbers = Regex.Split(enabledIndicatorPair, @"\D+");
 
-                    foreach(string number in numbers)
+                    foreach (string number in numbers)
                     {
                         int length = int.Parse(number);
                         if (length > this._MaxIndicatorLength)
@@ -360,21 +382,22 @@ namespace StockSolution.Services
                 }
             }
 
-            return this._MaxIndicatorLength;            
+            return this._MaxIndicatorLength;
         }
 
 
         private List<LengthIndicator<decimal>> _ShortIndicators = new List<LengthIndicator<decimal>>();
         private List<LengthIndicator<decimal>> _LongIndicators = new List<LengthIndicator<decimal>>();
+        private List<decimal> _LoseLimits = new List<decimal>();
 
-        public List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles)
+        public List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles, decimal loseLimitMin)
         {
             List<IndicatorPair> indicatorPairs = new List<IndicatorPair>();
-            
+
             //Singleton
-            if(_ShortIndicators.Count <= 0)
-            { 
-            StringReader strReader = new StringReader(this._EnabledPairs);
+            if (_ShortIndicators.Count <= 0)
+            {
+                StringReader strReader = new StringReader(this._EnabledPairs);
 
                 while (strReader.Peek() >= 0)
                 {
@@ -389,7 +412,7 @@ namespace StockSolution.Services
 
                         LengthIndicator<decimal> shortIndicator = null;
                         LengthIndicator<decimal> longIndicator = null;
-
+                        decimal loseLimit = 0;
 
                         string[] indicator = indicators[0].Split(' ');
 
@@ -468,6 +491,8 @@ namespace StockSolution.Services
                                 break;
                         }
 
+                        loseLimit = -(decimal.Parse(indicators[2]));
+
                         if (!(shortIndicator != null))
                         {
                             throw new ArgumentNullException();
@@ -478,21 +503,27 @@ namespace StockSolution.Services
                             throw new ArgumentNullException();
                         }
 
+                        if (loseLimit == 0)
+                        {
+                            throw new ArgumentNullException();
+                        }
+
+                        _LoseLimits.Add(loseLimit);
                         _ShortIndicators.Add(shortIndicator);
                         _LongIndicators.Add(longIndicator);
                     }
                 }
             }
 
-            // Clones Empty Indicators And Create Pairs
-            for(int i; i < _ShortIndicators.Count; i++)
+            // Clone Empty Indicators And Create Pairs
+            for (int i = 0; i < _ShortIndicators.Count; i++)
             {
                 LengthIndicator<decimal> shortIndicatorClone = _ShortIndicators[i].Clone() as LengthIndicator<decimal>;
                 LengthIndicator<decimal> longIndicatorClone = _LongIndicators[i].Clone() as LengthIndicator<decimal>;
                 Entity.Models.LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
                 Entity.Models.LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
                 // Init candles
-                for(i = initialCandles.Count - shortIndicatorAdapter.Indicator.Length; i < initialCandles.Count; i++)
+                for (i = initialCandles.Count - shortIndicatorAdapter.Indicator.Length; i < initialCandles.Count; i++)
                 {
                     shortIndicatorAdapter.Indicator.Process(initialCandles[i].ClosePrice);
                 }
@@ -502,7 +533,7 @@ namespace StockSolution.Services
                     longIndicatorAdapter.Indicator.Process(initialCandles[i].ClosePrice);
                 }
 
-                indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter));
+                indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter, _LoseLimits[i], loseLimitMin));
             }
 
             return indicatorPairs;
@@ -515,432 +546,433 @@ namespace StockSolution.Services
          * ShortIndicator - LongIndicator 
          */
         private readonly string _EnabledPairs = @"
-KAMA 2 - EMA 2
-SMMA 2 - EMA 2
-LinearReg 22 - Highest 24
-LinearReg 26 - Highest 26
-LinearReg 28 - Highest 28
-LinearReg 22 - Highest 30
-LinearReg 26 - Highest 30
-LinearReg 30 - Highest 30
-LinearReg 28 - Highest 32
-LinearReg 30 - Highest 32
-LinearReg 32 - Highest 32
-LinearReg 32 - Highest 34
-LinearReg 22 - Highest 36
-LinearReg 28 - Highest 36
-LinearReg 30 - Highest 36
-LinearReg 36 - Highest 36
-LinearReg 24 - Highest 38
-LinearReg 40 - Highest 40
-LinearReg 24 - Highest 42
-LinearReg 38 - Highest 42
-LinearReg 40 - Highest 42
-LinearReg 24 - Highest 44
-LinearReg 40 - Highest 44
-LinearReg 24 - Highest 46
-LinearReg 38 - Highest 46
-LinearReg 40 - Highest 46
-LinearReg 46 - Highest 46
-SMMA 2 - HMA 2
-EMA 6 - HMA 6
-EMA 8 - JMA 10
-KAMA 8 - JMA 10
-SMA 8 - JMA 14
-SMMA 12 - JMA 14
-SMMA 6 - JMA 14
-SMA 14 - JMA 16
-SMA 16 - JMA 16
-SMMA 10 - JMA 16
-SMMA 8 - JMA 20
-LinearReg 20 - JMA 22
-LinearReg 22 - JMA 22
-SMMA 8 - JMA 22
-LinearReg 26 - JMA 26
-LinearReg 28 - JMA 30
-LinearReg 30 - JMA 30
-LinearReg 28 - JMA 32
-LinearReg 24 - JMA 34
-LinearReg 34 - JMA 34
-LinearReg 26 - JMA 36
-LinearReg 34 - JMA 36
-LinearReg 32 - JMA 38
-LinearReg 38 - JMA 38
-LinearReg 28 - JMA 40
-LinearReg 38 - JMA 40
-LinearReg 40 - JMA 40
-LinearReg 28 - JMA 42
-LinearReg 30 - JMA 42
-LinearReg 32 - JMA 42
-LinearReg 36 - JMA 42
-LinearReg 28 - JMA 46
-LinearReg 36 - JMA 46
-LinearReg 44 - JMA 46
-EMA 6 - JMA 6
-SMA 4 - JMA 6
-KAMA 2 - JMA 8
-SMA 6 - JMA 8
-Highest 10 - LinearReg 10
-SMMA 10 - EMA 12
-SMMA 4 - EMA 6
-SMMA 8 - EMA 8
-LinearReg 24 - Highest 24
-LinearReg 24 - Highest 26
-LinearReg 24 - Highest 30
-LinearReg 26 - Highest 34
-LinearReg 34 - Highest 34
-LinearReg 34 - Highest 36
-LinearReg 22 - Highest 38
-LinearReg 26 - Highest 38
-LinearReg 22 - Highest 42
-LinearReg 26 - Highest 42
-LinearReg 22 - Highest 44
-LinearReg 28 - Highest 44
-LinearReg 30 - Highest 44
-LinearReg 36 - Highest 44
-LinearReg 44 - Highest 44
-LinearReg 22 - Highest 46
-LinearReg 26 - Highest 46
-JMA 2 - HMA 2
-Highest 2 - HMA 4
-SMA 6 - HMA 6
-SMMA 4 - HMA 6
-SMMA 6 - HMA 6
-Highest 6 - HMA 8
-EMA 10 - JMA 10
-SMA 6 - JMA 10
-SMA 8 - JMA 10
-SMMA 4 - JMA 10
-SMMA 6 - JMA 10
-SMA 6 - JMA 12
-SMA 8 - JMA 12
-SMMA 12 - JMA 12
-SMMA 6 - JMA 12
-SMA 14 - JMA 14
-SMMA 14 - JMA 14
-SMMA 10 - JMA 18
-KAMA 2 - JMA 2
-SMA 2 - JMA 2
-SMMA 10 - JMA 20
-LinearReg 22 - JMA 24
-LinearReg 26 - JMA 28
-LinearReg 24 - JMA 30
-LinearReg 24 - JMA 32
-LinearReg 28 - JMA 34
-LinearReg 30 - JMA 34
-LinearReg 32 - JMA 34
-LinearReg 32 - JMA 36
-LinearReg 26 - JMA 38
-LinearReg 34 - JMA 38
-KAMA 2 - JMA 4
-LinearReg 2 - JMA 4
-SMMA 2 - JMA 4
-LinearReg 34 - JMA 42
-LinearReg 42 - JMA 42
-LinearReg 28 - JMA 44
-LinearReg 38 - JMA 44
-LinearReg 40 - JMA 44
-LinearReg 40 - JMA 46
-LinearReg 46 - JMA 46
-KAMA 2 - JMA 6
-LinearReg 2 - JMA 6
-SMA 6 - JMA 6
-SMMA 4 - JMA 6
-EMA 6 - JMA 8
-KAMA 6 - LinearReg 10
-SMMA 8 - EMA 10
-SMMA 6 - EMA 8
-LinearReg 22 - Highest 28
-LinearReg 26 - Highest 28
-LinearReg 22 - Highest 32
-LinearReg 26 - Highest 32
-LinearReg 22 - Highest 34
-LinearReg 28 - Highest 34
-LinearReg 26 - Highest 36
-LinearReg 32 - Highest 36
-LinearReg 28 - Highest 38
-LinearReg 34 - Highest 38
-LinearReg 22 - Highest 40
-LinearReg 26 - Highest 40
-LinearReg 28 - Highest 40
-LinearReg 34 - Highest 40
-LinearReg 28 - Highest 42
-LinearReg 34 - Highest 42
-LinearReg 42 - Highest 42
-LinearReg 34 - Highest 44
-LinearReg 42 - Highest 44
-LinearReg 28 - Highest 46
-LinearReg 34 - Highest 46
-LinearReg 42 - Highest 46
-KAMA 2 - HMA 2
-LinearReg 2 - HMA 2
-Lowest 2 - HMA 2
-SMA 2 - HMA 2
-KAMA 4 - HMA 6
-KAMA 6 - HMA 6
-KAMA 10 - JMA 10
-SMA 10 - JMA 10
-KAMA 10 - JMA 12
-KAMA 12 - JMA 12
-SMA 10 - JMA 12
-SMA 12 - JMA 12
-SMMA 10 - JMA 14
-SMMA 8 - JMA 14
-SMMA 14 - JMA 16
-SMMA 12 - JMA 18
-SMMA 8 - JMA 18
-EMA 2 - JMA 2
-SMMA 2 - JMA 2
-SMMA 12 - JMA 20
-LinearReg 24 - JMA 26
-LinearReg 22 - JMA 28
-LinearReg 28 - JMA 28
-LinearReg 26 - JMA 30
-LinearReg 26 - JMA 32
-LinearReg 30 - JMA 32
-LinearReg 32 - JMA 32
-LinearReg 30 - JMA 36
-LinearReg 36 - JMA 36
-LinearReg 28 - JMA 38
-SMA 2 - JMA 4
-LinearReg 34 - JMA 40
-LinearReg 38 - JMA 42
-LinearReg 40 - JMA 42
-LinearReg 30 - JMA 44
-LinearReg 32 - JMA 44
-LinearReg 36 - JMA 44
-LinearReg 44 - JMA 44
-LinearReg 30 - JMA 46
-LinearReg 32 - JMA 46
-LinearReg 38 - JMA 46
-KAMA 4 - JMA 6
-SMMA 6 - EMA 6
-LinearReg 22 - Highest 22
-LinearReg 22 - Highest 26
-LinearReg 24 - Highest 28
-LinearReg 28 - Highest 30
-LinearReg 24 - Highest 32
-LinearReg 24 - Highest 34
-LinearReg 30 - Highest 34
-LinearReg 24 - Highest 36
-LinearReg 30 - Highest 38
-LinearReg 32 - Highest 38
-LinearReg 36 - Highest 38
-LinearReg 38 - Highest 38
-LinearReg 24 - Highest 40
-LinearReg 30 - Highest 40
-LinearReg 32 - Highest 40
-LinearReg 36 - Highest 40
-LinearReg 38 - Highest 40
-LinearReg 30 - Highest 42
-LinearReg 32 - Highest 42
-LinearReg 36 - Highest 42
-LinearReg 26 - Highest 44
-LinearReg 32 - Highest 44
-LinearReg 38 - Highest 44
-LinearReg 30 - Highest 46
-LinearReg 32 - Highest 46
-LinearReg 36 - Highest 46
-LinearReg 44 - Highest 46
-EMA 2 - HMA 2
-Highest 2 - HMA 2
-KAMA 2 - HMA 4
-SMA 2 - HMA 4
-Highest 2 - HMA 6
-Highest 4 - HMA 6
-Highest 6 - HMA 6
-Highest 4 - HMA 8
-KAMA 4 - JMA 10
-KAMA 6 - JMA 10
-SMMA 10 - JMA 10
-SMMA 8 - JMA 10
-SMMA 10 - JMA 12
-SMMA 8 - JMA 12
-SMA 10 - JMA 14
-SMA 12 - JMA 14
-SMMA 12 - JMA 16
-SMMA 8 - JMA 16
-SMMA 14 - JMA 18
-LinearReg 22 - JMA 26
-LinearReg 24 - JMA 28
-LinearReg 26 - JMA 34
-LinearReg 28 - JMA 36
-LinearReg 30 - JMA 38
-LinearReg 36 - JMA 38
-SMA 4 - JMA 4
-LinearReg 30 - JMA 40
-LinearReg 32 - JMA 40
-LinearReg 36 - JMA 40
-LinearReg 34 - JMA 44
-LinearReg 42 - JMA 44
-LinearReg 34 - JMA 46
-LinearReg 42 - JMA 46
-EMA 4 - JMA 6
-SMMA 6 - JMA 6
-SMA 8 - JMA 8
-SMMA 6 - JMA 8
-Highest 4 - LinearReg 10
-KAMA 6 - JMA 6
-KAMA 6 - JMA 8
-SMA 6 - LinearReg 10
-SMA 8 - LinearReg 10
-Highest 10 - LinearReg 12
-Highest 14 - LinearReg 14
-Highest 6 - LinearReg 16
-Highest 8 - LinearReg 16
-SMA 10 - LinearReg 16
-Highest 8 - LinearReg 18
-SMMA 2 - LinearReg 2
-EMA 4 - LinearReg 4
-EMA 6 - LinearReg 6
-Highest 2 - LinearReg 6
-Highest 4 - LinearReg 6
-Highest 6 - LinearReg 6
-SMA 4 - LinearReg 6
-EMA 6 - LinearReg 8
-Highest 6 - LinearReg 8
-SMMA 12 - Lowest 14
-SMMA 6 - Lowest 6
-SMMA 6 - Lowest 8
-MeanDeviation 6 - Momentum 10
-MeanDeviation 8 - Momentum 10
-MeanDeviation 12 - Momentum 14
-MeanDeviation 4 - Momentum 14
-MeanDeviation 2 - Momentum 16
-MeanDeviation 16 - Momentum 18
-MeanDeviation 6 - Momentum 18
-MeanDeviation 6 - Momentum 20
-MeanDeviation 12 - Momentum 24
-MeanDeviation 2 - Momentum 26
-MeanDeviation 4 - Momentum 26
-MeanDeviation 6 - Momentum 28
-MeanDeviation 6 - Momentum 34
-MeanDeviation 2 - Momentum 4
-MeanDeviation 2 - Momentum 44
-MeanDeviation 4 - Momentum 6
-Highest 6 - LinearReg 10
-Highest 8 - LinearReg 10
-SMMA 10 - LinearReg 10
-SMMA 8 - LinearReg 10
-Highest 6 - LinearReg 12
-Highest 8 - LinearReg 12
-Highest 10 - LinearReg 16
-Highest 12 - LinearReg 16
-Highest 12 - LinearReg 18
-Highest 14 - LinearReg 18
-Highest 18 - LinearReg 18
-Lowest 2 - LinearReg 2
-Highest 2 - LinearReg 4
-SMMA 2 - LinearReg 4
-EMA 4 - LinearReg 6
-SMA 6 - LinearReg 6
-SMMA 4 - LinearReg 6
-SMMA 6 - LinearReg 6
-SMA 6 - LinearReg 8
-SMMA 6 - LinearReg 8
-SMMA 10 - Lowest 10
-SMMA 14 - Lowest 14
-KAMA 2 - Lowest 2
-SMMA 2 - Lowest 2
-MeanDeviation 4 - Momentum 10
-MeanDeviation 2 - Momentum 12
-MeanDeviation 6 - Momentum 14
-MeanDeviation 10 - Momentum 16
-MeanDeviation 2 - Momentum 18
-MeanDeviation 4 - Momentum 18
-MeanDeviation 2 - Momentum 2
-MeanDeviation 2 - Momentum 22
-MeanDeviation 4 - Momentum 22
-MeanDeviation 6 - Momentum 24
-MeanDeviation 10 - Momentum 26
-MeanDeviation 2 - Momentum 28
-MeanDeviation 4 - Momentum 28
-MeanDeviation 2 - Momentum 30
-MeanDeviation 8 - Momentum 30
-MeanDeviation 6 - Momentum 32
-MeanDeviation 2 - Momentum 40
-MeanDeviation 4 - Momentum 46
-MeanDeviation 6 - Momentum 6
-MeanDeviation 2 - Momentum 8
-KAMA 2 - SMA 2
-KAMA 2 - SMMA 2
-KAMA 8 - LinearReg 10
-Highest 12 - LinearReg 12
-SMA 10 - LinearReg 14
-Highest 16 - LinearReg 16
-Highest 10 - LinearReg 18
-Highest 16 - LinearReg 18
-Highest 6 - LinearReg 18
-KAMA 2 - LinearReg 2
-SMA 2 - LinearReg 2
-KAMA 2 - LinearReg 4
-SMA 2 - LinearReg 4
-SMMA 4 - LinearReg 4
-KAMA 2 - LinearReg 6
-KAMA 4 - LinearReg 6
-KAMA 6 - LinearReg 6
-SMMA 8 - Lowest 10
-EMA 2 - Lowest 2
-MeanDeviation 10 - Momentum 10
-MeanDeviation 10 - Momentum 12
-MeanDeviation 10 - Momentum 14
-MeanDeviation 14 - Momentum 14
-MeanDeviation 6 - Momentum 16
-MeanDeviation 18 - Momentum 18
-MeanDeviation 8 - Momentum 18
-MeanDeviation 10 - Momentum 20
-MeanDeviation 10 - Momentum 22
-MeanDeviation 12 - Momentum 22
-MeanDeviation 14 - Momentum 22
-MeanDeviation 10 - Momentum 24
-MeanDeviation 14 - Momentum 24
-MeanDeviation 6 - Momentum 26
-MeanDeviation 8 - Momentum 26
-MeanDeviation 8 - Momentum 28
-MeanDeviation 4 - Momentum 30
-MeanDeviation 2 - Momentum 32
-MeanDeviation 2 - Momentum 34
-MeanDeviation 4 - Momentum 34
-MeanDeviation 2 - Momentum 42
-MeanDeviation 4 - Momentum 42
-MeanDeviation 4 - Momentum 44
-MeanDeviation 2 - Momentum 6
-Highest 10 - LinearReg 14
-Highest 12 - LinearReg 14
-Highest 4 - LinearReg 14
-Highest 6 - LinearReg 14
-Highest 8 - LinearReg 14
-Highest 14 - LinearReg 16
-SMA 8 - LinearReg 16
-EMA 2 - LinearReg 2
-Highest 8 - LinearReg 20
-KAMA 4 - LinearReg 8
-KAMA 6 - LinearReg 8
-SMMA 10 - Lowest 12
-SMMA 12 - Lowest 12
-EMA 4 - Lowest 4
-SMMA 4 - Lowest 6
-SMMA 8 - Lowest 8
-MeanDeviation 2 - Momentum 10
-MeanDeviation 6 - Momentum 12
-MeanDeviation 2 - Momentum 14
-MeanDeviation 8 - Momentum 14
-MeanDeviation 14 - Momentum 16
-MeanDeviation 10 - Momentum 18
-MeanDeviation 12 - Momentum 18
-MeanDeviation 14 - Momentum 18
-MeanDeviation 2 - Momentum 20
-MeanDeviation 6 - Momentum 22
-MeanDeviation 8 - Momentum 22
-MeanDeviation 2 - Momentum 24
-MeanDeviation 8 - Momentum 24
-MeanDeviation 10 - Momentum 28
-MeanDeviation 6 - Momentum 30
-MeanDeviation 2 - Momentum 36
-MeanDeviation 2 - Momentum 38
-MeanDeviation 4 - Momentum 38
-MeanDeviation 2 - Momentum 46
-MeanDeviation 6 - Momentum 8
+SMMA 12 - JMA 20 - 0.16
+KAMA 12 - JMA 12 - 0.13
+SMA 8 - LinearReg 10 - 0.13
+KAMA 6 - LinearReg 10 - 0.13
+MeanDeviation 14 - Momentum 24 - 0.19
+LinearReg 2 - JMA 6 - 0.11
+MeanDeviation 4 - Momentum 42 - 0.24
+SMMA 4 - HMA 6 - 0.1
+MeanDeviation 4 - Momentum 44 - 0.24
+LinearReg 32 - JMA 46 - 0.11
+LinearReg 28 - JMA 46 - 0.11
+Highest 2 - LinearReg 6 - 0.17
+SMA 6 - JMA 12 - 0.1
+EMA 6 - HMA 6 - 0.12
+Highest 16 - LinearReg 18 - 0.16
+Highest 14 - LinearReg 18 - 0.16
+LinearReg 2 - JMA 4 - 0.12
+SMA 10 - LinearReg 14 - 0.14
+Highest 18 - LinearReg 18 - 0.16
+MeanDeviation 8 - Momentum 30 - 0.22
+SMA 10 - LinearReg 16 - 0.15
+LinearReg 26 - JMA 38 - 0.11
+KAMA 2 - JMA 8 - 0.13
+LinearReg 20 - JMA 22 - 0.11
+MeanDeviation 14 - Momentum 22 - 0.16
+SMMA 8 - JMA 22 - 0.11
+MeanDeviation 10 - Momentum 28 - 0.22
+LinearReg 28 - JMA 44 - 0.11
+MeanDeviation 4 - Momentum 46 - 0.24
+LinearReg 24 - JMA 34 - 0.11
+MeanDeviation 18 - Momentum 18 - 0.15
+SMMA 10 - EMA 12 - 0.2
+SMMA 12 - Lowest 14 - 0.2
+SMMA 10 - JMA 20 - 0.15
+LinearReg 30 - JMA 46 - 0.11
+MeanDeviation 6 - Momentum 34 - 0.24
+SMA 8 - LinearReg 16 - 0.15
+KAMA 4 - JMA 10 - 0.1
+SMMA 14 - JMA 18 - 0.15
+SMA 10 - JMA 14 - 0.11
+SMA 16 - JMA 16 - 0.14
+LinearReg 28 - JMA 42 - 0.11
+SMA 6 - LinearReg 10 - 0.13
+MeanDeviation 16 - Momentum 18 - 0.12
+EMA 6 - LinearReg 8 - 0.11
+EMA 4 - JMA 6 - 0.12
+MeanDeviation 12 - Momentum 24 - 0.19
+Highest 12 - LinearReg 18 - 0.16
+LinearReg 32 - JMA 44 - 0.11
+SMMA 8 - EMA 8 - 0.16
+MeanDeviation 10 - Momentum 26 - 0.22
+SMA 2 - JMA 4 - 0.16
+Highest 8 - LinearReg 20 - 0.2
+LinearReg 22 - JMA 28 - 0.11
+SMA 12 - JMA 14 - 0.11
+SMMA 8 - LinearReg 10 - 0.16
+EMA 6 - JMA 8 - 0.14
+MeanDeviation 10 - Momentum 20 - 0.22
+MeanDeviation 4 - Momentum 38 - 0.23
+LinearReg 30 - JMA 44 - 0.11
+MeanDeviation 8 - Momentum 28 - 0.22
+LinearReg 26 - JMA 36 - 0.11
+MeanDeviation 12 - Momentum 22 - 0.16
+SMMA 12 - JMA 18 - 0.16
+SMMA 6 - JMA 14 - 0.16
+SMA 14 - JMA 16 - 0.12
+SMA 8 - JMA 14 - 0.09
+KAMA 10 - JMA 12 - 0.14
+Highest 10 - LinearReg 18 - 0.19
+LinearReg 24 - JMA 32 - 0.12
+SMMA 10 - LinearReg 10 - 0.16
+KAMA 8 - JMA 10 - 0.16
+SMMA 14 - JMA 16 - 0.15
+SMA 6 - HMA 6 - 0.09
+LinearReg 34 - JMA 46 - 0.11
+EMA 4 - LinearReg 6 - 0.13
+SMMA 6 - HMA 6 - 0.12
+LinearReg 28 - JMA 40 - 0.11
+MeanDeviation 6 - Momentum 30 - 0.25
+MeanDeviation 14 - Momentum 14 - 0.12
+EMA 10 - JMA 10 - 0.14
+MeanDeviation 10 - Momentum 22 - 0.23
+MeanDeviation 10 - Momentum 24 - 0.22
+LinearReg 30 - JMA 42 - 0.11
+SMMA 8 - JMA 20 - 0.11
+LinearReg 32 - JMA 42 - 0.11
+Highest 6 - LinearReg 18 - 0.19
+KAMA 6 - JMA 10 - 0.2
+MeanDeviation 14 - Momentum 18 - 0.15
+KAMA 8 - LinearReg 10 - 0.14
+SMA 14 - JMA 14 - 0.13
+MeanDeviation 8 - Momentum 26 - 0.22
+MeanDeviation 10 - Momentum 12 - 0.22
+LinearReg 22 - JMA 26 - 0.11
+SMMA 12 - JMA 16 - 0.16
+MeanDeviation 6 - Momentum 32 - 0.24
+SMA 12 - JMA 12 - 0.12
+MeanDeviation 2 - Momentum 42 - 0.2
+LinearReg 26 - JMA 34 - 0.11
+SMA 2 - HMA 4 - 0.14
+SMMA 10 - JMA 18 - 0.16
+MeanDeviation 2 - Momentum 44 - 0.2
+SMA 6 - JMA 10 - 0.1
+LinearReg 34 - JMA 44 - 0.12
+SMMA 2 - LinearReg 4 - 0.11
+EMA 8 - JMA 10 - 0.17
+SMMA 8 - EMA 10 - 0.21
+KAMA 10 - JMA 10 - 0.16
+Highest 2 - HMA 6 - 0.12
+MeanDeviation 12 - Momentum 14 - 0.12
+LinearReg 24 - JMA 30 - 0.12
+LinearReg 22 - Highest 24 - 0.11
+SMMA 14 - JMA 14 - 0.14
+LinearReg 22 - Highest 28 - 0.11
+LinearReg 22 - Highest 30 - 0.11
+MeanDeviation 8 - Momentum 22 - 0.23
+LinearReg 22 - Highest 32 - 0.11
+LinearReg 32 - JMA 40 - 0.11
+LinearReg 22 - Highest 26 - 0.11
+LinearReg 22 - Highest 22 - 0.11
+LinearReg 22 - Highest 34 - 0.11
+LinearReg 22 - Highest 36 - 0.11
+SMA 10 - JMA 12 - 0.11
+LinearReg 22 - Highest 38 - 0.11
+LinearReg 22 - Highest 46 - 0.11
+LinearReg 22 - Highest 40 - 0.11
+LinearReg 22 - Highest 44 - 0.11
+LinearReg 22 - Highest 42 - 0.11
+LinearReg 28 - JMA 38 - 0.11
+MeanDeviation 8 - Momentum 24 - 0.22
+Highest 8 - LinearReg 18 - 0.19
+KAMA 2 - JMA 6 - 0.15
+MeanDeviation 2 - Momentum 46 - 0.19
+MeanDeviation 12 - Momentum 18 - 0.15
+MeanDeviation 14 - Momentum 16 - 0.15
+MeanDeviation 6 - Momentum 28 - 0.24
+SMMA 10 - Lowest 12 - 0.23
+LinearReg 34 - JMA 42 - 0.12
+MeanDeviation 2 - Momentum 40 - 0.18
+MeanDeviation 10 - Momentum 18 - 0.22
+SMMA 6 - EMA 6 - 0.14
+LinearReg 30 - JMA 40 - 0.11
+MeanDeviation 8 - Momentum 18 - 0.22
+MeanDeviation 6 - Momentum 20 - 0.22
+SMMA 12 - JMA 14 - 0.16
+LinearReg 32 - Highest 46 - 0.11
+LinearReg 32 - Highest 44 - 0.11
+LinearReg 32 - Highest 42 - 0.11
+LinearReg 32 - Highest 40 - 0.11
+LinearReg 32 - Highest 38 - 0.11
+LinearReg 32 - Highest 32 - 0.11
+LinearReg 32 - Highest 34 - 0.11
+LinearReg 32 - Highest 36 - 0.11
+KAMA 4 - HMA 6 - 0.13
+KAMA 4 - LinearReg 8 - 0.13
+SMA 10 - JMA 10 - 0.11
+LinearReg 22 - JMA 24 - 0.11
+SMA 8 - JMA 12 - 0.09
+MeanDeviation 6 - Momentum 12 - 0.13
+LinearReg 26 - JMA 32 - 0.11
+KAMA 6 - JMA 8 - 0.2
+Highest 6 - HMA 8 - 0.12
+LinearReg 32 - JMA 38 - 0.12
+MeanDeviation 6 - Momentum 22 - 0.22
+SMMA 10 - JMA 16 - 0.21
+MeanDeviation 6 - Momentum 26 - 0.23
+MeanDeviation 4 - Momentum 34 - 0.24
+MeanDeviation 10 - Momentum 14 - 0.23
+LinearReg 36 - JMA 46 - 0.13
+SMMA 4 - JMA 10 - 0.15
+KAMA 2 - LinearReg 6 - 0.13
+MeanDeviation 10 - Momentum 10 - 0.15
+SMMA 8 - JMA 18 - 0.18
+KAMA 6 - HMA 6 - 0.11
+LinearReg 28 - JMA 36 - 0.11
+LinearReg 24 - JMA 28 - 0.11
+LinearReg 34 - JMA 40 - 0.11
+SMMA 2 - JMA 4 - 0.11
+Highest 4 - LinearReg 14 - 0.15
+MeanDeviation 2 - Momentum 38 - 0.19
+SMMA 6 - JMA 12 - 0.14
+SMMA 6 - LinearReg 8 - 0.14
+LinearReg 26 - Highest 32 - 0.11
+LinearReg 26 - Highest 30 - 0.11
+LinearReg 26 - Highest 34 - 0.11
+LinearReg 30 - JMA 38 - 0.11
+LinearReg 26 - Highest 36 - 0.11
+LinearReg 26 - Highest 40 - 0.11
+MeanDeviation 8 - Momentum 10 - 0.17
+LinearReg 26 - Highest 28 - 0.11
+LinearReg 26 - Highest 42 - 0.11
+LinearReg 26 - Highest 26 - 0.11
+LinearReg 26 - Highest 38 - 0.11
+LinearReg 26 - Highest 46 - 0.11
+LinearReg 26 - Highest 44 - 0.11
+KAMA 6 - LinearReg 8 - 0.13
+Highest 4 - HMA 8 - 0.12
+LinearReg 34 - Highest 46 - 0.11
+LinearReg 34 - Highest 44 - 0.11
+LinearReg 34 - Highest 40 - 0.11
+LinearReg 34 - Highest 42 - 0.11
+LinearReg 34 - Highest 38 - 0.11
+LinearReg 34 - Highest 34 - 0.11
+LinearReg 34 - Highest 36 - 0.11
+LinearReg 22 - JMA 22 - 0.12
+SMMA 12 - JMA 12 - 0.16
+LinearReg 32 - JMA 36 - 0.12
+EMA 6 - LinearReg 6 - 0.13
+KAMA 6 - JMA 6 - 0.11
+LinearReg 36 - JMA 44 - 0.13
+LinearReg 28 - Highest 32 - 0.11
+LinearReg 28 - Highest 40 - 0.11
+LinearReg 28 - Highest 30 - 0.11
+MeanDeviation 6 - Momentum 24 - 0.24
+LinearReg 28 - Highest 34 - 0.11
+LinearReg 28 - Highest 38 - 0.11
+LinearReg 28 - Highest 36 - 0.11
+LinearReg 28 - Highest 42 - 0.11
+SMA 4 - JMA 6 - 0.1
+LinearReg 28 - Highest 46 - 0.11
+LinearReg 26 - JMA 30 - 0.12
+LinearReg 28 - Highest 28 - 0.11
+LinearReg 28 - Highest 44 - 0.11
+MeanDeviation 8 - Momentum 14 - 0.23
+KAMA 6 - LinearReg 6 - 0.11
+EMA 6 - JMA 6 - 0.12
+LinearReg 34 - JMA 38 - 0.12
+MeanDeviation 6 - Momentum 18 - 0.22
+SMMA 6 - EMA 8 - 0.16
+SMMA 10 - JMA 14 - 0.21
+KAMA 2 - HMA 4 - 0.11
+MeanDeviation 10 - Momentum 16 - 0.22
+LinearReg 30 - JMA 36 - 0.11
+MeanDeviation 4 - Momentum 30 - 0.23
+MeanDeviation 2 - Momentum 36 - 0.19
+MeanDeviation 6 - Momentum 10 - 0.15
+LinearReg 28 - JMA 34 - 0.11
+SMA 6 - JMA 8 - 0.13
+LinearReg 24 - Highest 24 - 0.13
+LinearReg 24 - Highest 30 - 0.13
+LinearReg 24 - Highest 26 - 0.13
+LinearReg 24 - Highest 28 - 0.13
+LinearReg 24 - Highest 32 - 0.13
+LinearReg 24 - Highest 34 - 0.13
+SMA 6 - LinearReg 8 - 0.09
+LinearReg 24 - JMA 26 - 0.11
+LinearReg 24 - Highest 40 - 0.11
+LinearReg 24 - Highest 36 - 0.13
+LinearReg 24 - Highest 42 - 0.11
+LinearReg 38 - JMA 46 - 0.14
+LinearReg 24 - Highest 38 - 0.13
+LinearReg 24 - Highest 46 - 0.11
+LinearReg 24 - Highest 44 - 0.11
+SMMA 6 - Lowest 8 - 0.21
+SMMA 8 - JMA 16 - 0.14
+SMMA 4 - LinearReg 6 - 0.13
+LinearReg 36 - JMA 42 - 0.13
+LinearReg 30 - Highest 32 - 0.11
+LinearReg 30 - Highest 36 - 0.11
+LinearReg 30 - Highest 34 - 0.11
+LinearReg 30 - Highest 30 - 0.11
+LinearReg 30 - Highest 42 - 0.11
+LinearReg 30 - Highest 40 - 0.11
+LinearReg 30 - Highest 46 - 0.11
+LinearReg 30 - Highest 38 - 0.11
+LinearReg 30 - Highest 44 - 0.11
+MeanDeviation 6 - Momentum 6 - 0.11
+Highest 16 - LinearReg 16 - 0.21
+MeanDeviation 4 - Momentum 26 - 0.23
+MeanDeviation 2 - Momentum 34 - 0.2
+Highest 14 - LinearReg 16 - 0.21
+MeanDeviation 2 - Momentum 8 - 0.1
+KAMA 2 - SMA 2 - 0.11
+LinearReg 32 - JMA 34 - 0.13
+SMA 6 - LinearReg 6 - 0.11
+LinearReg 26 - JMA 28 - 0.12
+MeanDeviation 6 - Momentum 14 - 0.22
+Highest 12 - LinearReg 16 - 0.21
+LinearReg 34 - JMA 36 - 0.13
+MeanDeviation 6 - Momentum 8 - 0.14
+EMA 4 - LinearReg 4 - 0.11
+MeanDeviation 4 - Momentum 28 - 0.23
+SMMA 4 - Lowest 6 - 0.19
+LinearReg 28 - JMA 32 - 0.12
+SMA 4 - LinearReg 6 - 0.11
+Highest 10 - LinearReg 16 - 0.21
+LinearReg 36 - JMA 40 - 0.14
+LinearReg 30 - JMA 34 - 0.13
+SMMA 6 - JMA 10 - 0.13
+LinearReg 38 - JMA 44 - 0.14
+MeanDeviation 4 - Momentum 22 - 0.23
+KAMA 4 - JMA 6 - 0.16
+SMMA 10 - JMA 12 - 0.17
+LinearReg 34 - JMA 34 - 0.13
+SMMA 6 - LinearReg 6 - 0.14
+LinearReg 32 - JMA 32 - 0.13
+MeanDeviation 2 - Momentum 6 - 0.1
+MeanDeviation 4 - Momentum 6 - 0.11
+SMA 8 - JMA 10 - 0.1
+MeanDeviation 6 - Momentum 16 - 0.22
+KAMA 2 - Lowest 2 - 0.13
+LinearReg 26 - JMA 26 - 0.12
+SMMA 8 - Lowest 10 - 0.21
+LinearReg 40 - JMA 46 - 0.16
+MeanDeviation 4 - Momentum 10 - 0.15
+LinearReg 36 - JMA 38 - 0.13
+Highest 6 - HMA 6 - 0.12
+LinearReg 38 - JMA 42 - 0.14
+MeanDeviation 4 - Momentum 18 - 0.22
+LinearReg 28 - JMA 30 - 0.12
+LinearReg 36 - Highest 36 - 0.13
+LinearReg 36 - Highest 44 - 0.13
+LinearReg 36 - Highest 46 - 0.13
+LinearReg 36 - Highest 40 - 0.13
+SMMA 14 - Lowest 14 - 0.26
+LinearReg 36 - Highest 42 - 0.13
+LinearReg 36 - Highest 38 - 0.13
+MeanDeviation 2 - Momentum 2 - 0.15
+Highest 4 - HMA 6 - 0.12
+SMA 6 - JMA 6 - 0.12
+Highest 6 - LinearReg 16 - 0.21
+LinearReg 30 - JMA 32 - 0.13
+SMA 8 - JMA 8 - 0.1
+MeanDeviation 2 - Momentum 32 - 0.18
+Highest 8 - LinearReg 16 - 0.21
+Highest 2 - HMA 4 - 0.15
+MeanDeviation 2 - Momentum 30 - 0.19
+MeanDeviation 2 - Momentum 10 - 0.15
+SMMA 10 - JMA 10 - 0.16
+MeanDeviation 2 - Momentum 20 - 0.14
+SMA 2 - LinearReg 4 - 0.12
+SMMA 8 - JMA 14 - 0.14
+SMMA 6 - JMA 8 - 0.14
+LinearReg 36 - JMA 36 - 0.14
+LinearReg 38 - JMA 40 - 0.14
+MeanDeviation 2 - Momentum 26 - 0.18
+LinearReg 40 - JMA 44 - 0.14
+SMMA 4 - EMA 6 - 0.13
+LinearReg 28 - JMA 28 - 0.13
+KAMA 4 - LinearReg 6 - 0.13
+MeanDeviation 2 - Momentum 24 - 0.16
+LinearReg 30 - JMA 30 - 0.13
+SMMA 6 - JMA 6 - 0.13
+MeanDeviation 2 - Momentum 28 - 0.19
+MeanDeviation 4 - Momentum 14 - 0.22
+LinearReg 38 - JMA 38 - 0.15
+MeanDeviation 2 - Momentum 22 - 0.15
+LinearReg 40 - JMA 42 - 0.16
+JMA 2 - HMA 2 - 0.15
+Highest 2 - HMA 2 - 0.15
+LinearReg 2 - HMA 2 - 0.15
+Lowest 2 - HMA 2 - 0.15
+SMA 2 - HMA 2 - 0.15
+Lowest 2 - LinearReg 2 - 0.15
+SMA 2 - LinearReg 2 - 0.15
+SMA 4 - JMA 4 - 0.11
+Highest 2 - LinearReg 4 - 0.17
+MeanDeviation 2 - Momentum 18 - 0.19
+SMMA 8 - JMA 12 - 0.14
+LinearReg 42 - JMA 46 - 0.16
+LinearReg 38 - Highest 40 - 0.14
+LinearReg 38 - Highest 42 - 0.14
+LinearReg 38 - Highest 38 - 0.14
+LinearReg 38 - Highest 44 - 0.14
+LinearReg 38 - Highest 46 - 0.14
+KAMA 2 - SMMA 2 - 0.14
+SMMA 4 - LinearReg 4 - 0.12
+KAMA 2 - JMA 4 - 0.12
+SMMA 4 - JMA 6 - 0.12
+MeanDeviation 2 - Momentum 12 - 0.14
+KAMA 2 - LinearReg 4 - 0.11
+SMMA 12 - Lowest 12 - 0.2
+LinearReg 40 - JMA 40 - 0.15
+LinearReg 42 - JMA 44 - 0.16
+MeanDeviation 2 - Momentum 14 - 0.13
+LinearReg 44 - JMA 46 - 0.16
+EMA 4 - Lowest 4 - 0.18
+MeanDeviation 2 - Momentum 4 - 0.11
+SMMA 8 - JMA 10 - 0.14
+LinearReg 42 - JMA 42 - 0.16
+LinearReg 40 - Highest 40 - 0.16
+LinearReg 40 - Highest 42 - 0.16
+LinearReg 40 - Highest 44 - 0.16
+LinearReg 40 - Highest 46 - 0.16
+LinearReg 46 - JMA 46 - 0.17
+LinearReg 44 - JMA 44 - 0.16
+MeanDeviation 2 - Momentum 16 - 0.14
+SMA 2 - JMA 2 - 0.16
+Highest 4 - LinearReg 10 - 0.15
+Highest 10 - LinearReg 14 - 0.22
+EMA 2 - HMA 2 - 0.15
+SMMA 10 - Lowest 10 - 0.23
+Highest 8 - LinearReg 12 - 0.22
+Highest 8 - LinearReg 14 - 0.22
+Highest 6 - LinearReg 14 - 0.22
+KAMA 2 - EMA 2 - 0.15
+Highest 6 - LinearReg 12 - 0.22
+SMMA 2 - EMA 2 - 0.12
+KAMA 2 - JMA 2 - 0.12
+EMA 2 - LinearReg 2 - 0.15
+LinearReg 42 - Highest 44 - 0.16
+LinearReg 42 - Highest 42 - 0.16
+LinearReg 42 - Highest 46 - 0.16
+KAMA 2 - LinearReg 2 - 0.14
+EMA 2 - JMA 2 - 0.16
+SMMA 2 - HMA 2 - 0.15
+Highest 12 - LinearReg 14 - 0.22
+Highest 14 - LinearReg 14 - 0.22
+Highest 4 - LinearReg 6 - 0.17
+Highest 6 - LinearReg 6 - 0.21
+KAMA 2 - HMA 2 - 0.15
+Highest 12 - LinearReg 12 - 0.2
+Highest 10 - LinearReg 12 - 0.2
+SMMA 2 - LinearReg 2 - 0.12
+SMMA 2 - Lowest 2 - 0.16
+Highest 6 - LinearReg 10 - 0.21
+LinearReg 44 - Highest 46 - 0.16
+LinearReg 44 - Highest 44 - 0.16
+SMMA 6 - Lowest 6 - 0.21
+SMMA 8 - Lowest 8 - 0.23
+SMMA 2 - JMA 2 - 0.15
+Highest 10 - LinearReg 10 - 0.21
+Highest 8 - LinearReg 10 - 0.21
+Highest 6 - LinearReg 8 - 0.21
+LinearReg 46 - Highest 46 - 0.16
+EMA 2 - Lowest 2 - 0.18
+
 ";
 
         private readonly string _DisabledPairs = @"

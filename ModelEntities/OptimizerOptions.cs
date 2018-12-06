@@ -96,11 +96,11 @@ namespace StockSolution.ModelEntities.Models
                         IsSellEnabled = false,
                         IsBuyEnabled = true,
                         MinOrders = 5,
-                        MaxOrders = 8,
+                        MaxOrders = 17,
                         //MaxOrders = maxOrders,
                         //PositiveOrderPct = 75,
-                        MinProfitPct = 13,
-                        LoseLimitMin = -0.21m,
+                        MinProfitPct = 14,
+                        //LoseLimitMin = -0.14m,
                         //LoseLimitConstant = -0.12m,
                         //IndicatorLength = GetIndicatorLength(tickPeriod)
                     };

@@ -19,15 +19,18 @@ namespace StockSolution.ModelEntities.Models
         public int Orders { get; set; }
         public int PositiveOrderPct { get; set; }
         public decimal LoseLimitMin { get; set; }
+        public decimal LoseLimit { get; set; }
 
-
-    public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator)
+    public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator, 
+        decimal loseLimit, decimal loseLimitMin)
         {
             this.ShortIndicator = shortIndicator;
             this.LongIndicator = longIndicator;
+            this.LoseLimit = loseLimit;
             this.LastResult = decimal.MinValue;
-            this.Orders = int.MinValue;
+            this.LoseLimitMin = loseLimitMin;
             this.PositiveOrderPct = int.MinValue;
+            this.Orders = int.MinValue;
         }
 
         public int CompareTo(IndicatorPair other)

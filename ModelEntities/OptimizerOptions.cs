@@ -23,7 +23,7 @@ namespace StockSolution.ModelEntities.Models
             {
                 if((_BestIndicatorPair != null) == false)
                 {
-                    BestIndicatorPair = new IndicatorPair(null, null);
+                    BestIndicatorPair = new IndicatorPair(null, null, decimal.MinValue);
                 }
                 return _BestIndicatorPair;
             }
@@ -39,14 +39,8 @@ namespace StockSolution.ModelEntities.Models
         public bool IsBuyEnabled { get; set; }
         public int MinOrders { get; set; }
         public int MaxOrders { get; set; }
-        //public int PositiveOrderPct { get; set; }
-        //public OptimizerOption<int> MaxOrders { get; set; }
-        public int MinProfitPct { get; set; }
+        public decimal MinProfitPct { get; set; }
         public decimal LoseLimitMin { get; set; }
-        public int IndicatorMaxLength { get; set; }
-        //public decimal LoseLimitConstant { get; set; }
-        //public virtual OptimizerOption<int> IndicatorLength { get; set; }
-
 
         private OptimizerOptions()
         {
@@ -60,13 +54,8 @@ namespace StockSolution.ModelEntities.Models
             bool isBuyEnabled,
             int minOrders,
             int maxOrders,
-            //int positiveOrderPct,
-            //OptimizerOption<int> maxOrders,
-            int minProfitPct,
+            decimal MinProfitPct,
             decimal loseLimitMin
-            //decimal loseLimitConstant,
-            //int IndicatorMaxLength
-            //OptimizerOption<int> indicatorLength
             )
         {
             this.RecursiveTests = recursiveTests;
@@ -74,12 +63,9 @@ namespace StockSolution.ModelEntities.Models
             this.IsSellEnabled = isSellEnabled;
             this.IsBuyEnabled = isBuyEnabled;
             this.MinOrders = minOrders;
-            this.MaxOrders = maxOrders;
-            //this.PositiveOrderPct = positiveOrderPct;
-            this.MinProfitPct = minProfitPct;
+            this.MaxOrders = minOrders;
+            this.MinProfitPct = MinProfitPct;
             this.LoseLimitMin = loseLimitMin;
-            //this.LoseLimitConstant = loseLimitConstant;
-            //this.IndicatorMaxLength = indicatorLength;
         }
 
         public static OptimizerOptions GetInstance(TickPeriod tickPeriod)
@@ -89,39 +75,24 @@ namespace StockSolution.ModelEntities.Models
             switch (tickPeriod)
             {
                 case TickPeriod.Daily:
-                    optimizerOptions = new OptimizerOptions()
-                    {
-                        RecursiveTests = 2,
-                        NrOfTestValues = 90,
-                        IsSellEnabled = false,
-                        IsBuyEnabled = true,
-                        MinOrders = 5,
-                        MaxOrders = 17,
-                        //MaxOrders = maxOrders,
-                        //PositiveOrderPct = 75,
-                        MinProfitPct = 14,
-                        //LoseLimitMin = -0.14m,
-                        //LoseLimitConstant = -0.12m,
-                        //IndicatorLength = GetIndicatorLength(tickPeriod)
-                    };
+                    int recursiveTests = 2;
+                    int nrOfTestValues = 90;
+                    bool isSellEnabled = false;
+                    bool isBuyEnabled = true;
+                    int minOrders = 5;
+                    int maxOrders = 17;
+                    int minProfitPct = 14;
+                    decimal loseLimitMin = -0.14m;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        isSellEnabled,
+                        isBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin);
                     break;
-                    /*
-                case TickPeriod.Daily:
-                    optimizerOptions = new OptimizerOptions()
-                    {
-                        RecursiveTests = 2,
-                        NrOfTestValues = 90,
-                        IsSellEnabled = false,
-                        IsBuyEnabled = true,
-                        MinOrders = 10,
-                        //MaxOrders = maxOrders,
-                        PositiveOrderPct = 75,
-                        MinProfitPct = 23,
-                        LoseLimitConstant = -0.12m,
-                        IndicatorLength = GetIndicatorLength(tickPeriod)
-                    };
-                    break;
-                    */
             }
             
             return optimizerOptions;

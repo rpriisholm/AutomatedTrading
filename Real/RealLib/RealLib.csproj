@@ -54,6 +54,7 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="ADClientSDK, Version=4.0.1900.1900, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.13\lib\net45\ADClientSDK.dll</HintPath>
@@ -778,10 +779,6 @@
     <Compile Include="TradingEnum.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AutomatedTrading\AutomatedTrading.csproj">
-      <Project>{173c308a-f28a-4740-bb5f-b8e516b2e53f}</Project>
-      <Name>AutomatedTrading</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ModelEntities\ModelEntities.csproj">
       <Project>{DD8EF70E-BAFF-402C-AE4D-E631BD2869A0}</Project>
       <Name>ModelEntities</Name>

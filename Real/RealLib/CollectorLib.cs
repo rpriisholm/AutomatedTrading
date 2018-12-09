@@ -96,9 +96,9 @@ namespace RealLib
                 {
                     csvWriter.WriteField(symbol);
                     csvWriter.WriteField(strategyGenerics[symbol].LastExecution.ToString("yyyy-MM-dd hh-mm"));
-                    csvWriter.WriteField(strategyGenerics[symbol].ShortIndicator.ToString());
-                    csvWriter.WriteField(strategyGenerics[symbol].LongIndicator.ToString());
-                    csvWriter.WriteField(strategyGenerics[symbol].LoseLimitConstant.ToString());
+                    csvWriter.WriteField(strategyGenerics[symbol].IndicatorPair.ShortIndicator.ToString());
+                    csvWriter.WriteField(strategyGenerics[symbol].IndicatorPair.LongIndicator.ToString());
+                    csvWriter.WriteField(strategyGenerics[symbol].IndicatorPair.LoseLimit.ToString());
                     csvWriter.NextRecord();
                 }
             }
@@ -138,17 +138,16 @@ namespace RealLib
                         }
                     }
 
-                    LengthIndicator longIndicator = null;
-                    LengthIndicator shortIndicator = null;
+                    decimal loseLimit = decimal.Parse(csvReader["Lose Limit Constant"]);
+                    IndicatorPair indicatorPair = new IndicatorPair(null, null, loseLimit);
                     bool isBuyEnabled = true;
                     bool isSellEnabled = true;
                     DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
-                    decimal loseLimitConstant = decimal.Parse(csvReader["Lose Limit Constant"]);
-
+                    
                     if (!(securityInfo != null) || !(securityInfo.Candles != null))
                     {
                         securityInfo = new SecurityInfo() { SecurityID = symbol };
-                        strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+                        strategy = new StrategyGeneric(connection, securityInfo, indicatorPair, isSellEnabled, isBuyEnabled, indicatorPair.LoseLimit)
                         {
                             LastExecution = lastExecution,
                             IsStrategyExpiring = isExpiring,
@@ -157,9 +156,9 @@ namespace RealLib
                     }
                     else
                     {
-                        longIndicator = optimizer.FindIndicator(csvReader["Long Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-                        shortIndicator = optimizer.FindIndicator(csvReader["Short Indicator"], optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-
+                        List<Candle> initialCandles = new List<Candle>();
+                        indicatorPair = optimizer.FindIndicator(csvReader["Long Indicator"], indicatorPair.LoseLimit, initialCandles);
+                        /* Initial Candles */                
                         foreach (Candle candle in securityInfo.Candles)
                         {
                             bool isNewerThanLastExecution = lastExecution.CompareTo(candle.CloseTime) < 0;
@@ -169,11 +168,11 @@ namespace RealLib
                                 break;
                             }
 
-                            longIndicator.Process(candle.ClosePrice, true);
-                            shortIndicator.Process(candle.ClosePrice, true);
+                            indicatorPair.LongIndicator.Process(candle.ClosePrice, true);
+                            indicatorPair.ShortIndicator.Process(candle.ClosePrice, true);
                         }
 
-                        strategy = new StrategyGeneric(connection, securityInfo, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+                        strategy = new StrategyGeneric(connection, securityInfo, indicatorPair, isSellEnabled, isBuyEnabled, loseLimit)
                         {
                             LastExecution = lastExecution,
                             IsStrategyExpiring = isExpiring

@@ -10,13 +10,14 @@ namespace StockSolution.ModelEntities.Models
 {
     public class StrategyGeneric : StrategyBasic, IComparable
     {
-        public StrategyGeneric(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, longIndicator, shortIndicator, isSellEnabled, isBuyEnabled, loseLimitConstant)
+        public StrategyGeneric(IConnection connection, SecurityInfo securityID, IndicatorPair indicatorPair, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, indicatorPair, isSellEnabled, isBuyEnabled, loseLimitConstant)
         {
 
         }
 
-        public StrategyGeneric(IConnection connection, SecurityInfo securityID, OptimizerOptions optimizerOptions) : 
-            base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitConstant)
+        public StrategyGeneric(IConnection connection, SecurityInfo securityID, OptimizerOptions optimizerOptions, decimal loseLimit) :
+            //base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimit)
+            base(connection, securityID, optimizerOptions.BestIndicatorPair, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, loseLimit)
         {
             this.LastTestResult = optimizerOptions.BestIndicatorPair.LastResult;
             //optimizerOptions.BestIndicatorPair.ShortIndicator.Candles = securityID.Candles;
@@ -48,12 +49,12 @@ namespace StockSolution.ModelEntities.Models
                 }
 
                 //Load candles
-                LongIndicator.Process(candle.ClosePrice, true);
-                ShortIndicator.Process(candle.ClosePrice, true);
+                IndicatorPair.LongIndicator.Process(candle.ClosePrice, true);
+                IndicatorPair.ShortIndicator.Process(candle.ClosePrice, true);
 
                 //Set Indicator Values
-                decimal shortValue = ShortIndicator.GetCurrentValue();
-                decimal longValue = LongIndicator.GetCurrentValue();
+                decimal shortValue = IndicatorPair.ShortIndicator.GetCurrentValue();
+                decimal longValue = IndicatorPair.LongIndicator.GetCurrentValue();
 
                 // calc new values for short and long
                 bool isShortLessThenLong = shortValue < longValue;
@@ -77,8 +78,8 @@ namespace StockSolution.ModelEntities.Models
                         // if short less than long, the sale, otherwise buy
                         Sides direction = isShortLessThenLong ? Sides.Sell : Sides.Buy;
 
-                        decimal pieceValueShort = ShortIndicator.GetCurrentValue();
-                        decimal pieceValueLong = LongIndicator.GetCurrentValue();
+                        decimal pieceValueShort = IndicatorPair.ShortIndicator.GetCurrentValue();
+                        decimal pieceValueLong = IndicatorPair.LongIndicator.GetCurrentValue();
 
                         if (pieceValueShort != 0 && pieceValueLong != 0)
                         {

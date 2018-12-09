@@ -15,8 +15,7 @@ namespace StockSolution.ModelEntities.Models
         public int Id { get; set; }
         public virtual AConnection Connection { get; set; }
         //public decimal CurrentPosition { get; set; }
-        public virtual LengthIndicator LongIndicator { get; set; }
-        public virtual LengthIndicator ShortIndicator { get; set; }
+        public virtual IndicatorPair IndicatorPair { get; set; }
         [Required]
         public SecurityInfo SecurityID { get; set; }
         protected bool _isRunning = false;
@@ -35,12 +34,11 @@ namespace StockSolution.ModelEntities.Models
         //Set when using OptimizerOptions
         public decimal LastTestResult = decimal.MinValue;
 
-        public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, decimal loseLimitConstant)
+        public StrategyBasic(IConnection connection, SecurityInfo securityID, IndicatorPair indicatorPair, decimal loseLimitConstant)
         {
             this.Connection = connection as AConnection;
             this.SecurityID = securityID;
-            this.LongIndicator = longIndicator;
-            this.ShortIndicator = shortIndicator;
+            this.IndicatorPair = indicatorPair;
             this.IsSellEnabled = true;
             this.IsBuyEnabled = true;
             this.Connection.InitializeSecurityID(securityID);
@@ -49,7 +47,7 @@ namespace StockSolution.ModelEntities.Models
             this.LastExecution = DateTime.MinValue;
         }
 
-        public StrategyBasic(IConnection connection, SecurityInfo securityID, LengthIndicator longIndicator, LengthIndicator shortIndicator, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, longIndicator, shortIndicator, loseLimitConstant)
+        public StrategyBasic(IConnection connection, SecurityInfo securityID, IndicatorPair indicatorPair, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : this(connection, securityID, indicatorPair, loseLimitConstant)
         {
             this.IsSellEnabled = isSellEnabled;
             this.IsBuyEnabled = isBuyEnabled;
@@ -65,7 +63,7 @@ namespace StockSolution.ModelEntities.Models
             _isRunning = true;
 
             //TODO - CHECK
-            _isShortLessThenLong = ShortIndicator.GetCurrentValue() < LongIndicator.GetCurrentValue();
+            _isShortLessThenLong = IndicatorPair.ShortIndicator.GetCurrentValue() < IndicatorPair.LongIndicator.GetCurrentValue();
         }
 
         public void Stop()
@@ -117,7 +115,7 @@ namespace StockSolution.ModelEntities.Models
         //IS Buy Or Sell Active
         public Sides GetDirection()
         {
-            return (ShortIndicator.GetCurrentValue() < LongIndicator.GetCurrentValue()) ? Sides.Sell : Sides.Buy;
+            return (IndicatorPair.ShortIndicator.GetCurrentValue() < IndicatorPair.LongIndicator.GetCurrentValue()) ? Sides.Sell : Sides.Buy;
         }
     }
 }

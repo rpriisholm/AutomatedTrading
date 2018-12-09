@@ -180,7 +180,6 @@ namespace RealLib
 
             Strategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "CurrentStrategies.csv", false);
             ExpiringStrategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "ExpiringStrategies.csv", true);
-            int possibleBreak = 0;
         }
 
         private static void OnExit()
@@ -318,10 +317,10 @@ namespace RealLib
                     break;
                 }
 
-                newStrategy.LongIndicator.Process(candle.ClosePrice, true);
-                newStrategy.ShortIndicator.Process(candle.ClosePrice, true);
-                expiredStrategy.LongIndicator.Process(candle.ClosePrice, true);
-                expiredStrategy.ShortIndicator.Process(candle.ClosePrice, true);
+                newStrategy.IndicatorPair.LongIndicator.Process(candle.ClosePrice, true);
+                newStrategy.IndicatorPair.ShortIndicator.Process(candle.ClosePrice, true);
+                expiredStrategy.IndicatorPair.LongIndicator.Process(candle.ClosePrice, true);
+                expiredStrategy.IndicatorPair.ShortIndicator.Process(candle.ClosePrice, true);
                 lastCandle = candle;
             }
 
@@ -533,7 +532,7 @@ namespace RealLib
                 {
                     #region Find Strategy / Best Indicator Pairs + Its options
 
-                    optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, optimizerOptions.NrOfTestValues, 1);
+                    optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 1);
                     #endregion
 
                     #region Create The Strategy
@@ -541,7 +540,7 @@ namespace RealLib
                     if (optimizerOptions.BestIndicatorPair.ShortIndicator != null && optimizerOptions.BestIndicatorPair.LongIndicator != null)
                     {
                         decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
-                        StrategyGeneric strategy = new StrategyGeneric(TraderLib.emulationConnection, securityInfo, optimizerOptions);
+                        StrategyGeneric strategy = new StrategyGeneric(TraderLib.emulationConnection, securityInfo, optimizerOptions, optimizerOptions.BestIndicatorPair.LoseLimit);
 
                         return strategy;
                     }

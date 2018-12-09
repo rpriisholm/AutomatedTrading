@@ -315,7 +315,7 @@ namespace StockSolution
                 finally { RaceCondition = false; }
             }
         }
-
+        
         // TODO TEST - private static void TestSelectedValuesOnce(ref StreamWriter streamWriter, ref CsvWriter csvWriter, ref IDictionary<SecurityInfo, IList<Candle>> candlesDictionary, ref Optimizer optimizer, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, int indicatorLength, int realValues, int nrOfTestValues, int nrOfTests, int currentTestNr, int orderLimit, int initialMoney, bool testCandleDates)
         private static void TestSelectedValuesOnce(ref StreamWriter streamWriter, ref CsvWriter csvWriter, IList<SecurityInfo> securityInfoes, Optimizer optimizer, int minOrders, int positiveOrderPct, int minProfitPct, decimal loseLimitConstant, bool isSellEnabled, int indicatorLength, int realValues, int nrOfTestValues, int nrOfTests, int currentTestNr, int orderLimit, int initialMoney, bool testCandleDates)
         {
@@ -339,8 +339,8 @@ namespace StockSolution
                     OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
                     optimizerOptions.MinProfitPct = minProfitPct;
                     optimizerOptions.MinOrders = minOrders;
-                    optimizerOptions.PositiveOrderPct = positiveOrderPct;
-                    optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                    //optimizerOptions.PositiveOrderPct = positiveOrderPct;
+                    //optimizerOptions.LoseLimitConstant = loseLimitConstant;
                     optimizerOptions.IsSellEnabled = false;
                     #endregion
 
@@ -373,7 +373,7 @@ namespace StockSolution
                             {
                                 #region Find Strategy
 
-                                optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, nrOfTestValues, 1);
+                                optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 1);
                                 #endregion
 
                                 #region Simulate Real Values
@@ -583,9 +583,9 @@ namespace StockSolution
                         OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
                         optimizerOptions.MinProfitPct = minProfitPct;
                         optimizerOptions.MinOrders = minOrders;
-                        optimizerOptions.PositiveOrderPct = positiveOrderPct;
-                        optimizerOptions.LoseLimitConstant = loseLimitConstant;
-                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 90, 1);
+                        //optimizerOptions.PositiveOrderPct = positiveOrderPct;
+                        //optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                        //optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 90, 1);
                         EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
                         decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
                         StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityID, optimizerOptions);
@@ -653,10 +653,10 @@ namespace StockSolution
                         csvWriter.WriteField(optimizerOptions.IsSellEnabled);
                         csvWriter.WriteField(optimizerOptions.IsBuyEnabled);
                         csvWriter.WriteField(optimizerOptions.MinOrders);
-                        csvWriter.WriteField(optimizerOptions.PositiveOrderPct);
-                        csvWriter.WriteField(optimizerOptions.BestIndicatorPair.PositiveOrderPct);
+                        //csvWriter.WriteField(optimizerOptions.PositiveOrderPct);
+                        //csvWriter.WriteField(optimizerOptions.BestIndicatorPair.PositiveOrderPct);
                         csvWriter.WriteField(optimizerOptions.MinProfitPct);
-                        csvWriter.WriteField(optimizerOptions.LoseLimitConstant);
+                        //csvWriter.WriteField(optimizerOptions.LoseLimitConstant);
                         csvWriter.WriteField(lastResultPct);
                         csvWriter.WriteField(profitPct);
                         csvWriter.NextRecord();
@@ -812,9 +812,9 @@ namespace StockSolution
                                         OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
                                         optimizerOptions.MinProfitPct = minProfitPct;
                                         optimizerOptions.MinOrders = minOrders;
-                                        optimizerOptions.PositiveOrderPct = positiveOrderPct;
-                                        optimizerOptions.LoseLimitConstant = loseLimitConstant;
-                                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 90, 1);
+                                        //optimizerOptions.PositiveOrderPct = positiveOrderPct;
+                                        //optimizerOptions.LoseLimitConstant = loseLimitConstant;
+                                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 1);
                                         EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, 80);
                                         decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
                                         StrategyBasic strategy = new StrategyGeneric(emulationConnection, securityInfo, optimizerOptions);
@@ -882,10 +882,10 @@ namespace StockSolution
                                         csvWriter.WriteField(optimizerOptions.IsSellEnabled);
                                         csvWriter.WriteField(optimizerOptions.IsBuyEnabled);
                                         csvWriter.WriteField(optimizerOptions.MinOrders);
-                                        csvWriter.WriteField(optimizerOptions.PositiveOrderPct);
-                                        csvWriter.WriteField(optimizerOptions.BestIndicatorPair.PositiveOrderPct);
+                                        //csvWriter.WriteField(optimizerOptions.PositiveOrderPct);
+                                        //csvWriter.WriteField(optimizerOptions.BestIndicatorPair.PositiveOrderPct);
                                         csvWriter.WriteField(optimizerOptions.MinProfitPct);
-                                        csvWriter.WriteField(optimizerOptions.LoseLimitConstant);
+                                        //csvWriter.WriteField(optimizerOptions.LoseLimitConstant);
                                         csvWriter.WriteField(lastResultPct);
                                         csvWriter.WriteField(profitPct);
                                         csvWriter.NextRecord();

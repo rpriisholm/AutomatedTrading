@@ -1,3 +1,0 @@
-﻿https://github.com/TestStack/White/issues/574
-
-Check your assemblys binding redirects or add one. There seems to be something odd with your project setup.

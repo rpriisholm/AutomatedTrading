@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MySql;
-using MySql.Data.MySqlClient;
+//using MySql;
+//using MySql.Data.MySqlClient;
 using System.Globalization;
 using Stocks.Import;
 using System.Threading;
@@ -17,7 +17,7 @@ namespace Stocks
         {
             Full, Compact
         }
-
+        /*
         public static void Collector_DailyCompact()
         {
             Collector_Daily(ColloctorType.Compact);
@@ -27,11 +27,12 @@ namespace Stocks
         {
             Collector_Daily(ColloctorType.Full);
         }
-
+        */
 
         //GENERATE LIST TO COLLECT
         //FIND LAST DAILY DATE In Database
         //EXTRACT NEWER DATES
+        /*
         public static void Collector_Daily(ColloctorType type)
         {
             Dictionary<string, List<string>> symbols = GetSymbols();
@@ -89,7 +90,7 @@ namespace Stocks
             }
 
         }
-
+        
         public static void Collector(string symbol, int interval, string url)
         {
             DB_Connector_MySQL connector = DB_Connector_MySQL.GetStocksConnector();
@@ -161,6 +162,7 @@ namespace Stocks
             }
             catch { }
         }
+        */
 
         private static string MySQL_DateTimeString(DateTime dateTime)
         {

@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSonTester", "JSonTester\JS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymbolExtractorEtoro_Test", "SymbolExtractorEtoro_Test\SymbolExtractorEtoro_Test.csproj", "{A04FC428-B988-41A6-9973-8D445ADF865B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StocksImportAndExport", "StocksImportAndExport\StocksImportAndExport.csproj", "{AA75356B-7482-4FA9-86CE-CB503407CF36}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedTrading", "AutomatedTrading\AutomatedTrading.csproj", "{173C308A-F28A-4740-BB5F-B8E516B2E53F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Real", "Real", "{EE0BA2C5-3F12-4775-9FB5-994BFA1CA4A8}"
@@ -46,6 +44,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcStrategies", "CalcStrategies\CalcStrategies.csproj", "{F841EC15-4187-41F1-A30D-52CEFE53A8C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcStrategies2", "CalcStrategies2\CalcStrategies2.csproj", "{20EE0F23-21CE-41B8-B6FD-AAFD3ADEC51D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StocksImportAndExport", "StocksImportAndExport\StocksImportAndExport.csproj", "{0B13D134-C814-4429-AFD6-DCD80E4C58DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,14 +87,6 @@ Global
 		{A04FC428-B988-41A6-9973-8D445ADF865B}.Release|Any CPU.Build.0 = Release|x64
 		{A04FC428-B988-41A6-9973-8D445ADF865B}.Release|x64.ActiveCfg = Release|x64
 		{A04FC428-B988-41A6-9973-8D445ADF865B}.Release|x64.Build.0 = Release|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Debug|Any CPU.Build.0 = Debug|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Debug|x64.ActiveCfg = Debug|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Debug|x64.Build.0 = Debug|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Release|Any CPU.ActiveCfg = Release|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Release|Any CPU.Build.0 = Release|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Release|x64.ActiveCfg = Release|x64
-		{AA75356B-7482-4FA9-86CE-CB503407CF36}.Release|x64.Build.0 = Release|x64
 		{173C308A-F28A-4740-BB5F-B8E516B2E53F}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{173C308A-F28A-4740-BB5F-B8E516B2E53F}.Debug|Any CPU.Build.0 = Debug|x64
 		{173C308A-F28A-4740-BB5F-B8E516B2E53F}.Debug|x64.ActiveCfg = Debug|x64
@@ -191,6 +183,14 @@ Global
 		{20EE0F23-21CE-41B8-B6FD-AAFD3ADEC51D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20EE0F23-21CE-41B8-B6FD-AAFD3ADEC51D}.Release|x64.ActiveCfg = Release|Any CPU
 		{20EE0F23-21CE-41B8-B6FD-AAFD3ADEC51D}.Release|x64.Build.0 = Release|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{0B13D134-C814-4429-AFD6-DCD80E4C58DD}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

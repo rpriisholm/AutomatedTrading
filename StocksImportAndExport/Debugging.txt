@@ -1,0 +1,23 @@
+﻿You can do a couple of things to troubleshoot this issue. First, use Windows file search to search your hard drive for your assembly (.dll). Once you have a list of results, do View->Choose Details... and then check "File Version". This will display the version number in the list of results, so you can see where the old version might be coming from.
+
+Also, like Lars said, check your GAC to see what version is listed there. This Microsoft article states that assemblies found in the GAC are not copied locally during a build, so you might need to remove the old version before doing a rebuild all. (See my answer to this question for notes on creating a batch file to do this for you)
+
+If you still can't figure out where the old version is coming from, you can use the fuslogvw.exe application that ships with Visual Studio to get more information about the binding failures. Microsoft has information about this tool here. Note that you'll have to enable logging by setting the HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Fusion\EnableLog registry key to 1.
+
+https://blogs.msdn.microsoft.com/junfeng/2004/02/14/fusion-binding-log-and-fuslogvw-exe/
+
+
+One of those sticky production problems is when you are faced with a ‘Could not load file or assembly’ type problem and you do not have the .net SDK installed…so no fuslogvw.exe. Today I shown the following extract from StackOverflow
+
+ 
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Fusion
+
+Add: DWORD ForceLog set value to 1 (DWORD )
+
+LogFailures set value to 1 (DWORD)
+
+LogResourceBinds set value to 1
+
+LogPath (String) set value to folder for logs ie) C:\FusionLog\
+

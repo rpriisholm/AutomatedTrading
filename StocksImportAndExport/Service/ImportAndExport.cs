@@ -1,8 +1,8 @@
 ﻿using CsvHelper;
 using LumenWorks.Framework.IO.Csv;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Linq;
-using Stocks.Export;
+//using Stocks.Export;
 using Stocks.Import;
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,7 @@ namespace Stocks.Service
         public static string PartialPath = @"C:\StockHistory\Active\";
         public static decimal MinStockPrice = -1;
 
+        /*
         public static void CSVToMySQL_Excel(string url, string path)
         {
             DB_Connector_MySQL connector = DB_Connector_MySQL.GetStocksConnector();
@@ -36,7 +37,8 @@ namespace Stocks.Service
                 conn.Close();
             }
         }
-
+        
+        */
         public static void ClearDataFolder(TickPeriod tickPeriod, List<string> excludeList)
         {
             //string size = "full";

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Text;
 
 namespace StockSolution.ModelEntities.Models
@@ -46,6 +47,11 @@ namespace StockSolution.ModelEntities.Models
         public int CompareTo(object other)
         {
             return this.CompareTo((IndicatorPair) other);
+        }
+
+        public override string ToString()
+        {
+            return ShortIndicator.ToString() + " - " + LongIndicator.ToString()  + " - " + (-LoseLimit).ToString(new CultureInfo("en-US"));
         }
     }
 }

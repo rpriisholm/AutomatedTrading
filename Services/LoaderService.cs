@@ -20,7 +20,7 @@ namespace StockSolution.Services
         {
             return ConvertCsvToCandles(timeFrame, storagePath, securityID);
         }
-
+        /* Load Should Be Lazy Instead? */
         public static IList<SecurityInfo> LoadLocalCandles(TimeSpan timeFrame, string storagePath, DateTime startTime, DateTime stopTime)
         {
             IList<SecurityInfo> securityInfoes = new List<SecurityInfo>();
@@ -81,60 +81,77 @@ namespace StockSolution.Services
             //Language Standard
             CultureInfo cultureInfo = CultureInfo.InvariantCulture;
 
-            try
-            {
+            /*try
+            { */
                 // Generate Candles
                 while (csvReader.ReadNextRecord())
                 {
-                    DateTime openTime = new DateTime();
-
+                        DateTime openTime = new DateTime();
+                try
+                {
                     if (csvReader.HasHeader("timestamp"))
                     {
-                        openTime = DateTime.Parse(csvReader["timestamp"]);
+                        //openTime = DateTime.Parse(csvReader["timestamp"]);
+                        string ds = csvReader["timestamp"];
+                        openTime = DateTime.Parse(ds, cultureInfo);
                     }
                     else
                     {
                         if (csvReader.HasHeader("date"))
                         {
-                            openTime = DateTime.Parse(csvReader["date"]);
+                            //openTime = DateTime.Parse(csvReader["date"]);
+                            string ds = csvReader["date"];
+                            openTime = DateTime.Parse(ds, cultureInfo);
                         }
                     }
-
-                    Candle candle = new Candle();
-                    candle.TimeFrame = timeFrame;
-                    candle.OpenTime = openTime;
-                    candle.CloseTime = openTime.Add(timeFrame);
-
-                    candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
-
-                    try
-                    {
-                        candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
-                    }
-                    catch { }
-
-                    try
-                    {
-                        candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
-                    }
-                    catch { }
-                    
-                    try
-                    {
-                        candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
-                    }
-                    catch { }
-                    //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
-
-
-                    securityInfo.Candles.Add(candle);
-                    securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
                 }
+                catch(System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    Console.WriteLine("At Candles To CSV");
+
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Data.ToString());
+                }
+
+                        Candle candle = new Candle();
+                        candle.TimeFrame = timeFrame;
+                        candle.OpenTime = openTime;
+                        candle.CloseTime = openTime.Add(timeFrame);
+
+                        candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
+
+                        try
+                        {
+                            candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
+                        }
+                        catch { }
+
+                        try
+                        {
+                            candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
+                        }
+                        catch { }
+
+                        try
+                        {
+                            candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
+                        }
+                        catch { }
+                        //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
+
+
+                        securityInfo.Candles.Add(candle);
+                        securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
+                }
+               /* 
             }
+            
             catch(System.FormatException e)
             {
                 securityInfo.Candles = null;
             }
+            */
 
             return securityInfo;
         }

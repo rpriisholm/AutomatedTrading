@@ -15,6 +15,7 @@ namespace StockSolution.ModelEntities.Models
         public int Id { get; set; }
         public virtual AConnection Connection { get; set; }
         //public decimal CurrentPosition { get; set; }
+        [Required]
         public virtual IndicatorPair IndicatorPair { get; set; }
         [Required]
         public SecurityInfo SecurityID { get; set; }
@@ -60,10 +61,14 @@ namespace StockSolution.ModelEntities.Models
 
         public void Start()
         {
-            _isRunning = true;
+            if (!IsDisabled)
+            {
+                _isRunning = true;
 
-            //TODO - CHECK
-            _isShortLessThenLong = IndicatorPair.ShortIndicator.GetCurrentValue() < IndicatorPair.LongIndicator.GetCurrentValue();
+                //TODO - CHECK
+                _isShortLessThenLong = IndicatorPair.ShortIndicator.GetCurrentValue() < IndicatorPair.LongIndicator.GetCurrentValue();
+
+            }
         }
 
         public void Stop()

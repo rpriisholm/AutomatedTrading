@@ -6,6 +6,8 @@ using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -28,12 +30,7 @@ namespace StockSolution.Services
             set { this._DivideValue = value; }
         }
 
-        public decimal _LoseLimitConstant = -0.12m;
-        public decimal LoseLimitConstant
-        {
-            get { return _LoseLimitConstant; }
-            set { this._LoseLimitConstant = value; }
-        }
+
 
         /* Simulate IndicatorPairs And Save
          * Might Need Dual Run To Check Test Values - Ex. Every 30-45 or 90
@@ -133,14 +130,20 @@ namespace StockSolution.Services
         /* TODO 06/12/2018 */
         private void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, decimal loseLimit)
         {
-            Parallel.ForEach(indicatorPairs, indicatorPair =>
-            //foreach (IndicatorPair indicatorPair in indicatorPairs)
+            //Parallel.ForEach(indicatorPairs, indicatorPair =>
+            foreach (IndicatorPair indicatorPair in indicatorPairs)
             //for(int i = 0; i < indicatorPairs.Count; i++)
             {
                 int initialMoney = 100000;
                 int orderLimit = initialMoney / 10;
                 int maxInvestedPct = 80;
                 SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
+
+                if(!(indicatorPair != null))
+                {
+                    Debug.WriteLine("IndicatorPair Should Never Be Null");
+                    throw new ArgumentNullException();
+                }
 
                 EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, maxInvestedPct);
                 StrategyGeneric strategyGeneric = null;
@@ -161,7 +164,7 @@ namespace StockSolution.Services
                 indicatorPair.OrdersCount = strategyGeneric.OrderCount;
                 //indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
             }
-            );
+            //);
         }
 
         /* CREATEINDICATORSOLD
@@ -296,15 +299,17 @@ namespace StockSolution.Services
             return lengthIndicator;
         }
 
-        public IndicatorPair FindIndicator(string indicatorPair, decimal loseLimit, List<Candle> initialCandles)
+        public IndicatorPair FindIndicator(string shortIndicator, string longIndicator, decimal loseLimit, List<Candle> initialCandles)
         {
             //List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
             List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles);
             IndicatorPair resultIndicatorPair = null;
+            string indicatorPairString = shortIndicator.Trim() + " - " + longIndicator.Trim() + " - " +  loseLimit.ToString();
 
             foreach (IndicatorPair currentIndicatorPair in indicatorPairs)
             {
-                if (currentIndicatorPair.ToString().Equals(indicatorPair))
+                string currentIndicatorPairString = currentIndicatorPair.ToString();
+                if (currentIndicatorPairString.Equals(indicatorPairString))
                 {
                     resultIndicatorPair = currentIndicatorPair;
                     break;
@@ -363,11 +368,17 @@ namespace StockSolution.Services
                 while (strReader.Peek() >= 0)
                 {
                     string enabledIndicatorPair = strReader.ReadLine();
-                    string[] numbers = Regex.Split(enabledIndicatorPair, @"\D+");
-
-                    foreach (string number in numbers)
+                    if (!string.IsNullOrEmpty(enabledIndicatorPair))
                     {
-                        int length = int.Parse(number);
+                        string[] numbers = Regex.Split(enabledIndicatorPair, @"\D+");
+
+                        int length = int.Parse(numbers[1]);
+                        if (length > this._MaxIndicatorLength)
+                        {
+                            this._MaxIndicatorLength = length;
+                        }
+
+                         length = int.Parse(numbers[2]);
                         if (length > this._MaxIndicatorLength)
                         {
                             this._MaxIndicatorLength = length;
@@ -485,7 +496,7 @@ namespace StockSolution.Services
                                 break;
                         }
 
-                        loseLimit = -(decimal.Parse(indicators[2]));
+                        loseLimit = -(decimal.Parse(indicators[2], new CultureInfo("en-US")));
 
                         if (!(shortIndicator != null))
                         {
@@ -509,26 +520,58 @@ namespace StockSolution.Services
                 }
             }
 
+            bool isLocked = false;
             // Clone Empty Indicators And Create Pairs
+            //Parallel.For(0, _ShortIndicators.Count, i => 
             for (int i = 0; i < _ShortIndicators.Count; i++)
             {
-                LengthIndicator<decimal> shortIndicatorClone = _ShortIndicators[i].Clone() as LengthIndicator<decimal>;
-                LengthIndicator<decimal> longIndicatorClone = _LongIndicators[i].Clone() as LengthIndicator<decimal>;
-                Entity.Models.LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
-                Entity.Models.LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
-                // Init candles
-                for (i = initialCandles.Count - shortIndicatorAdapter.Indicator.Length; i < initialCandles.Count; i++)
-                {
-                    shortIndicatorAdapter.Indicator.Process(initialCandles[i].ClosePrice);
-                }
-                // Init candles
-                for (i = initialCandles.Count - longIndicatorAdapter.Indicator.Length; i < initialCandles.Count; i++)
-                {
-                    longIndicatorAdapter.Indicator.Process(initialCandles[i].ClosePrice);
-                }
+                /*try
+                {*/
+                    LengthIndicator<decimal> shortIndicatorClone = _ShortIndicators[i].Clone() as LengthIndicator<decimal>;
+                    LengthIndicator<decimal> longIndicatorClone = _LongIndicators[i].Clone() as LengthIndicator<decimal>;
+                    Entity.Models.LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
+                    Entity.Models.LengthIndicator longIndicatorAdapter = new LengthIndicator(longIndicatorClone);
 
-                indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter, _LoseLimits[i]));
+                    if (initialCandles.Count >= shortIndicatorAdapter.Indicator.Length)
+                    {
+                        // Init candles
+                        for (int j = initialCandles.Count - shortIndicatorAdapter.Indicator.Length; j < initialCandles.Count; j++)
+                        {
+                            shortIndicatorAdapter.Indicator.Process(initialCandles[j].ClosePrice);
+                        }
+                        // Init candles
+                        for (int j = initialCandles.Count - longIndicatorAdapter.Indicator.Length; j < initialCandles.Count; j++)
+                        {
+                            longIndicatorAdapter.Indicator.Process(initialCandles[j].ClosePrice);
+                        }
+                    }
+
+
+                    
+                    while(isLocked){ }
+                    isLocked = true;
+                    decimal loseLimit = _LoseLimits[i];
+                    indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter, loseLimit));
+
+                    if(indicatorPairs[indicatorPairs.Count-1] != null)
+                    {
+                        isLocked = false;
+                    }
+                    else
+                    {
+                        indicatorPairs.RemoveAt(indicatorPairs.Count-1);
+                        isLocked = false;
+                    }
+
+                /*}
+                catch(Exception e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Data.ToString());
+                    throw e;
+                }*/
             }
+            //);
 
             return indicatorPairs;
         }
@@ -539,8 +582,7 @@ namespace StockSolution.Services
          * From SQL
          * ShortIndicator - LongIndicator 
          */
-        private readonly string _EnabledPairs = @"
-SMMA 12 - JMA 20 - 0.16
+        private readonly string _EnabledPairs = @"SMMA 12 - JMA 20 - 0.16
 KAMA 12 - JMA 12 - 0.13
 SMA 8 - LinearReg 10 - 0.13
 KAMA 6 - LinearReg 10 - 0.13
@@ -965,12 +1007,9 @@ Highest 10 - LinearReg 10 - 0.21
 Highest 8 - LinearReg 10 - 0.21
 Highest 6 - LinearReg 8 - 0.21
 LinearReg 46 - Highest 46 - 0.16
-EMA 2 - Lowest 2 - 0.18
+EMA 2 - Lowest 2 - 0.18";
 
-";
-
-        private readonly string _DisabledPairs = @"
-Momentum 28 - Momentum 36
+        private readonly string _DisabledPairs = @"Momentum 28 - Momentum 36
 SMA 8 - JMA 28
 MeanDeviation 40 - Momentum 40
 Lowest 4 - LinearReg 20
@@ -1337,8 +1376,7 @@ Lowest 4 - KAMA 4
 MeanDeviation 40 - Momentum 56
 Lowest 8 - LinearReg 8
 MeanDeviation 12 - Momentum 48
-Momentum 40 - Momentum 60
-";
+Momentum 40 - Momentum 60";
 
     }
 }

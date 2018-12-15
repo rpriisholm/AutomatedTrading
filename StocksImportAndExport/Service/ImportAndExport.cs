@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using Stocks.Import;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using TickEnum;
@@ -63,7 +64,11 @@ namespace Stocks.Service
                     }
                 }
             }
-            catch (IOException e) { }
+            catch (IOException e)
+            {
+                Debug.WriteLine(e.ToString());
+                Debug.WriteLine(e.Data.ToString());
+            }
         }
 
         public static void CollectData(TickPeriod tickPeriod, List<string> symbols, bool appendSymbols, bool deleteSymbols)
@@ -151,6 +156,8 @@ namespace Stocks.Service
             }
             catch (System.ArgumentException e)
             {
+                Debug.WriteLine(e.ToString());
+                Debug.WriteLine(e.Data.ToString());
                 isPathValied = false;
             }
 
@@ -249,6 +256,8 @@ namespace Stocks.Service
                         }
                         catch (System.ArgumentException e)
                         {
+                            Debug.WriteLine(e.ToString());
+                            Debug.WriteLine(e.Data.ToString());
                             hasArgumentException = true;
                         }
 
@@ -377,7 +386,12 @@ namespace Stocks.Service
                             }
                             else { newCsvContent += "-1" + ','; }
                         }
-                        catch { newCsvContent += "-1" + ','; }
+                        catch(Exception e)
+                        {
+                            Debug.WriteLine(e.ToString());
+                            Debug.WriteLine(e.Data.ToString());
+                            newCsvContent += "-1" + ',';
+                        }
                     }
                     newCsvContent = newCsvContent.TrimEnd(',');
                     output.Add(newCsvContent);

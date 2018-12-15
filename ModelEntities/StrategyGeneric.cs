@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Text;
 
 namespace StockSolution.ModelEntities.Models
@@ -12,13 +13,39 @@ namespace StockSolution.ModelEntities.Models
     {
         public StrategyGeneric(IConnection connection, SecurityInfo securityID, IndicatorPair indicatorPair, bool isSellEnabled, bool isBuyEnabled, decimal loseLimitConstant) : base(connection, securityID, indicatorPair, isSellEnabled, isBuyEnabled, loseLimitConstant)
         {
-
+            if (!(indicatorPair != null))
+            {
+                try
+                {
+                    throw new ArgumentNullException();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Data.ToString());
+                    throw e;
+                }
+            }
         }
 
         public StrategyGeneric(IConnection connection, SecurityInfo securityID, OptimizerOptions optimizerOptions, decimal loseLimit) :
             //base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimit)
             base(connection, securityID, optimizerOptions.BestIndicatorPair, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, loseLimit)
         {
+            if(!(this.IndicatorPair != null))
+            {
+                try
+                {
+                    throw new ArgumentNullException();
+                }
+                catch(Exception e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Data.ToString());
+                    throw e;
+                }
+            }
+
             this.LastTestResult = optimizerOptions.BestIndicatorPair.LastResult;
             //optimizerOptions.BestIndicatorPair.ShortIndicator.Candles = securityID.Candles;
             //optimizerOptions.BestIndicatorPair.LongIndicator.Candles = securityID.Candles;

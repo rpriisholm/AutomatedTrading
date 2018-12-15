@@ -50,7 +50,12 @@ namespace RealLib
                         Directory.CreateDirectory(partialPath);
                         _TradingLogWriter = new StreamWriter($"{partialPath}\\TradingLog", true);
                     }
-                    catch { }
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Message);
+                        Debug.WriteLine(e.Data.ToString());
+                    }
                 }
 
                 return _TradingLogWriter;
@@ -120,8 +125,11 @@ namespace RealLib
                             _ErrorWriter = new StreamWriter($"{partialPath}\\ErrorLog_Trader{count}.txt");
                             completed = true;
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Debug.WriteLine(e.ToString());
+                            Debug.WriteLine(e.Message);
+                            Debug.WriteLine(e.Data.ToString());
                             count += 1;
                         }
                     }
@@ -134,7 +142,8 @@ namespace RealLib
         public static void RunTradingProgram(TickPeriod tickPeriod, TradingEnum tradingEnum)
         {
             ImportAndExport.MinStockPrice = 3m;
-            OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum);
+            bool isDownloadEnabled = false;
+            OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum, isDownloadEnabled);
 
             switch (tradingEnum)
             {
@@ -161,21 +170,24 @@ namespace RealLib
             InvokeTrading(ref ExpiringStrategies);
         }
 
-        private static void OnStart(string dataLocation, TickPeriod tickPeriod, TradingEnum tradingEnumn)
+        private static void OnStart(string dataLocation, TickPeriod tickPeriod, TradingEnum tradingEnum, bool isDownloadEnabled)
         {
             CollectorLib.DataLocation = dataLocation;
 
-            if (TradingEnum.NewStrategies == tradingEnumn)
+            if (isDownloadEnabled)
             {
-                ImportAndExport.CollectData(tickPeriod, ImportAndExport.GetAllSymbols(), false, true);
-            }
+                if (TradingEnum.NewStrategies == tradingEnum)
+                {
+                    ImportAndExport.CollectData(tickPeriod, ImportAndExport.GetAllSymbols(), false, true);
+                }
 
-            if (TradingEnum.ContinueTrading == tradingEnumn)
-            {
-                List<string> symbols = ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "CurrentStrategies.csv");
-                symbols.AddRange(ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "ExpiringStrategies.csv"));
+                if (TradingEnum.ContinueTrading == tradingEnum)
+                {
+                    List<string> symbols = ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "CurrentStrategies.csv");
+                    symbols.AddRange(ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "ExpiringStrategies.csv"));
 
-                ImportAndExport.CollectData(TickPeriod.Daily, symbols, true, true);
+                    ImportAndExport.CollectData(TickPeriod.Daily, symbols, true, true);
+                }
             }
 
             Strategies = CollectorLib.LoadStrategies(ref emulationConnection, tickPeriod, "CurrentStrategies.csv", false);
@@ -434,8 +446,8 @@ namespace RealLib
                 List<string> failedSecurities = new List<string>();
                 IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
 
-                Parallel.ForEach(securityIDs, new ParallelOptions { MaxDegreeOfParallelism = 8 }, securityID =>
-                //foreach (string securityID in securityIDs)
+                //Parallel.ForEach(securityIDs, new ParallelOptions { MaxDegreeOfParallelism = 8 }, securityID =>
+                foreach (string securityID in securityIDs)
                 {
                     try
                     {
@@ -485,13 +497,25 @@ namespace RealLib
                         failedSecurities.Add(securityID);
                         System.Console.WriteLine(e.ToString());
                         System.Console.WriteLine(new StackTrace(e, true).GetFrame(0).GetFileLineNumber());
+
+                        ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                        ErrorWriter.WriteLineAsync(e.Message).Wait();
+                        ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                        ErrorWriter.FlushAsync().Wait();
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Message);
+                        Debug.WriteLine(e.Data.ToString());
                     }
+                    
+                    finally { }
+                    
                 }
-                );
+                //);
                 failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
 
                 #endregion
             }
+            
             catch (Exception e)
             {
                 while (RaceCondition) { Thread.Sleep(5); }
@@ -502,11 +526,20 @@ namespace RealLib
                     ErrorWriter.WriteLineAsync(e.Message).Wait();
                     ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
                     ErrorWriter.FlushAsync().Wait();
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.Data.ToString()); ;
                 }
-                catch { }
+                catch(Exception ei)
+                {
+                    Debug.WriteLine(ei.ToString());
+                    Debug.WriteLine(ei.Message);
+                    Debug.WriteLine(ei.Data.ToString());
+                }
                 finally { RaceCondition = false; }
             }
-
+            
+            finally { }
 
             return newStrategies;
         }
@@ -546,9 +579,12 @@ namespace RealLib
                     }
                     #endregion
                 }
-                catch (System.NullReferenceException)
+                catch (System.NullReferenceException e)
                 {
                     Console.WriteLine("NullReferenceException - No Strategy Found - " + securityInfo);
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.Data.ToString());
                 }
 
                 RaceCondition = false;
@@ -564,8 +600,16 @@ namespace RealLib
                     ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
                     ErrorWriter.WriteLineAsync(new StackTrace(e, true).GetFrame(0).GetFileLineNumber().ToString());
                     ErrorWriter.FlushAsync().Wait();
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.Data.ToString());
                 }
-                catch { }
+                catch(Exception ei)
+                {
+                    Debug.WriteLine(ei.ToString());
+                    Debug.WriteLine(ei.Message);
+                    Debug.WriteLine(ei.Data.ToString());
+                }
                 finally { RaceCondition = false; }
             }
 

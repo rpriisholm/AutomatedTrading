@@ -15,11 +15,13 @@ namespace RealLib
     {
         static void Main(string[] args)
         {
+            //CollectorLib.DataLocation = @"c:\StockHistory\Real";
+
             #region Empty Console  
             TextWriter outTextWriter = Console.Out;
             TextWriter errTextWriter = Console.Error;
-            Console.SetOut(TextWriter.Null);
-            Console.SetError(TextWriter.Null);
+            //Console.SetOut(TextWriter.Null);
+            //Console.SetError(TextWriter.Null);
             #endregion
 
             if (args.Length != 0)

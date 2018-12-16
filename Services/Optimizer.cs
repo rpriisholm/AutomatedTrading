@@ -152,6 +152,7 @@ namespace StockSolution.Services
 
                 strategyGeneric.Start();
                 //Process Candles
+
                 foreach (Candle candle in simulateCandles)
                 {
                     strategyGeneric.ProcessCandle(candle);
@@ -160,10 +161,11 @@ namespace StockSolution.Services
 
                 //Set LastResult
                 indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
-                //indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
+                indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
                 indicatorPair.OrdersCount = strategyGeneric.OrderCount;
                 //indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
             }
+
             //);
         }
 
@@ -248,6 +250,7 @@ namespace StockSolution.Services
         /* TODO 06/12/2018 */
         public OptimizerOptions FindBestOptions(OptimizerOptions optimizerOptions, List<Candle> candles, int leverage)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             int minCandles = (this.GetMaxIndicatorLength() + optimizerOptions.NrOfTestValues * optimizerOptions.RecursiveTests);
             if (candles.Count < minCandles)
             {
@@ -271,12 +274,41 @@ namespace StockSolution.Services
                 List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();
                 for (int i = 0; i < indicatorPairs.Count; i++)
                 {
-                    if (optimizerOptions.MinOrders <= indicatorPairs[i].OrdersCount &&
-                        optimizerOptions.MaxOrders >= indicatorPairs[i].OrdersCount &&
-                        optimizerOptions.MinProfitPct <= indicatorPairs[i].LastResult &&
-                        optimizerOptions.LoseLimitMin <= indicatorPairs[i].LoseLimit)
+                    if (indicatorPairs[i].OrdersCount  >= optimizerOptions.MinOrders  &&
+                        indicatorPairs[i].OrdersCount  <= optimizerOptions.MaxOrders &&
+                        indicatorPairs[i].LastResult   >= optimizerOptions.MinProfitPct &&
+                        indicatorPairs[i].LoseLimitMin >= optimizerOptions.LoseLimitMin)
                     {
                         filteredIndicatorPairs.Add(indicatorPairs[i]);
+
+                        if (true)
+                        {
+                            string path = @"C:\StockHistory\Real\TEST.csv";
+                            bool fileExist = File.Exists(path);
+
+                            StreamWriter streamWriter = new StreamWriter(path, fileExist);
+                            CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+                            if (!fileExist)
+                            {
+                                csvWriter.WriteField("ShortIndicator");
+                                csvWriter.WriteField("LongIndicator");
+                                csvWriter.WriteField("Orders");
+                                csvWriter.WriteField("LastResult");
+                                csvWriter.WriteField("LoseLimitMin");
+                                csvWriter.NextRecord();
+                                csvWriter.Flush();
+                            }
+
+                            csvWriter.WriteField(indicatorPairs[i].ShortIndicator);
+                            csvWriter.WriteField(indicatorPairs[i].LongIndicator);
+                            csvWriter.WriteField(indicatorPairs[i].OrdersCount);
+                            csvWriter.WriteField(indicatorPairs[i].LastResult);
+                            csvWriter.WriteField(indicatorPairs[i].LoseLimitMin);
+                            csvWriter.NextRecord();
+                            csvWriter.Flush();
+                            streamWriter.Close();
+                        }
                     }
                 }
 
@@ -304,7 +336,13 @@ namespace StockSolution.Services
             //List<LengthIndicator<decimal>> indicators = CreateIndicators(out differentIndicators, minIndicatorLength, maxIndicatorLength, interval);
             List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles);
             IndicatorPair resultIndicatorPair = null;
-            string indicatorPairString = shortIndicator.Trim() + " - " + longIndicator.Trim() + " - " +  loseLimit.ToString();
+
+            if(loseLimit < 0)
+            {
+                loseLimit = -loseLimit;
+            }
+            
+            string indicatorPairString = shortIndicator.Trim() + " - " + longIndicator.Trim() + " - " +  loseLimit.ToString(new CultureInfo("en-US"));
 
             foreach (IndicatorPair currentIndicatorPair in indicatorPairs)
             {

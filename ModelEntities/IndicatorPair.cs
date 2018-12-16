@@ -18,6 +18,7 @@ namespace StockSolution.ModelEntities.Models
         public virtual LengthIndicator LongIndicator { get; set; }
         public decimal LastResult { get; set; }
         public decimal LoseLimit { get; set; }
+        public decimal LoseLimitMin { get; set; }
         public int OrdersCount { get; set; }
 
     public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator, decimal LoseLimit)

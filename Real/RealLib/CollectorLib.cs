@@ -73,6 +73,7 @@ namespace RealLib
 
         public static void SaveStrategies(string fileName, Dictionary<string, StrategyGeneric> strategyGenerics)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             // Relocate old strategies csv using relocation date
             // Need One For Strategies which haven't expired yeat (Will expire on next change)
 
@@ -139,6 +140,12 @@ namespace RealLib
                     }
 
                     decimal loseLimit = decimal.Parse(csvReader["Lose Limit Constant"]);
+
+                    while(loseLimit <= -1)
+                    {
+                        loseLimit /= 100;
+                    }
+
                     IndicatorPair indicatorPair = new IndicatorPair(null, null, loseLimit);
                     bool isBuyEnabled = true;
                     bool isSellEnabled = true;

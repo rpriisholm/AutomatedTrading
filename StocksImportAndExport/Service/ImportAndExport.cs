@@ -7,6 +7,7 @@ using Stocks.Import;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using TickEnum;
@@ -148,6 +149,7 @@ namespace Stocks.Service
          * */
         public static void SingleDataCollector(string path, string url, string symbol, bool append)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             bool isPathValied = true;
 
             try

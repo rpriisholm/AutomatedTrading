@@ -20,7 +20,7 @@ namespace StockSolution.Services
         {
             return ConvertCsvToCandles(timeFrame, storagePath, securityID);
         }
-        /* Load Should Be Lazy Instead? */
+
         public static IList<SecurityInfo> LoadLocalCandles(TimeSpan timeFrame, string storagePath, DateTime startTime, DateTime stopTime)
         {
             IList<SecurityInfo> securityInfoes = new List<SecurityInfo>();

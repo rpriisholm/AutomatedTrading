@@ -54,7 +54,7 @@ namespace StockSolution.ModelEntities.Models
             bool isBuyEnabled,
             int minOrders,
             int maxOrders,
-            decimal MinProfitPct,
+            decimal minProfitPct,
             decimal loseLimitMin
             )
         {
@@ -63,8 +63,8 @@ namespace StockSolution.ModelEntities.Models
             this.IsSellEnabled = isSellEnabled;
             this.IsBuyEnabled = isBuyEnabled;
             this.MinOrders = minOrders;
-            this.MaxOrders = MaxOrders;
-            this.MinProfitPct = MinProfitPct;
+            this.MaxOrders = maxOrders;
+            this.MinProfitPct = minProfitPct;
             this.LoseLimitMin = loseLimitMin;
         }
 

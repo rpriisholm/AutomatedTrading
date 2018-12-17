@@ -268,22 +268,30 @@ namespace StockSolution.Services
 
                 /* TODO 06/12/2018 */
                 //Simulate IndicatorPairs With CurrentCandles
-                SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimitMin);
+
+                decimal loseLimitMax = -1m;
+                SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, loseLimitMax);
 
                 //Missing Recursive AND FILTER USING CHOOSEN SETTINGS
                 List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();
                 for (int i = 0; i < indicatorPairs.Count; i++)
                 {
-                    if (indicatorPairs[i].OrdersCount  >= optimizerOptions.MinOrders  &&
-                        indicatorPairs[i].OrdersCount  <= optimizerOptions.MaxOrders &&
-                        indicatorPairs[i].LastResult   >= optimizerOptions.MinProfitPct &&
-                        indicatorPairs[i].LoseLimitMin >= optimizerOptions.LoseLimitMin)
+                    bool isLargerOrEqualToMinOrders = indicatorPairs[i].OrdersCount >= optimizerOptions.MinOrders;
+                    bool isLessOrEqualToMaxOrders = indicatorPairs[i].OrdersCount <= optimizerOptions.MaxOrders;
+                    bool isLargerThanLastResult = indicatorPairs[i].LastResult >= optimizerOptions.MinProfitPct;
+                    bool isLargerThanLoseLimitMin = indicatorPairs[i].LoseLimitMin >= optimizerOptions.LoseLimitMin;
+
+
+                    if (isLargerOrEqualToMinOrders &&
+                        isLessOrEqualToMaxOrders &&
+                        isLargerThanLastResult &&
+                        isLargerThanLoseLimitMin)
                     {
                         filteredIndicatorPairs.Add(indicatorPairs[i]);
 
                         if (true)
                         {
-                            string path = @"C:\StockHistory\Real\TEST.csv";
+                            string path = @"C:\StockHistory\Real\Simulation_Filtered.csv";
                             bool fileExist = File.Exists(path);
 
                             StreamWriter streamWriter = new StreamWriter(path, fileExist);
@@ -296,6 +304,7 @@ namespace StockSolution.Services
                                 csvWriter.WriteField("Orders");
                                 csvWriter.WriteField("LastResult");
                                 csvWriter.WriteField("LoseLimitMin");
+                                csvWriter.WriteField("RecursiveTests");
                                 csvWriter.NextRecord();
                                 csvWriter.Flush();
                             }
@@ -305,11 +314,53 @@ namespace StockSolution.Services
                             csvWriter.WriteField(indicatorPairs[i].OrdersCount);
                             csvWriter.WriteField(indicatorPairs[i].LastResult);
                             csvWriter.WriteField(indicatorPairs[i].LoseLimitMin);
+                            csvWriter.WriteField(recursiveTests);
                             csvWriter.NextRecord();
                             csvWriter.Flush();
                             streamWriter.Close();
                         }
                     }
+                    /*
+                    if (true)
+                    {
+                        string path = @"C:\StockHistory\Real\Simulation_Filtered.csv";
+                        bool fileExist = File.Exists(path);
+
+                        StreamWriter streamWriter = new StreamWriter(path, fileExist);
+                        CsvWriter csvWriter = new CsvWriter(streamWriter);
+
+                        
+                        if (!fileExist)
+                        {
+                            csvWriter.WriteField("ShortIndicator");
+                            csvWriter.WriteField("LongIndicator");
+                            csvWriter.WriteField("Orders");
+                            csvWriter.WriteField("LastResult");
+                            csvWriter.WriteField("LoseLimitMin");
+                            csvWriter.WriteField("RecursiveTests");
+                            csvWriter.WriteField("isLargerOrEqualToMinOrders");
+                            csvWriter.WriteField("isLessOrEqualToMaxOrders");
+                            csvWriter.WriteField("isLargerThanLastResult");
+                            csvWriter.WriteField("isLargerThanLoseLimitMin");
+                            csvWriter.NextRecord();
+                            csvWriter.Flush();
+                        }
+
+                        csvWriter.WriteField(indicatorPairs[i].ShortIndicator);
+                        csvWriter.WriteField(indicatorPairs[i].LongIndicator);
+                        csvWriter.WriteField(indicatorPairs[i].OrdersCount);
+                        csvWriter.WriteField(indicatorPairs[i].LastResult);
+                        csvWriter.WriteField(indicatorPairs[i].LoseLimitMin);
+                        csvWriter.WriteField(recursiveTests);
+                        csvWriter.WriteField(isLargerOrEqualToMinOrders);
+                        csvWriter.WriteField(isLessOrEqualToMaxOrders);
+                        csvWriter.WriteField(isLargerThanLastResult);
+                        csvWriter.WriteField(isLargerThanLoseLimitMin);
+                        csvWriter.NextRecord();
+                        csvWriter.Flush();
+                        streamWriter.Close();
+                        
+                    }*/
                 }
 
                 //Replace Found Pairs Whith Filtered Pairs - Reduces Test Time

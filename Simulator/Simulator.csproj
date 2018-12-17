@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AutomatedTrading\AutomatedTrading.csproj">
-      <Project>{173C308A-F28A-4740-BB5F-B8E516B2E53F}</Project>
+      <Project>{173c308a-f28a-4740-bb5f-b8e516b2e53f}</Project>
       <Name>AutomatedTrading</Name>
     </ProjectReference>
     <ProjectReference Include="..\ModelEntities\ModelEntities.csproj">

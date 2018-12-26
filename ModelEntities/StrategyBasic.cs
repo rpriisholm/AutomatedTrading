@@ -108,7 +108,9 @@ namespace StockSolution.ModelEntities.Models
 
         public decimal ConnectionSecurityIDProfit()
         {
-            decimal currentLosePct = Connection.Profit(this.SecurityID) / this.Connection.CalcPayment();
+            decimal profit = Connection.Profit(this.SecurityID);
+            decimal payment = this.Connection.CalcPayment();
+            decimal currentLosePct = profit / payment;
             if (currentLosePct < LoseLimitMin)
             {
                 this.LoseLimitMin = currentLosePct;

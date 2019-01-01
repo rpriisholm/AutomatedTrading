@@ -69,10 +69,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AutomatedTrading\AutomatedTrading.csproj">
-      <Project>{173c308a-f28a-4740-bb5f-b8e516b2e53f}</Project>
-      <Name>AutomatedTrading</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ModelEntities\ModelEntities.csproj">
       <Project>{DD8EF70E-BAFF-402C-AE4D-E631BD2869A0}</Project>
       <Name>ModelEntities</Name>

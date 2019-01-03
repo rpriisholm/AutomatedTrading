@@ -141,8 +141,8 @@ namespace RealLib
 
         public static void RunTradingProgram(TickPeriod tickPeriod, TradingEnum tradingEnum)
         {
-            ImportAndExport.MinStockPrice = 3m;
-            bool isDownloadEnabled = false;
+            ImportAndExport.MinStockPrice = 2m;
+            bool isDownloadEnabled = true;
             //bool isDownloadEnabled = true;
             OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum, isDownloadEnabled);
 
@@ -161,7 +161,7 @@ namespace RealLib
 
         private static void NewStrategies()
         {
-            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300, 2.00m);
+            Dictionary<string, StrategyGeneric> newStrategies = TraderLib.FindNewStrategies(300, ImportAndExport.MinStockPrice);
             MoveStrategiesToExpiring(ref newStrategies, "CurrentStrategies.csv", "ExpiringStrategies.csv");
         }
 

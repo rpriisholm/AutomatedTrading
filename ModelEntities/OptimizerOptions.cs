@@ -79,10 +79,10 @@ namespace StockSolution.ModelEntities.Models
                     int nrOfTestValues = 90;
                     bool isSellEnabled = false;
                     bool isBuyEnabled = true;
-                    int minOrders = 5;
-                    int maxOrders = 17;
-                    int minProfitPct = 14;
-                    decimal loseLimitMin = -0.14m;
+                    int minOrders = 3;
+                    int maxOrders = 3;
+                    int minProfitPct = 18;
+                    decimal loseLimitMin = -0.09m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
@@ -98,6 +98,7 @@ namespace StockSolution.ModelEntities.Models
             return optimizerOptions;
         }
 
+        /* Legacy
         public static OptimizerOption<int> GetIndicatorLength(TickPeriod tickPeriod)
         {
             switch (tickPeriod)
@@ -108,6 +109,7 @@ namespace StockSolution.ModelEntities.Models
 
             return new OptimizerOption<int>(4, 4, 64);
         }
+        */
 
         public class OptimizerOption<T>
         {

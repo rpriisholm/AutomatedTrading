@@ -79,10 +79,10 @@ namespace StockSolution.ModelEntities.Models
                     int nrOfTestValues = 90;
                     bool isSellEnabled = false;
                     bool isBuyEnabled = true;
-                    int minOrders = 3;
-                    int maxOrders = 3;
-                    int minProfitPct = 18;
-                    decimal loseLimitMin = -0.09m;
+                    int minOrders = 7;
+                    int maxOrders = 8;
+                    int minProfitPct = 70;
+                    decimal loseLimitMin = -0.04m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,

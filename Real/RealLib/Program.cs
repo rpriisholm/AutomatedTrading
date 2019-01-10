@@ -38,8 +38,8 @@ namespace RealLib
             }
             else
             {
-                //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
-                TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
             }
             //SimulateSaveOnStartAndOnExit();
         }

@@ -147,8 +147,8 @@ namespace RealLib
                     }
 
                     IndicatorPair indicatorPair = new IndicatorPair(null, null, loseLimit);
-                    bool isBuyEnabled = true;
-                    bool isSellEnabled = true;
+                    bool isBuyEnabled = optimizerOptions.IsBuyEnabled;
+                    bool isSellEnabled = optimizerOptions.IsSellEnabled;
                     DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
                     
                     if (!(securityInfo != null) || !(securityInfo.Candles != null))

@@ -255,7 +255,7 @@ namespace RealLib
                     //Could OtherWise Cause Troubles With Disabling Strategies, should add another date to strategies instead of this
                     DateTime executionStart = strategies[symbol].LastExecution;
 
-                    foreach (Candle candle in CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles)
+                    foreach (Candle candle in candles)
                     {
                         bool isNewerThanLastExecution = strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
                         if (isNewerThanLastExecution)

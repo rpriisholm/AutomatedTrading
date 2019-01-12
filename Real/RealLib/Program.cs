@@ -28,7 +28,7 @@ namespace RealLib
             {
                 if (args[0].ToLower().Equals("NewStrategies".ToLower()))
                 {
-                   TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                   TraderLib.RunTradingProgram(TickPeriod.Daily , TradingEnum.NewStrategies);
                 }
 
                 if (args[0].ToLower().Equals("ContinueTrading".ToLower()))

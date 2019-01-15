@@ -68,24 +68,53 @@ namespace RealLib
             Directory.CreateDirectory(partialPath);
 
             string[] lines = File.ReadAllLines($"{partialPath}\\TradingLog");
-            string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
+            //string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
             List<string> noDuplicates = new List<string>();
 
-            foreach (string line in sortedLines)
+            Dictionary<DateTime, List<string>> sortedDictonary = new Dictionary<DateTime, List<string>>();
+
+            //string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
+            foreach(string line in lines)
             {
-                int lastIndex = noDuplicates.Count - 1;
-
-                if (lastIndex != -1)
+                DateTime date = DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
+                if(!sortedDictonary.ContainsKey(date))
                 {
-                    string lastLine = noDuplicates[lastIndex];
-                    int lastLength = lastLine.Length;
+                    sortedDictonary[date] = new List<string>();
+                }
 
-                    if (lastLength >= line.Length)
+                sortedDictonary[date].Add(line);
+            }
+
+            //SortLines
+            List<DateTime> keys = sortedDictonary.Keys.ToList();
+            foreach (DateTime key in keys)
+            {
+                sortedDictonary[key] = sortedDictonary[key].OrderByDescending(line => line).ToList();
+            }
+
+            //Begin Writing
+            foreach (DateTime key in sortedDictonary.Keys.OrderByDescending(key => key))
+            {
+                foreach (string line in sortedDictonary[key])
+                {
+                    int lastIndex = noDuplicates.Count - 1;
+
+                    if (lastIndex != -1)
                     {
-                        lastLine = lastLine.Substring(0, line.Length);
-                        if (lastLine.Equals(line))
+                        string lastLine = noDuplicates[lastIndex];
+                        int lastLength = lastLine.Length;
+
+                        if (lastLength >= line.Length)
                         {
-                            noDuplicates[lastIndex] = $"{lastLine} - Duplicate";
+                            lastLine = lastLine.Substring(0, line.Length);
+                            if (lastLine.Equals(line))
+                            {
+                                noDuplicates[lastIndex] = $"{lastLine} - Duplicate";
+                            }
+                            else
+                            {
+                                noDuplicates.Add(line);
+                            }
                         }
                         else
                         {
@@ -96,10 +125,6 @@ namespace RealLib
                     {
                         noDuplicates.Add(line);
                     }
-                }
-                else
-                {
-                    noDuplicates.Add(line);
                 }
             }
 
@@ -245,16 +270,17 @@ namespace RealLib
         private static void InvokeTrading(ref Dictionary<string, StrategyGeneric> strategies)
         {
             List<string> symbols = strategies.Keys.ToList<string>();
-
+            
             foreach (string symbol in symbols)
             {
+                //USED FOR WRITING
+                DateTime executionStart = strategies[symbol].LastExecution;
+
                 List<Candle> candles = CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles;
 
                 if (candles != null)
                 {
                     //Could OtherWise Cause Troubles With Disabling Strategies, should add another date to strategies instead of this
-                    DateTime executionStart = strategies[symbol].LastExecution;
-
                     foreach (Candle candle in candles)
                     {
                         bool isNewerThanLastExecution = strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
@@ -265,13 +291,15 @@ namespace RealLib
                         }
                     }
 
-                    strategies[symbol].LastExecution = executionStart;
+                    // strategies[symbol].LastExecution = executionStart;
                 }
                 else
                 {
                     strategies[symbol] = AddCandleToStrategy(strategies[symbol], null);
                 }
 
+                //USED FOR WRITING
+                strategies[symbol].LastExecution = executionStart;
             }
         }
 
@@ -323,7 +351,7 @@ namespace RealLib
             Candle lastCandle = null;
             foreach (Candle candle in securityInfo.Candles)
             {
-                bool isNewerThanLastExecution = newStrategy.LastExecution.CompareTo(candle.CloseTime) < 0;
+                bool isNewerThanLastExecution = newStrategy.LastExecution.CompareTo(candle.CloseTime) <= 0;
 
                 if (isNewerThanLastExecution)
                 {
@@ -367,6 +395,12 @@ namespace RealLib
                 //New Values
                 bool currentDisabled = strategy.IsDisabled;
                 Sides currentDirection = strategy.GetDirection();
+
+                //No Change
+                if (!previousDisabled && !currentDisabled && previousDirection == currentDirection && strategy.IsStrategyExpiring == false)
+                {
+                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - (No Change) ID: {strategy.SecurityID}");
+                }
 
                 //Create New Order And Cancel Old
                 if (!previousDisabled && !currentDisabled && previousDirection != currentDirection && strategy.IsStrategyExpiring == false)
@@ -413,6 +447,7 @@ namespace RealLib
                 TradingLogWriter.Flush();
             }
 
+            string s = candle.CloseTime.ToLongDateString();
             return strategy;
         }
 

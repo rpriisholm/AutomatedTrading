@@ -873,6 +873,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PermanentValues.cs" />
     <Compile Include="CreationService.cs" />
     <Compile Include="IEnumeratorHelper.cs" />
     <Compile Include="LoaderService.cs" />

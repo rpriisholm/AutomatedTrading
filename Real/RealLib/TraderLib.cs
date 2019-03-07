@@ -1,18 +1,16 @@
-﻿using CsvHelper;
-using SidesEnum;
+﻿using SidesEnum;
 using Stocks.Service;
 using StockSolution.Entity.Models;
 using StockSolution.ModelEntities.Models;
 using StockSolution.Services;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using TickEnum;
 
 namespace RealLib
@@ -50,7 +48,7 @@ namespace RealLib
                         Directory.CreateDirectory(partialPath);
                         _TradingLogWriter = new StreamWriter($"{partialPath}\\TradingLog", true);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Debug.WriteLine(e.ToString());
                         Debug.WriteLine(e.Message);
@@ -74,10 +72,10 @@ namespace RealLib
             Dictionary<DateTime, List<string>> sortedDictonary = new Dictionary<DateTime, List<string>>();
 
             //string[] sortedLines = lines.OrderByDescending(line => DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture)).ToArray();
-            foreach(string line in lines)
+            foreach (string line in lines)
             {
                 DateTime date = DateTime.ParseExact(line.Substring(0, 16), "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
-                if(!sortedDictonary.ContainsKey(date))
+                if (!sortedDictonary.ContainsKey(date))
                 {
                     sortedDictonary[date] = new List<string>();
                 }
@@ -150,7 +148,7 @@ namespace RealLib
                             _ErrorWriter = new StreamWriter($"{partialPath}\\ErrorLog_Trader{count}.txt");
                             completed = true;
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             Debug.WriteLine(e.ToString());
                             Debug.WriteLine(e.Message);
@@ -270,7 +268,7 @@ namespace RealLib
         private static void InvokeTrading(ref Dictionary<string, StrategyGeneric> strategies)
         {
             List<string> symbols = strategies.Keys.ToList<string>();
-            
+
             foreach (string symbol in symbols)
             {
                 //USED FOR WRITING
@@ -492,7 +490,7 @@ namespace RealLib
 
                         if (securityInfo.Candles.Count >= minNrOfTestValues)
                         {
-                            if (securityInfo.Candles[securityInfo.Candles.Count -1].ClosePrice > minStockValue)
+                            if (securityInfo.Candles[securityInfo.Candles.Count - 1].ClosePrice > minStockValue)
                             {
                                 int firstTestIndex = securityInfo.Candles.Count - minNrOfTestValues;
                                 DateTimeOffset startDateTest = securityInfo.Candles[firstTestIndex].CloseTime;
@@ -542,16 +540,16 @@ namespace RealLib
                         Debug.WriteLine(e.Message);
                         Debug.WriteLine(e.Data.ToString());
                     }
-                    
+
                     finally { }
-                    
+
                 }
                 //);
                 failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
 
                 #endregion
             }
-            
+
             catch (Exception e)
             {
                 while (RaceCondition) { Thread.Sleep(5); }
@@ -566,7 +564,7 @@ namespace RealLib
                     Debug.WriteLine(e.Message);
                     Debug.WriteLine(e.Data.ToString()); ;
                 }
-                catch(Exception ei)
+                catch (Exception ei)
                 {
                     Debug.WriteLine(ei.ToString());
                     Debug.WriteLine(ei.Message);
@@ -574,7 +572,7 @@ namespace RealLib
                 }
                 finally { RaceCondition = false; }
             }
-            
+
             finally { }
 
             return newStrategies;
@@ -640,7 +638,7 @@ namespace RealLib
                     Debug.WriteLine(e.Message);
                     Debug.WriteLine(e.Data.ToString());
                 }
-                catch(Exception ei)
+                catch (Exception ei)
                 {
                     Debug.WriteLine(ei.ToString());
                     Debug.WriteLine(ei.Message);
@@ -651,6 +649,179 @@ namespace RealLib
 
             //If not suatable
             return null;
+        }
+
+        public static void SimulateStrategies()
+        {
+            Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
+            Optimizer optimizer = new Optimizer();
+            OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+            int nrOfTestValues = 90;
+            int testMoney = 100000;
+            int orderLimit = testMoney / 10;
+
+            try
+            {
+                // #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
+                //var startTime = DateTime.Now;
+
+                #region LOAD INDEVIDUAL CANDLES - Distibuted Load - Memory Efficient
+                string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+
+                string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+                List<string> failedSecurities = new List<string>();
+                IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
+
+                int nrOfSecurities = securityIDs.Count;
+                int minNumberOfSecurities = securityIDs.Count * 100 / 70;
+                int maxCandles = 0;
+
+                List<int> securitiesLength = new List<int>();
+
+                foreach (string securityID in securityIDs)
+                {
+                    SecurityInfo securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+                    securitiesLength.Add(securityInfo.Candles.Count - 64);
+
+                    if (maxCandles < securityInfo.Candles.Count)
+                    {
+                        maxCandles = securityInfo.Candles.Count - 64;
+                    }
+                }
+
+                //Round Down
+                int maxNrIterations = maxCandles / nrOfTestValues;
+                int lessThanMaxIterations = -1;
+                int iterations;
+
+                //Min Nr Of Iterations
+                while (true)
+                {
+                    int count = 0;
+                    lessThanMaxIterations += 1;
+                    iterations = maxNrIterations - lessThanMaxIterations;
+
+                    foreach (int length in securitiesLength)
+                    {
+                        if ((length / nrOfTestValues) >= iterations)
+                        {
+                            count += 1;
+                        }
+                    }
+
+                    if (count >= minNumberOfSecurities)
+                    {
+                        break;
+                    }
+                }
+
+                //First Round
+                bool isFirst = true;
+
+                //Run Simulation
+                foreach (string securityID in securityIDs)
+                {
+                    SecurityInfo securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+
+                    if (securityInfo.Candles.Count > (64 + nrOfTestValues * iterations))
+                    {
+                        List<Candle> initialCandles = new List<Candle>();
+                        int initialStart = (64 + nrOfTestValues * iterations) - 1;
+
+                        for (int i = 0; i < 64; i++)
+                        {
+                            initialCandles.Add(securityInfo.Candles[initialStart - i]);
+                        }
+
+                        List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(initialCandles, Optimizer._TestPairs);
+
+                        int iterNr = 1;
+                        for (int i = iterations; i > 0; i--)
+                        {
+                            List<Candle> candles = new List<Candle>();
+                            int startIndex = (nrOfTestValues * iterations) - 1;
+
+                            string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
+                            SqlConnection connection = new SqlConnection(connectionString);
+
+                            if (isFirst)
+                            {
+                                string insert = "INSERT INTO[dbo].[InOrder]([Nr],[CloseDate],[NrOfTests]) VALUES " +
+                                    $"({iterNr}" +
+                                    $",'{securityInfo.Candles[startIndex].CloseTime.ToString("yyyy-MM-dd HH:mm:ss")}'" +
+                                    $",{nrOfTestValues})";
+
+                                connection.Open();
+                                SqlCommand command = new SqlCommand(insert, connection);
+                                command.ExecuteNonQuery();
+                                connection.Close();
+                            }
+
+                            for (int j = 0; j < nrOfTestValues; j++)
+                            {
+                                initialCandles.Add(securityInfo.Candles[startIndex - j]);
+                            }
+
+                            bool isSellEnabled = false;
+                            bool isBuyEnabled = true;
+                            decimal loseLimit = -1m;
+
+                            Optimizer.SimulateIndicatorPairs(ref indicatorPairs, initialCandles, isSellEnabled, isBuyEnabled, loseLimit);
+
+                            foreach (IndicatorPair indicatorPair in indicatorPairs)
+                            {
+                                string insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES " +
+                                    $"('{securityID}'" +
+                                    $",{iterNr}" +
+                                    $",{indicatorPair.ShortIndicator.ToString()}" +
+                                    $",{indicatorPair.LongIndicator.ToString()}" +
+                                    $",{indicatorPair.LoseLimitMin}" +
+                                    $",{indicatorPair.OrdersCount}" +
+                                    $",{indicatorPair.StrategyBasic.AllPositiveOrdersPct()}" +
+                                    $",{indicatorPair.LastResult}" +
+                                    $",{securityInfo.Candles[startIndex].ClosePrice})";
+
+                                connection.Open();
+                                SqlCommand command = new SqlCommand(insert, connection);
+                                command.ExecuteNonQuery();
+                                connection.Close();
+
+                                indicatorPair.Reset();
+                                iterNr += 1;
+                            }
+                        }
+                    }
+
+                    isFirst = false;
+                }
+                #endregion
+            }
+
+            catch (Exception e)
+            {
+                while (RaceCondition) { Thread.Sleep(5); }
+                RaceCondition = true;
+                try
+                {
+                    ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                    ErrorWriter.WriteLineAsync(e.Message).Wait();
+                    ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                    ErrorWriter.FlushAsync().Wait();
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.Data.ToString()); ;
+                }
+                catch (Exception ei)
+                {
+                    Debug.WriteLine(ei.ToString());
+                    Debug.WriteLine(ei.Message);
+                    Debug.WriteLine(ei.Data.ToString());
+                }
+                finally { RaceCondition = false; }
+            }
+
+            finally { }
+
         }
     }
 }

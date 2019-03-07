@@ -13,7 +13,7 @@ namespace StockSolution.ModelEntities.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
+        public StrategyBasic StrategyBasic { get; set; }
         public virtual LengthIndicator ShortIndicator { get; set; }
         public virtual LengthIndicator LongIndicator { get; set; }
         public decimal LastResult { get; set; }
@@ -23,6 +23,7 @@ namespace StockSolution.ModelEntities.Models
 
     public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator, decimal LoseLimit)
         {
+            this.StrategyBasic = null;
             this.ShortIndicator = shortIndicator;
             this.LongIndicator = longIndicator;
             this.LoseLimit = LoseLimit;
@@ -53,6 +54,14 @@ namespace StockSolution.ModelEntities.Models
         public override string ToString()
         {
             return ShortIndicator.ToString() + " - " + LongIndicator.ToString()  + " - " + (-LoseLimit).ToString(new CultureInfo("en-US"));
+        }
+
+        public void Reset()
+        {
+            this.StrategyBasic = null;
+            this.LastResult = decimal.MinValue;
+            this.OrdersCount = 0;
+            this.LoseLimitMin = 0m;
         }
     }
 }

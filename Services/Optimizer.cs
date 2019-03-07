@@ -129,7 +129,7 @@ namespace StockSolution.Services
 
         // Simulate IndicatorPairs
         /* TODO 06/12/2018 */
-        private void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, decimal loseLimit)
+        public static void SimulateIndicatorPairs(ref List<IndicatorPair> indicatorPairs, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, decimal loseLimit)
         {
             //Parallel.ForEach(indicatorPairs, indicatorPair =>
             foreach (IndicatorPair indicatorPair in indicatorPairs)
@@ -150,6 +150,7 @@ namespace StockSolution.Services
                 StrategyGeneric strategyGeneric = null;
 
                 strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair, isSellEnabled, isBuyEnabled, loseLimit);
+                indicatorPair.StrategyBasic = strategyGeneric;
 
                 strategyGeneric.Start();
                 //Process Candles
@@ -166,8 +167,6 @@ namespace StockSolution.Services
                 indicatorPair.OrdersCount = strategyGeneric.OrderCount;
                 //indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
             }
-
-            //);
         }
 
         /* CREATEINDICATORSOLD
@@ -260,7 +259,7 @@ namespace StockSolution.Services
             int initIndex = candles.Count - (this.GetMaxIndicatorLength() + optimizerOptions.NrOfTestValues * optimizerOptions.RecursiveTests);
             List<Candle> initialCandles = candles.GetRange(initIndex, this.GetMaxIndicatorLength());
             //List<IndicatorPair> indicatorPairs = CreateIndicatorPairs(initialCandles, optimizerOptions.IndicatorLength.Min, optimizerOptions.IndicatorLength.Max, optimizerOptions.IndicatorLength.IncrementIncrease);
-            List<IndicatorPair> indicatorPairs = this.CreateIndicatorPairs(initialCandles);
+            List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(initialCandles);
 
             //START SIMULATION - RUN X TIMES
             for (int recursiveTests = 0; recursiveTests < optimizerOptions.RecursiveTests; recursiveTests++)
@@ -271,7 +270,7 @@ namespace StockSolution.Services
                 //Simulate IndicatorPairs With CurrentCandles
 
                 decimal loseLimitMax = -1m;
-                SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, loseLimitMax);
+                Optimizer.SimulateIndicatorPairs(ref indicatorPairs, currentCandles, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, loseLimitMax);
 
                 //Missing Recursive AND FILTER USING CHOOSEN SETTINGS
                 List<IndicatorPair> filteredIndicatorPairs = new List<IndicatorPair>();
@@ -481,18 +480,23 @@ namespace StockSolution.Services
         }
 
 
-        private List<LengthIndicator<decimal>> _ShortIndicators = new List<LengthIndicator<decimal>>();
-        private List<LengthIndicator<decimal>> _LongIndicators = new List<LengthIndicator<decimal>>();
-        private List<decimal> _LoseLimits = new List<decimal>();
+        private static List<LengthIndicator<decimal>> _ShortIndicators = new List<LengthIndicator<decimal>>();
+        private static List<LengthIndicator<decimal>> _LongIndicators = new List<LengthIndicator<decimal>>();
+        private static List<decimal> _LoseLimits = new List<decimal>();
 
-        public List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles)
+        public static List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles)
+        {
+            return CreateIndicatorPairs(initialCandles, Optimizer._EnabledPairs);
+        }
+
+        public static List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles, string enabledPairs)
         {
             List<IndicatorPair> indicatorPairs = new List<IndicatorPair>();
 
             //Singleton
             if (_ShortIndicators.Count <= 0)
             {
-                StringReader strReader = new StringReader(Optimizer._EnabledPairs);
+                StringReader strReader = new StringReader(enabledPairs);
 
                 while (strReader.Peek() >= 0)
                 {
@@ -672,11 +676,11 @@ namespace StockSolution.Services
          * From SQL
          * ShortIndicator - LongIndicator 
          */
-        private static readonly string _EnabledPairs = PermanentValues.EnabledPairs;
+        public static readonly string _EnabledPairs = PermanentValues.EnabledPairs;
 
-        private static readonly string _TestPairs = PermanentValues.TestPairs;
+        public static readonly string _TestPairs = PermanentValues.TestPairs;
 
-        private static readonly string _DisabledPairs = @"";
+        public static readonly string _DisabledPairs = @"";
 
     }
 }

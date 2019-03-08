@@ -653,9 +653,9 @@ namespace RealLib
 
         public static void SimulateStrategies()
         {
+            ImportAndExport.PartialPath = @"C:\StockHistory\Testing\";
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
-            Optimizer optimizer = new Optimizer();
-            OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+
             int nrOfTestValues = 90;
             int testMoney = 100000;
             int orderLimit = testMoney / 10;
@@ -672,23 +672,31 @@ namespace RealLib
                 List<string> failedSecurities = new List<string>();
                 IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
 
-                int nrOfSecurities = securityIDs.Count;
-                int minNumberOfSecurities = securityIDs.Count * 100 / 70;
-                int maxCandles = 0;
-
                 List<int> securitiesLength = new List<int>();
+                int nrOfSecurities = 0;
+                int maxCandles = 0;
 
                 foreach (string securityID in securityIDs)
                 {
-                    SecurityInfo securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
-                    securitiesLength.Add(securityInfo.Candles.Count - 64);
-
-                    if (maxCandles < securityInfo.Candles.Count)
+                    try
                     {
-                        maxCandles = securityInfo.Candles.Count - 64;
+                        ImportAndExport.CollectChoosenData(securityID, TickPeriod.Daily, false);
+
+                        SecurityInfo securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+                        securitiesLength.Add(securityInfo.Candles.Count - 64);
+
+                        if (maxCandles < securityInfo.Candles.Count)
+                        {
+                            maxCandles = securityInfo.Candles.Count - 64;
+                        }
+
+                        nrOfSecurities += 1;
                     }
+                    catch { }
                 }
 
+                int minNumberOfSecurities = securityIDs.Count * 100 / 70;
+                
                 //Round Down
                 int maxNrIterations = maxCandles / nrOfTestValues;
                 int lessThanMaxIterations = -1;
@@ -721,9 +729,16 @@ namespace RealLib
                 //Run Simulation
                 foreach (string securityID in securityIDs)
                 {
-                    SecurityInfo securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+                    SecurityInfo securityInfo = null;
+                    bool isCandlesValied = false;
+                    try
+                    {
+                        securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+                        isCandlesValied = true;
+                    }
+                    catch { }
 
-                    if (securityInfo.Candles.Count > (64 + nrOfTestValues * iterations))
+                    if (isCandlesValied && securityInfo != null && securityInfo.Candles.Count > (64 + nrOfTestValues * iterations))
                     {
                         List<Candle> initialCandles = new List<Candle>();
                         int initialStart = (64 + nrOfTestValues * iterations) - 1;
@@ -821,7 +836,6 @@ namespace RealLib
             }
 
             finally { }
-
         }
     }
 }

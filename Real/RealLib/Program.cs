@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TickEnum;
+using Xceed.Wpf.Toolkit;
 
 namespace RealLib
 {
@@ -16,32 +17,44 @@ namespace RealLib
         static void Main(string[] args)
         {
             //CollectorLib.DataLocation = @"c:\StockHistory\Real";
-
-            #region Empty Console  
-            TextWriter outTextWriter = Console.Out;
-            TextWriter errTextWriter = Console.Error;
-            //Console.SetOut(TextWriter.Null);
-            //Console.SetError(TextWriter.Null);
-            #endregion
-
-            if (args.Length != 0)
+            try
             {
-                if (args[0].ToLower().Equals("NewStrategies".ToLower()))
-                {
-                   TraderLib.RunTradingProgram(TickPeriod.Daily , TradingEnum.NewStrategies);
-                }
+                #region Empty Console  
+                TextWriter outTextWriter = Console.Out;
+                TextWriter errTextWriter = Console.Error;
+                //Console.SetOut(TextWriter.Null);
+                //Console.SetError(TextWriter.Null);
+                #endregion
 
-                if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+                if (args.Length != 0)
                 {
-                    TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                    if (args[0].ToLower().Equals("NewStrategies".ToLower()))
+                    {
+                        TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                    }
+
+                    if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+                    {
+                        TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                    }
+
+                    if (args[0].ToLower().Equals("AddSimulationToDatabase".ToLower()))
+                    {
+                        TraderLib.SimulateStrategies();
+                    }
                 }
+                else
+                {
+                    //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                    //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                    //TraderLib.SimulateStrategies();
+                }
+                //SimulateSaveOnStartAndOnExit();
             }
-            else
+            catch ( Exception e)
             {
-                TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
-                //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                MessageBox.Show(e.ToString());
             }
-            //SimulateSaveOnStartAndOnExit();
         }
 
 

@@ -456,6 +456,8 @@
     <Reference Include="Northwoods.GoWPF, Version=2.1.1.4, Culture=neutral, PublicKeyToken=616e2dc80068a33d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\Northwoods.GoWPF.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="protobuf-net, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\protobuf-net.dll</HintPath>
     </Reference>
@@ -771,6 +773,7 @@
     <Reference Include="Types, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\Types.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.Toolkit, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>

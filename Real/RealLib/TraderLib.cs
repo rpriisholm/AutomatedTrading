@@ -657,7 +657,7 @@ namespace RealLib
             string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
 
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
-            ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+            //portAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             int nrOfTestValues = 90;
             int testMoney = 100000;
             int orderLimit = testMoney / 10;
@@ -686,13 +686,13 @@ namespace RealLib
                         {
                             maxCandles = count;
                         }
-
+                        securitiesLength.Add(count);
                         nrOfSecurities += 1;
                     }
                     catch { }
                 }
 
-                int minNumberOfSecurities = securityIDs.Count * 100 / 70 / 100;
+                int minNumberOfSecurities = securityIDs.Count * 70 / 100;
                 
                 //Round Down
                 int maxNrIterations = maxCandles / nrOfTestValues;

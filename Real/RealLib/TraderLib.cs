@@ -654,8 +654,10 @@ namespace RealLib
         public static void SimulateStrategies()
         {
             ImportAndExport.PartialPath = @"C:\StockHistory\Testing\";
-            Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
+            string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
 
+            Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
+            ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             int nrOfTestValues = 90;
             int testMoney = 100000;
             int orderLimit = testMoney / 10;
@@ -666,9 +668,6 @@ namespace RealLib
                 //var startTime = DateTime.Now;
 
                 #region LOAD INDEVIDUAL CANDLES - Distibuted Load - Memory Efficient
-                string fullPath = ImportAndExport.GetFullPath(TickPeriod.Daily);
-
-                string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
                 List<string> failedSecurities = new List<string>();
                 IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
 

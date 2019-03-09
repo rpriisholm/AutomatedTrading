@@ -680,13 +680,11 @@ namespace RealLib
                     try
                     {
                         ImportAndExport.CollectChoosenData(securityID, TickPeriod.Daily, false);
+                        int count = LoaderService.CountCandleLines(storagePath, securityID);
 
-                        SecurityInfo securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
-                        securitiesLength.Add(securityInfo.Candles.Count - 64);
-
-                        if (maxCandles < securityInfo.Candles.Count)
+                        if (maxCandles < count)
                         {
-                            maxCandles = securityInfo.Candles.Count - 64;
+                            maxCandles = count;
                         }
 
                         nrOfSecurities += 1;
@@ -694,15 +692,15 @@ namespace RealLib
                     catch { }
                 }
 
-                int minNumberOfSecurities = securityIDs.Count * 100 / 70;
+                int minNumberOfSecurities = securityIDs.Count * 100 / 70 / 100;
                 
                 //Round Down
                 int maxNrIterations = maxCandles / nrOfTestValues;
                 int lessThanMaxIterations = -1;
-                int iterations;
+                int iterations = maxNrIterations;
 
                 //Min Nr Of Iterations
-                while (true)
+                while (true && iterations >= 0)
                 {
                     int count = 0;
                     lessThanMaxIterations += 1;

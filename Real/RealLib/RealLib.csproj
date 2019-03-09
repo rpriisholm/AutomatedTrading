@@ -272,6 +272,9 @@
     <Reference Include="DotNetDBF, Version=3.0.1.27028, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\DotNetDBF.dll</HintPath>
     </Reference>
+    <Reference Include="Easy.Common, Version=3.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Easy.Common.3.3.1\lib\net45\Easy.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Ecng.Backup, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\Ecng.Backup.dll</HintPath>
     </Reference>
@@ -751,6 +754,9 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reflection.Metadata, Version=1.4.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StockSharp.4.4.14\lib\net45\System.Security.Cryptography.Algorithms.dll</HintPath>

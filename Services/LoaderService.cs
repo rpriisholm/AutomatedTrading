@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace StockSolution.Services
 {
     public class LoaderService
@@ -67,6 +68,12 @@ namespace StockSolution.Services
             List<string> IdStrings = new List<string>(IDs);
 
             return IdStrings;
+        }
+
+        public static int CountCandleLines(string storagePath, string securityID)
+        {
+            FileInfo file = new FileInfo($"{storagePath}\\{securityID}.csv");
+            return File.ReadLines(file.FullName).Count() - 5;
         }
 
         public static SecurityInfo ConvertCsvToCandles(TimeSpan timeFrame, string filePath, string securityID)

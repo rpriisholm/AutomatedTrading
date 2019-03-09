@@ -86,13 +86,35 @@ namespace Stocks.Service
                 }
             }
 
+            List<string> failedDownloads = new List<string>();
+
+
             // TODO //
-            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
-            foreach (var symbol in symbols)
+            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
-                CollectChoosenData(symbol, tickPeriod, appendSymbols);
+                try
+                {
+                    CollectChoosenData(symbol, tickPeriod, appendSymbols);
+                }
+                catch
+                {
+                    failedDownloads.Add(symbol);
+                }
             }
-            //);
+            );
+
+            foreach (string symbol in failedDownloads)
+            {
+                try
+                {
+                    CollectChoosenData(symbol, tickPeriod, appendSymbols);
+                }
+                catch(Exception e)
+                {
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Data.ToString());
+                }
+            }
 
             //Cleanup - Delete Files With Less Than 400 Rows
             Console.WriteLine("Done");
@@ -106,41 +128,40 @@ namespace Stocks.Service
             // Get Information About Stock
             // https://api.iextrading.com/1.0/stock/aapl/quote
             //-----/ /-----/ /-----/ /-----/  
-            try
+
+            switch (tickPeriod)
             {
-                switch (tickPeriod)
-                {
-                    case TickPeriod.Daily:
-                        url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
-                        break;
+                case TickPeriod.Daily:
+                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
+                    break;
 
-                    case TickPeriod.SixMin:
-                        url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/6m?format=csv";
-                        break;
+                case TickPeriod.SixMin:
+                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/6m?format=csv";
+                    break;
 
-                    case TickPeriod.ThreeMin:
-                        url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/3m?format=csv";
-                        break;
+                case TickPeriod.ThreeMin:
+                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/3m?format=csv";
+                    break;
 
-                    case TickPeriod.OneMin:
-                        url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1m?format=csv";
-                        break;
-                }
-
-                //Start Collecting
-                SingleDataCollector(path, url, symbol, append);
-
-                // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,news,chart&range=1m&last=5
-
-                // Daily 5 Years
-                // url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
-                // SingleDataCollector(path, url);
+                case TickPeriod.OneMin:
+                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1m?format=csv";
+                    break;
             }
-            finally { } /*
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }*/
+
+            //Start Collecting
+            SingleDataCollector(path, url, symbol, append);
+
+            // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,news,chart&range=1m&last=5
+
+            // Daily 5 Years
+            // url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
+            // SingleDataCollector(path, url);
+
+            /*
+           catch (Exception e)
+           {
+               Console.WriteLine(e.ToString());
+           }*/
         }
 
         /* *
@@ -160,6 +181,7 @@ namespace Stocks.Service
             {
                 Debug.WriteLine(e.ToString());
                 Debug.WriteLine(e.Data.ToString());
+                Debug.WriteLine("Failed Path:" + path);
                 isPathValied = false;
             }
 
@@ -176,16 +198,12 @@ namespace Stocks.Service
                     int tries = 20;
                     while (!hasCompleted && count < tries)
                     {
-                        try
-                        {
-                            csvContent = Other.Download(url);
+                        csvContent = Other.Download(url);
 
-                            if (!string.IsNullOrWhiteSpace(csvContent))
-                            {
-                                hasCompleted = true;
-                            }
+                        if (!string.IsNullOrWhiteSpace(csvContent))
+                        {
+                            hasCompleted = true;
                         }
-                        catch { }
                         count++;
                     }
                 }
@@ -388,7 +406,7 @@ namespace Stocks.Service
                             }
                             else { newCsvContent += "-1" + ','; }
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             Debug.WriteLine(e.ToString());
                             Debug.WriteLine(e.Data.ToString());

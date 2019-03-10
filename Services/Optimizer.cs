@@ -125,7 +125,43 @@ namespace StockSolution.Services
             //IGNORES loseLimitConstant
             SimulateIndicatorPairs(ref indicatorPairs, simulateCandles, isSellEnabled, isBuyEnabled, -10000m);
         }
-        */ 
+        */
+
+        public static IndicatorPair SimulateIndicatorPair(IndicatorPair indicatorPair, List<Candle> simulateCandles, bool isSellEnabled, bool isBuyEnabled, decimal loseLimit)
+        {
+            int initialMoney = 100000;
+            int orderLimit = initialMoney / 10;
+            int maxInvestedPct = 80;
+            SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
+
+            if (!(indicatorPair != null))
+            {
+                Debug.WriteLine("IndicatorPair Should Never Be Null");
+                throw new ArgumentNullException();
+            }
+
+            EmulationConnection emulationConnection = new EmulationConnection(initialMoney, OrderLimitType.Value, orderLimit, 1, maxInvestedPct);
+            StrategyGeneric strategyGeneric = null;
+
+            strategyGeneric = new StrategyGeneric(emulationConnection, securityInfo, indicatorPair, isSellEnabled, isBuyEnabled, loseLimit);
+            indicatorPair.StrategyBasic = strategyGeneric;
+
+            strategyGeneric.Start();
+            //Process Candles
+
+            foreach (Candle candle in simulateCandles)
+            {
+                strategyGeneric.ProcessCandle(candle);
+            }
+            strategyGeneric.Stop();
+
+            //Set LastResult
+            indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
+            indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
+            indicatorPair.OrdersCount = strategyGeneric.OrderCount;
+
+            return indicatorPair;
+        }
 
         // Simulate IndicatorPairs
         /* TODO 06/12/2018 */
@@ -140,7 +176,7 @@ namespace StockSolution.Services
                 int maxInvestedPct = 80;
                 SecurityInfo securityInfo = new SecurityInfo() { SecurityID = "TestID" };
 
-                if(!(indicatorPair != null))
+                if (!(indicatorPair != null))
                 {
                     Debug.WriteLine("IndicatorPair Should Never Be Null");
                     throw new ArgumentNullException();
@@ -165,7 +201,6 @@ namespace StockSolution.Services
                 indicatorPair.LastResult = strategyGeneric.ConnectionSecurityIDProfit() / orderLimit * 100;
                 indicatorPair.LoseLimitMin = strategyGeneric.LoseLimitMin;
                 indicatorPair.OrdersCount = strategyGeneric.OrderCount;
-                //indicatorPair.PositiveOrderPct = (int)strategyGeneric.AllPositiveOrdersPct();
             }
         }
 

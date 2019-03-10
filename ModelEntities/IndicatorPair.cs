@@ -1,10 +1,8 @@
 ﻿using StockSolution.Entity.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
-using System.Text;
 
 namespace StockSolution.ModelEntities.Models
 {
@@ -21,7 +19,7 @@ namespace StockSolution.ModelEntities.Models
         public decimal LoseLimitMin { get; set; }
         public int OrdersCount { get; set; }
 
-    public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator, decimal LoseLimit)
+        public IndicatorPair(LengthIndicator shortIndicator, LengthIndicator longIndicator, decimal LoseLimit)
         {
             this.StrategyBasic = null;
             this.ShortIndicator = shortIndicator;
@@ -33,7 +31,7 @@ namespace StockSolution.ModelEntities.Models
 
         public int CompareTo(IndicatorPair other)
         {
-            if(this.LastResult > other.LastResult)
+            if (this.LastResult > other.LastResult)
             {
                 return -1;
             }
@@ -41,19 +39,19 @@ namespace StockSolution.ModelEntities.Models
             if (this.LastResult < other.LastResult)
             {
                 return 1;
-            } 
+            }
 
             return 0;
         }
 
         public int CompareTo(object other)
         {
-            return this.CompareTo((IndicatorPair) other);
+            return this.CompareTo((IndicatorPair)other);
         }
 
         public override string ToString()
         {
-            return ShortIndicator.ToString() + " - " + LongIndicator.ToString()  + " - " + (-LoseLimit).ToString(new CultureInfo("en-US"));
+            return ShortIndicator.ToString() + " - " + LongIndicator.ToString() + " - " + (-LoseLimit).ToString(new CultureInfo("en-US"));
         }
 
         public void Reset()

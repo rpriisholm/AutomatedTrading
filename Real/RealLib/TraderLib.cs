@@ -657,158 +657,183 @@ namespace RealLib
             string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
 
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
-            //portAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+            //importAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             int nrOfTestValues = 90;
             int testMoney = 100000;
             int orderLimit = testMoney / 10;
 
-            try
+
+            // #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
+            //var startTime = DateTime.Now;
+
+            #region LOAD INDEVIDUAL CANDLES - Distibuted Load - Memory Efficient
+            List<string> failedSecurities = new List<string>();
+            IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
+
+            List<int> securitiesLength = new List<int>();
+            int nrOfSecurities = 0;
+            int maxCandles = 0;
+
+            foreach (string securityID in securityIDs)
             {
-                // #region Load Speed - 5 Minutes (18:43:25-18:48:36) - 7619 Files - 1,28 GB - Rows: 19230860 - (nu en enkelt security ekstra)
-                //var startTime = DateTime.Now;
-
-                #region LOAD INDEVIDUAL CANDLES - Distibuted Load - Memory Efficient
-                List<string> failedSecurities = new List<string>();
-                IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
-
-                List<int> securitiesLength = new List<int>();
-                int nrOfSecurities = 0;
-                int maxCandles = 0;
-
-                foreach (string securityID in securityIDs)
+                try
                 {
-                    try
-                    {
-                        ImportAndExport.CollectChoosenData(securityID, TickPeriod.Daily, false);
-                        int count = LoaderService.CountCandleLines(storagePath, securityID);
+                    //ImportAndExport.CollectChoosenData(securityID, TickPeriod.Daily, false);
+                    int count = LoaderService.CountCandleLines(storagePath, securityID);
 
-                        if (maxCandles < count)
-                        {
-                            maxCandles = count;
-                        }
-                        securitiesLength.Add(count);
-                        nrOfSecurities += 1;
+                    if (maxCandles < count)
+                    {
+                        maxCandles = count;
                     }
-                    catch { }
+                    securitiesLength.Add(count);
+                    nrOfSecurities += 1;
                 }
+                catch { }
+            }
 
-                int minNumberOfSecurities = securityIDs.Count * 70 / 100;
-                
-                //Round Down
-                int maxNrIterations = maxCandles / nrOfTestValues;
-                int lessThanMaxIterations = -1;
-                int iterations = maxNrIterations;
+            int minNumberOfSecurities = securityIDs.Count * 70 / 100;
 
-                //Min Nr Of Iterations
-                while (true && iterations >= 0)
+            //Round Down
+            int maxNrIterations = maxCandles / nrOfTestValues;
+            int lessThanMaxIterations = -1;
+            int iterations = maxNrIterations;
+
+            //Min Nr Of Iterations
+            while (true && iterations >= 0)
+            {
+                int count = 0;
+                lessThanMaxIterations += 1;
+                iterations = maxNrIterations - lessThanMaxIterations;
+
+                foreach (int length in securitiesLength)
                 {
-                    int count = 0;
-                    lessThanMaxIterations += 1;
-                    iterations = maxNrIterations - lessThanMaxIterations;
-
-                    foreach (int length in securitiesLength)
+                    if ((length / nrOfTestValues) >= iterations)
                     {
-                        if ((length / nrOfTestValues) >= iterations)
-                        {
-                            count += 1;
-                        }
-                    }
-
-                    if (count >= minNumberOfSecurities)
-                    {
-                        break;
+                        count += 1;
                     }
                 }
 
-                //First Round
-                bool isFirst = true;
-
-                //Run Simulation
-                foreach (string securityID in securityIDs)
+                if (count >= minNumberOfSecurities)
                 {
-                    SecurityInfo securityInfo = null;
-                    bool isCandlesValied = false;
-                    try
-                    {
-                        securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
-                        isCandlesValied = true;
-                    }
-                    catch { }
+                    break;
+                }
+            }
 
-                    if (isCandlesValied && securityInfo != null && securityInfo.Candles.Count > (64 + nrOfTestValues * iterations))
+            //First Round
+            bool isFirst = true;
+
+            //Run Simulation
+            foreach (string securityID in securityIDs)
+            {
+                SecurityInfo securityInfo = null;
+                bool isCandlesValied = false;
+                try
+                {
+                    securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+                    isCandlesValied = true;
+                }
+                catch { }
+
+                if (isCandlesValied && securityInfo != null && securityInfo.Candles.Count > (64 + nrOfTestValues * iterations))
+                {
+                    int iterNr = 1;
+                    for (int i = iterations; i > 0; i--)
                     {
                         List<Candle> initialCandles = new List<Candle>();
-                        int initialStart = (64 + nrOfTestValues * iterations) - 1;
+                        int initialStart = securityInfo.Candles.Count - (64 + nrOfTestValues * i);
 
-                        for (int i = 0; i < 64; i++)
+                        for (int j = 0; j < 64; j++)
                         {
-                            initialCandles.Add(securityInfo.Candles[initialStart - i]);
+                            initialCandles.Add(securityInfo.Candles[initialStart + j]);
                         }
 
                         List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(initialCandles, Optimizer._TestPairs);
 
-                        int iterNr = 1;
-                        for (int i = iterations; i > 0; i--)
+                        List<Candle> candles = new List<Candle>();
+                        int startIndex = securityInfo.Candles.Count - (nrOfTestValues * i);
+
+                        string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
+                        SqlConnection connection = new SqlConnection(connectionString);
+
+                        if (isFirst)
                         {
-                            List<Candle> candles = new List<Candle>();
-                            int startIndex = (nrOfTestValues * iterations) - 1;
+                            string insertInOrder = "INSERT INTO[dbo].[InOrder]([Nr],[CloseDate],[NrOfTests]) VALUES " +
+                                $"({iterNr}" +
+                                $",'{securityInfo.Candles[startIndex].CloseTime.ToString("yyyy-MM-dd HH:mm:ss")}'" +
+                                $",{nrOfTestValues})";
 
-                            string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
-                            SqlConnection connection = new SqlConnection(connectionString);
+                            connection.Open();
+                            SqlCommand commandInOrder = new SqlCommand(insertInOrder, connection);
+                            commandInOrder.ExecuteNonQuery();
+                            connection.Close();
+                        }
 
-                            if (isFirst)
+                        List<Candle> testCandles = new List<Candle>();
+                        for (int j = 0; j < nrOfTestValues; j++)
+                        {
+                            testCandles.Add(securityInfo.Candles[startIndex + j]);
+                        }
+
+                        bool isSellEnabled = false;
+                        bool isBuyEnabled = true;
+                        decimal loseLimit = -1m;
+
+                        string insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
+                        int count = 0;
+                        for (int j = 0; j < indicatorPairs.Count; j++)
+                        {
+                            indicatorPairs[j] = Optimizer.SimulateIndicatorPair(indicatorPairs[j], testCandles, isSellEnabled, isBuyEnabled, loseLimit);
+
+                            insert += $"('{securityID}'" +
+                                $",{iterNr}" +
+                                $",'{indicatorPairs[j].ShortIndicator.ToString()}'" +
+                                $",'{indicatorPairs[j].LongIndicator.ToString()}'" +
+                                $",{indicatorPairs[j].LoseLimitMin}" +
+                                $",{indicatorPairs[j].OrdersCount}" +
+                                $",{indicatorPairs[j].StrategyBasic.AllPositiveOrdersPct()}" +
+                                $",{indicatorPairs[j].LastResult}" +
+                                $",{securityInfo.Candles[startIndex].ClosePrice})";
+                            indicatorPairs[j].Reset();
+                            indicatorPairs[j].ShortIndicator.Indicator.Container.ClearValues();
+                            indicatorPairs[j].LongIndicator.Indicator.Container.ClearValues();
+
+                            count += 1;
+                            if (count >= 1000)
                             {
-                                string insert = "INSERT INTO[dbo].[InOrder]([Nr],[CloseDate],[NrOfTests]) VALUES " +
-                                    $"({iterNr}" +
-                                    $",'{securityInfo.Candles[startIndex].CloseTime.ToString("yyyy-MM-dd HH:mm:ss")}'" +
-                                    $",{nrOfTestValues})";
-
                                 connection.Open();
                                 SqlCommand command = new SqlCommand(insert, connection);
                                 command.ExecuteNonQuery();
                                 connection.Close();
+                                count = 0;
+                                insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
                             }
-
-                            for (int j = 0; j < nrOfTestValues; j++)
+                            else
                             {
-                                initialCandles.Add(securityInfo.Candles[startIndex - j]);
+                                insert += $",";
                             }
+                        }
+                        if (count > 0)
+                        {
+                            insert = insert.TrimEnd(',');
+                            connection.Open();
+                            SqlCommand command = new SqlCommand(insert, connection);
+                            command.ExecuteNonQuery();
+                            connection.Close();
 
-                            bool isSellEnabled = false;
-                            bool isBuyEnabled = true;
-                            decimal loseLimit = -1m;
-
-                            Optimizer.SimulateIndicatorPairs(ref indicatorPairs, initialCandles, isSellEnabled, isBuyEnabled, loseLimit);
-
-                            foreach (IndicatorPair indicatorPair in indicatorPairs)
-                            {
-                                string insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES " +
-                                    $"('{securityID}'" +
-                                    $",{iterNr}" +
-                                    $",{indicatorPair.ShortIndicator.ToString()}" +
-                                    $",{indicatorPair.LongIndicator.ToString()}" +
-                                    $",{indicatorPair.LoseLimitMin}" +
-                                    $",{indicatorPair.OrdersCount}" +
-                                    $",{indicatorPair.StrategyBasic.AllPositiveOrdersPct()}" +
-                                    $",{indicatorPair.LastResult}" +
-                                    $",{securityInfo.Candles[startIndex].ClosePrice})";
-
-                                connection.Open();
-                                SqlCommand command = new SqlCommand(insert, connection);
-                                command.ExecuteNonQuery();
-                                connection.Close();
-
-                                indicatorPair.Reset();
-                                iterNr += 1;
-                            }
+                            iterNr += 1;
                         }
                     }
 
                     isFirst = false;
                 }
-                #endregion
+                Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             }
+            #endregion
 
+            try
+            {
+
+            }
             catch (Exception e)
             {
                 while (RaceCondition) { Thread.Sleep(5); }

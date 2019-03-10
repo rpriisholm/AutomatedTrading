@@ -574,6 +574,7 @@
     <Reference Include="SandS.Algorithm.Library.Sort, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SandS.Algorithm.Library.Sort.2.0.2\lib\SandS.Algorithm.Library.Sort.dll</HintPath>
     </Reference>
+    <Reference Include="StockSharp.Algo, Version=4.4.14.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />

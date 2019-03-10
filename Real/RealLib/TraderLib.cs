@@ -30,6 +30,7 @@ namespace RealLib
 
     public class TraderLib
     {
+        public static string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
         public static IConnection emulationConnection = new EmulationConnection(1000000, OrderLimitType.Value, 5000, 5, 100);
         public static Dictionary<string, StrategyGeneric> Strategies = new Dictionary<string, StrategyGeneric>();
         public static Dictionary<string, StrategyGeneric> ExpiringStrategies = new Dictionary<string, StrategyGeneric>();
@@ -688,6 +689,25 @@ namespace RealLib
                     nrOfSecurities += 1;
                 }
                 catch { }
+
+                #region Try Inserting SecurityId           
+                SqlConnection connection = new SqlConnection(connectionString);
+
+                try
+                {
+                    string insertSecurity = "INSERT INTO [dbo].[Security] ([SecurityId]) VALUES " +
+                        $"('{securityID}')";
+
+                    connection.Open();
+                    SqlCommand commandInOrder = new SqlCommand(insertSecurity, connection);
+                    commandInOrder.ExecuteNonQuery();
+                    connection.Close();
+                }
+                catch (Exception e)
+                {
+
+                }
+                #endregion
             }
 
             int minNumberOfSecurities = securityIDs.Count * 70 / 100;
@@ -763,7 +783,6 @@ namespace RealLib
                         List<Candle> candles = new List<Candle>();
                         int startIndex = securityInfo.Candles.Count - (nrOfTestValues * i);
 
-                        string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
                         SqlConnection connection = new SqlConnection(connectionString);
 
                         if (isFirst && false)
@@ -818,12 +837,20 @@ namespace RealLib
                             count += 1;
                             if (count >= 1000)
                             {
-                                connection.Open();
-                                SqlCommand command = new SqlCommand(insert, connection);
-                                command.ExecuteNonQuery();
-                                connection.Close();
-                                count = 0;
-                                insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
+                                try
+                                {
+                                    connection.Open();
+                                    SqlCommand command = new SqlCommand(insert, connection);
+                                    command.ExecuteNonQuery();
+                                    connection.Close();
+                                    count = 0;
+                                    insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
+                                }
+                                catch (Exception e)
+                                {
+                                    File.WriteAllText(@"C:\StockHistory\insert.txt", insert);
+                                    throw e;
+                                }
                             }
                             else
                             {
@@ -832,13 +859,21 @@ namespace RealLib
                         }
                         if (count > 0)
                         {
-                            insert = insert.TrimEnd(',');
-                            connection.Open();
-                            SqlCommand command = new SqlCommand(insert, connection);
-                            command.ExecuteNonQuery();
-                            connection.Close();
+                            try
+                            {
+                                insert = insert.TrimEnd(',');
+                                connection.Open();
+                                SqlCommand command = new SqlCommand(insert, connection);
+                                command.ExecuteNonQuery();
+                                connection.Close();
 
-                            iterNr += 1;
+                                iterNr += 1;
+                            }
+                            catch (Exception e)
+                            {
+                                File.WriteAllText(@"C:\StockHistory\insert.txt", insert);
+                                throw e;
+                            }
                         }
                     }
 

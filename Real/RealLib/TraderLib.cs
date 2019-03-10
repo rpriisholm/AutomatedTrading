@@ -766,17 +766,24 @@ namespace RealLib
                         string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
                         SqlConnection connection = new SqlConnection(connectionString);
 
-                        if (isFirst)
+                        if (isFirst && false)
                         {
-                            string insertInOrder = "INSERT INTO[dbo].[InOrder]([Nr],[CloseDate],[NrOfTests]) VALUES " +
-                                $"({iterNr}" +
-                                $",'{securityInfo.Candles[startIndex].CloseTime.ToString("yyyy-MM-dd HH:mm:ss")}'" +
-                                $",{nrOfTestValues})";
+                            try
+                            {
+                                string insertInOrder = "INSERT INTO[dbo].[InOrder]([Nr],[CloseDate],[NrOfTests]) VALUES " +
+                                    $"({iterNr}" +
+                                    $",'{securityInfo.Candles[startIndex].CloseTime.ToString("yyyy-MM-dd HH:mm:ss")}'" +
+                                    $",{nrOfTestValues})";
 
-                            connection.Open();
-                            SqlCommand commandInOrder = new SqlCommand(insertInOrder, connection);
-                            commandInOrder.ExecuteNonQuery();
-                            connection.Close();
+                                connection.Open();
+                                SqlCommand commandInOrder = new SqlCommand(insertInOrder, connection);
+                                commandInOrder.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                            catch (SqlException e)
+                            {
+
+                            }
                         }
 
                         List<Candle> testCandles = new List<Candle>();

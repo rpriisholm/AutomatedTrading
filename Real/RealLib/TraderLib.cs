@@ -845,7 +845,8 @@ namespace RealLib
                     isFirst = false;
                 }
                 Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                File.Delete(@"\" + securityID + ".csv");
+                FileInfo fi1 = new FileInfo(storagePath + '\\' + securityID + ".csv");
+                fi1.Delete();
             }
             #endregion
 

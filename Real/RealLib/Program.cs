@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TickEnum;
 
@@ -10,37 +11,53 @@ namespace RealLib
         {
             //CollectorLib.DataLocation = @"c:\StockHistory\Real";
 
-            #region Empty Console  
-            TextWriter outTextWriter = Console.Out;
-            TextWriter errTextWriter = Console.Error;
-            //Console.SetOut(TextWriter.Null);
-            //Console.SetError(TextWriter.Null);
-            #endregion
-
-            if (args.Length != 0)
+            try
             {
-                if (args[0].ToLower().Equals("NewStrategies".ToLower()))
-                {
-                    TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
-                }
+                #region Empty Console  
+                TextWriter outTextWriter = Console.Out;
+                TextWriter errTextWriter = Console.Error;
+                //Console.SetOut(TextWriter.Null);
+                //Console.SetError(TextWriter.Null);
+                #endregion
 
-                if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+                if (args.Length != 0)
                 {
-                    TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
-                }
+                    if (args[0].ToLower().Equals("NewStrategies".ToLower()))
+                    {
+                        TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                    }
 
-                if (args[0].ToLower().Equals("AddSimulationToDatabase".ToLower()))
-                {
-                    TraderLib.SimulateStrategies("ALL", args[1].ToString());
+                    if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
+                    {
+                        TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                    }
+
+                    if (args[0].ToLower().Equals("AddSimulationToDatabase".ToLower()))
+                    {
+                        TraderLib.SimulateStrategies("ALL", args[1].ToString());
+                    }
                 }
+                else
+                {
+                    //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                    //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
+                    //TraderLib.SimulateStrategies();
+                }
+                //SimulateSaveOnStartAndOnExit();
             }
-            else
+            catch (Exception e)
             {
-                //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
-                //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
-                //TraderLib.SimulateStrategies();
+                List<string> list = new List<string>();
+                list.Add(e.ToString());
+                list.Add(e.Data.ToString());
+                list.Add("Inner Execption: " + e.InnerException.ToString());
+                list.Add("");
+                File.AppendAllLines(@"c:\StockHistory\", list);
+
+                Console.WriteLine(e.ToString());
+                Console.WriteLine("Press Enter To Continue...");
+                Console.ReadLine();
             }
-            //SimulateSaveOnStartAndOnExit();
         }
 
 

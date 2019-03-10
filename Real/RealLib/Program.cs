@@ -31,7 +31,7 @@ namespace RealLib
 
                 if (args[0].ToLower().Equals("AddSimulationToDatabase".ToLower()))
                 {
-                    TraderLib.SimulateStrategies();
+                    TraderLib.SimulateStrategies("ALL", args[1].ToString());
                 }
             }
             else

@@ -651,11 +651,10 @@ namespace RealLib
             return null;
         }
 
-        public static void SimulateStrategies()
+        public static void SimulateStrategies(string allHistPath, string subPath)
         {
-            ImportAndExport.PartialPath = @"C:\StockHistory\Testing\";
+            ImportAndExport.PartialPath = @"C:\StockHistory\Testing\" + allHistPath + @"\";
             string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
-
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
             //importAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             int nrOfTestValues = 90;
@@ -695,8 +694,9 @@ namespace RealLib
 
             //Round Down
             int maxNrIterations = maxCandles / nrOfTestValues;
-            int lessThanMaxIterations = -1;
+
             int iterations = maxNrIterations;
+            int lessThanMaxIterations = -1;
 
             //Min Nr Of Iterations
             while (true && iterations >= 0)
@@ -718,6 +718,17 @@ namespace RealLib
                     break;
                 }
             }
+
+            securityIDs.Clear();
+
+            SimulateStrategies(subPath, nrOfTestValues, maxNrIterations);
+        }
+
+        public static void SimulateStrategies(string subPath, int nrOfTestValues, int iterations)
+        {
+            ImportAndExport.PartialPath = @"C:\StockHistory\Testing\" + subPath + @"\";
+            string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+            IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
 
             //First Round
             bool isFirst = true;
@@ -827,6 +838,7 @@ namespace RealLib
                     isFirst = false;
                 }
                 Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                File.Delete(@"\" + securityID + ".csv");
             }
             #endregion
 
@@ -858,6 +870,9 @@ namespace RealLib
             }
 
             finally { }
+
+            Console.WriteLine("Completed. Press Enter...");
+            Console.ReadLine();
         }
     }
 }

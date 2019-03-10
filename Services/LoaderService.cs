@@ -1,5 +1,4 @@
-﻿using Ecng.Common;
-using LumenWorks.Framework.IO.Csv;
+﻿using LumenWorks.Framework.IO.Csv;
 using SandS.Algorithm.Library.SortNamespace;
 using StockSolution.Entity.Models;
 using System;
@@ -8,7 +7,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -44,7 +42,7 @@ namespace StockSolution.Services
                     }
 
                 }
-                
+
                 /*
                 catch (Exception e)
                 {
@@ -53,7 +51,7 @@ namespace StockSolution.Services
                     System.Console.WriteLine(new StackTrace(e, true).GetFrame(0).GetFileLineNumber());
                 }
                 */
-                
+
             }
             );
             failedSecurities.ForEach(failed => System.Console.WriteLine("Failed Security: " + failed));
@@ -90,10 +88,10 @@ namespace StockSolution.Services
 
             /*try
             { */
-                // Generate Candles
-                while (csvReader.ReadNextRecord())
-                {
-                        DateTime openTime = new DateTime();
+            // Generate Candles
+            while (csvReader.ReadNextRecord())
+            {
+                DateTime openTime = new DateTime();
                 try
                 {
                     if (csvReader.HasHeader("timestamp"))
@@ -112,7 +110,7 @@ namespace StockSolution.Services
                         }
                     }
                 }
-                catch(System.FormatException e)
+                catch (System.FormatException e)
                 {
                     Console.WriteLine(e);
                     Console.WriteLine("At Candles To CSV");
@@ -121,45 +119,45 @@ namespace StockSolution.Services
                     Debug.WriteLine(e.Data.ToString());
                 }
 
-                        Candle candle = new Candle();
-                        candle.TimeFrame = timeFrame;
-                        candle.OpenTime = openTime;
-                        candle.CloseTime = openTime.Add(timeFrame);
+                Candle candle = new Candle();
+                candle.TimeFrame = timeFrame;
+                candle.OpenTime = openTime;
+                candle.CloseTime = openTime.Add(timeFrame);
 
-                        candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
+                candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
 
-                        try
-                        {
-                            candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
-                        }
-                        catch { }
-
-                        try
-                        {
-                            candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
-                        }
-                        catch { }
-
-                        try
-                        {
-                            candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
-                        }
-                        catch { }
-                        //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
-
-
-                        securityInfo.Candles.Add(candle);
-                        securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
+                try
+                {
+                    candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
                 }
-               /* 
-            }
-            
-            catch(System.FormatException e)
-            {
-                securityInfo.Candles = null;
-            }
-            */
+                catch { }
 
+                try
+                {
+                    candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
+                }
+                catch { }
+
+                try
+                {
+                    candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
+                }
+                catch { }
+                //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
+
+
+                securityInfo.Candles.Add(candle);
+                securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
+            }
+            /* 
+         }
+
+         catch(System.FormatException e)
+         {
+             securityInfo.Candles = null;
+         }
+         */
+            streamReader.Close();
             return securityInfo;
         }
     }

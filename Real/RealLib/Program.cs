@@ -50,10 +50,9 @@ namespace RealLib
                 List<string> list = new List<string>();
                 list.Add(e.ToString());
                 list.Add(e.Data.ToString());
-                list.Add("Inner Execption: " + e.InnerException.ToString());
                 list.Add("");
-                File.AppendAllLines(@"c:\StockHistory\", list);
-
+                File.AppendAllLines(@"c:\StockHistory\errors.txt", list);
+                
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("Press Enter To Continue...");
                 Console.ReadLine();

@@ -753,9 +753,14 @@ namespace RealLib
             //First Round
             bool isFirst = true;
 
+            // Create or Append File
+            StreamWriter stream = new StreamWriter(@"C:\StockHistory\Testing\" + subPath + @"\Inserts.txt", true);
+
+
             //Run Simulation
             foreach (string securityID in securityIDs)
             {
+                //string insert = "";
                 SecurityInfo securityInfo = null;
                 bool isCandlesValied = false;
                 try
@@ -783,8 +788,9 @@ namespace RealLib
                         List<Candle> candles = new List<Candle>();
                         int startIndex = securityInfo.Candles.Count - (nrOfTestValues * i);
 
-                        SqlConnection connection = new SqlConnection(connectionString);
+                        //SqlConnection connection = new SqlConnection(connectionString);
 
+                        /* Doesn't Work 2. Time
                         if (isFirst && false)
                         {
                             try
@@ -804,6 +810,7 @@ namespace RealLib
 
                             }
                         }
+                        */
 
                         List<Candle> testCandles = new List<Candle>();
                         for (int j = 0; j < nrOfTestValues; j++)
@@ -815,12 +822,23 @@ namespace RealLib
                         bool isBuyEnabled = true;
                         decimal loseLimit = -1m;
 
-                        string insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
+                        stream.WriteLine("INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ");
+                        //insert += "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
                         int count = 0;
                         for (int j = 0; j < indicatorPairs.Count; j++)
                         {
                             indicatorPairs[j] = Optimizer.SimulateIndicatorPair(indicatorPairs[j], testCandles, isSellEnabled, isBuyEnabled, loseLimit);
 
+                            stream.WriteLine($"('{securityID}'" +
+                                $",{iterNr}" +
+                                $",'{indicatorPairs[j].ShortIndicator.ToString()}'" +
+                                $",'{indicatorPairs[j].LongIndicator.ToString()}'" +
+                                $",{indicatorPairs[j].LoseLimitMin}" +
+                                $",{indicatorPairs[j].OrdersCount}" +
+                                $",{indicatorPairs[j].StrategyBasic.AllPositiveOrdersPct()}" +
+                                $",{indicatorPairs[j].LastResult}" +
+                                $",{securityInfo.Candles[startIndex].ClosePrice})");
+                            /*
                             insert += $"('{securityID}'" +
                                 $",{iterNr}" +
                                 $",'{indicatorPairs[j].ShortIndicator.ToString()}'" +
@@ -830,55 +848,105 @@ namespace RealLib
                                 $",{indicatorPairs[j].StrategyBasic.AllPositiveOrdersPct()}" +
                                 $",{indicatorPairs[j].LastResult}" +
                                 $",{securityInfo.Candles[startIndex].ClosePrice})";
+                                */
                             indicatorPairs[j].Reset();
                             indicatorPairs[j].ShortIndicator.Indicator.Container.ClearValues();
                             indicatorPairs[j].LongIndicator.Indicator.Container.ClearValues();
+                            stream.Flush();
 
                             count += 1;
                             if (count >= 1000)
                             {
+                                stream.Write(";");
+                                /*
                                 try
                                 {
-                                    connection.Open();
-                                    SqlCommand command = new SqlCommand(insert, connection);
-                                    command.ExecuteNonQuery();
-                                    connection.Close();
-                                    count = 0;
-                                    insert = "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
-                                }
-                                catch (Exception e)
-                                {
-                                    File.WriteAllText(@"C:\StockHistory\insert.txt", insert);
-                                    throw e;
-                                }
-                            }
-                            else
-                            {
-                                insert += $",";
-                            }
-                        }
-                        if (count > 0)
-                        {
-                            try
-                            {
-                                insert = insert.TrimEnd(',');
+                                */
+                                //insert += ";" + Environment.NewLine + Environment.NewLine;
+                                /*
                                 connection.Open();
                                 SqlCommand command = new SqlCommand(insert, connection);
                                 command.ExecuteNonQuery();
                                 connection.Close();
-
-                                iterNr += 1;
+                                */
+                                count = 0;
+                                /*
+                                stream.WriteLine(insert);
+                                stream.WriteLine();
+                                stream.Flush();
+                                insert = "";
+                                */
+                                if (!((j + 1) >= indicatorPairs.Count))
+                                {
+                                    stream.WriteLine("INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ");
+                                    stream.Flush();
+                                    //insert += "INSERT INTO [dbo].[CombinationResult] ([SecurityId],[Nr],[ShortIndicator],[LongIndicator],[LoseLimitMin],[Orders],[PositiveOrderPct],[LastResult],[ClosePrice]) VALUES ";
+                                }
+                                /*
                             }
                             catch (Exception e)
                             {
-                                File.WriteAllText(@"C:\StockHistory\insert.txt", insert);
+                                //File.WriteAllText(@"C:\StockHistory\insert.txt", insert);
                                 throw e;
                             }
+                            */
+                            }
+                            else
+                            {
+                                if(j <= indicatorPairs.Count)
+                                {
+                                    stream.Write(",");
+                                    //insert += $",";
+                                }
+                            }
                         }
+                        if (count > 0)
+                        {
+                            /*
+                            try
+                            {
+                            */
+                            //insert = insert.TrimEnd(',');
+                            stream.Write(";");
+                            stream.WriteLine("");
+                            //insert += ";" + Environment.NewLine + Environment.NewLine;
+                            /*
+                            connection.Open();
+                            SqlCommand command = new SqlCommand(insert, connection);
+                            command.ExecuteNonQuery();
+                            connection.Close();
+                            
+
+                            stream.WriteLine(insert);
+                            stream.WriteLine();
+                            stream.Flush();
+                            insert = "";
+                            */
+                            stream.Flush();
+                            iterNr += 1;
+                            /*
+                        }
+                        catch (Exception e)
+                        {
+                            throw e;
+                        }
+                        */
+                        }
+
+                        //stream.WriteLine(insert);
+                        //stream.WriteLine();
+                        stream.Flush();
                     }
 
                     isFirst = false;
+
                 }
+                /*
+                 stream.WriteLine(insert);
+                 stream.WriteLine();
+                 stream.Flush();
+                 * */
+
                 Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 FileInfo fi1 = new FileInfo(storagePath + '\\' + securityID + ".csv");
                 fi1.Delete();

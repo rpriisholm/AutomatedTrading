@@ -39,6 +39,7 @@ namespace RealLib
                 }
                 else
                 {
+                    TraderLib.SimulateStrategies("ALL", "1");
                     //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
                     //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
                     //TraderLib.SimulateStrategies();

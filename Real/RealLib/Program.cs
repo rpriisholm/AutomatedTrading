@@ -11,8 +11,7 @@ namespace RealLib
         {
             //CollectorLib.DataLocation = @"c:\StockHistory\Real";
 
-            try
-            {
+
                 #region Empty Console  
                 TextWriter outTextWriter = Console.Out;
                 TextWriter errTextWriter = Console.Error;
@@ -39,13 +38,14 @@ namespace RealLib
                 }
                 else
                 {
-                    TraderLib.SimulateStrategies("ALL", "1");
+                    //TraderLib.SimulateStrategies("ALL", "3");
                     //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
                     //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
                     //TraderLib.SimulateStrategies();
                 }
-                //SimulateSaveOnStartAndOnExit();
-            }
+            //SimulateSaveOnStartAndOnExit();
+            try
+            { }
             catch (Exception e)
             {
                 List<string> list = new List<string>();

@@ -146,9 +146,14 @@ namespace StockSolution.Services
                 //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
 
 
-                securityInfo.Candles.Add(candle);
-                securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
+                if(candle.ClosePrice > 0m)
+                {
+                    securityInfo.Candles.Add(candle);
+                }
             }
+
+            securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
+
             /* 
          }
 

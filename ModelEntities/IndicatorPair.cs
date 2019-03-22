@@ -27,6 +27,7 @@ namespace StockSolution.ModelEntities.Models
             this.LoseLimit = LoseLimit;
             this.LastResult = decimal.MinValue;
             this.OrdersCount = 0;
+            this.LoseLimitMin = 0m;
         }
 
         public int CompareTo(IndicatorPair other)

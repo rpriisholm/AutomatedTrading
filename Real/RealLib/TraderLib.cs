@@ -462,7 +462,7 @@ namespace RealLib
             Optimizer optimizer = new Optimizer();
             OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
             //int nrOfTestValues = 90;
-            int testMoney = 100000;
+            int testMoney = 10000;
             int orderLimit = testMoney / 10;
             DateTime currentDateTime = endDate;
             DateTimeOffset dateMayNotBeOlderThan = DateTime.SpecifyKind(currentDateTime, DateTimeKind.Utc).AddDays(-(minNrOfTestValues * 1.7));
@@ -893,7 +893,7 @@ namespace RealLib
                             }
                             else
                             {
-                                if(j <= indicatorPairs.Count)
+                                if(!((j + 1) >= indicatorPairs.Count))
                                 {
                                     stream.Write(",");
                                     //insert += $",";

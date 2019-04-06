@@ -8,6 +8,7 @@ namespace Services
 {
     public static class PermanentValues
     {
+        #region EnabledPairs
         public static readonly string EnabledPairs = @"SMMA 12 - JMA 20 - 0.16
 KAMA 12 - JMA 12 - 0.13
 SMA 8 - LinearReg 10 - 0.13
@@ -3958,5 +3959,14 @@ MeanDeviation 30 - MeanDeviation 32 - 1.00
 Lowest 8 - JMA 42 - 1.00
 EMA 6 - HMA 20 - 1.00
 LinearReg 12 - Lowest 40 - 1.00";
+        #endregion
+
+        #region
+        public static readonly string EnabledPairs_AvgIndicator47 = @"";
+        #endregion
+
+        #region
+        public static readonly string EnabledPairs_AvgIndicator70 = @"";
+        #endregion
     }
 }

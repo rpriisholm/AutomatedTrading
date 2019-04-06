@@ -10,7 +10,8 @@ namespace RealLib
         static void Main(string[] args)
         {
             //CollectorLib.DataLocation = @"c:\StockHistory\Real";
-
+            try
+            {
 
                 #region Empty Console  
                 TextWriter outTextWriter = Console.Out;
@@ -43,9 +44,8 @@ namespace RealLib
                     //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
                     //TraderLib.SimulateStrategies();
                 }
-            //SimulateSaveOnStartAndOnExit();
-            try
-            { }
+                //SimulateSaveOnStartAndOnExit();
+            }
             catch (Exception e)
             {
                 List<string> list = new List<string>();
@@ -53,7 +53,7 @@ namespace RealLib
                 list.Add(e.Data.ToString());
                 list.Add("");
                 File.AppendAllLines(@"c:\StockHistory\errors.txt", list);
-                
+
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("Press Enter To Continue...");
                 Console.ReadLine();

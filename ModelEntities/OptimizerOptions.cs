@@ -15,6 +15,10 @@ namespace StockSolution.ModelEntities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public static bool IsSellEnabled = false;
+        public static bool IsBuyEnabled = true;
+        public string EnabledPairs = null; 
+
         private IndicatorPair _BestIndicatorPair = null;
 
         public virtual IndicatorPair BestIndicatorPair
@@ -35,8 +39,8 @@ namespace StockSolution.ModelEntities.Models
 
         public int RecursiveTests { get; set; }
         public int NrOfTestValues { get; set; }
-        public bool IsSellEnabled { get; set; }
-        public bool IsBuyEnabled { get; set; }
+        //public bool IsSellEnabled { get; set; }
+        //public bool IsBuyEnabled { get; set; }
         public int MinOrders { get; set; }
         public int MaxOrders { get; set; }
         public decimal MinProfitPct { get; set; }
@@ -50,52 +54,81 @@ namespace StockSolution.ModelEntities.Models
         public OptimizerOptions(
             int recursiveTests,
             int nrOfTestValues,
-            bool isSellEnabled,
-            bool isBuyEnabled,
+            //bool isSellEnabled,
+            //bool isBuyEnabled,
             int minOrders,
             int maxOrders,
             decimal minProfitPct,
-            decimal loseLimitMin
+            decimal loseLimitMin,
+            string enabledPairs
             )
         {
             this.RecursiveTests = recursiveTests;
             this.NrOfTestValues = nrOfTestValues;
-            this.IsSellEnabled = isSellEnabled;
-            this.IsBuyEnabled = isBuyEnabled;
+            //this.IsSellEnabled = isSellEnabled;
+            //this.IsBuyEnabled = isBuyEnabled;
             this.MinOrders = minOrders;
             this.MaxOrders = maxOrders;
             this.MinProfitPct = minProfitPct;
             this.LoseLimitMin = loseLimitMin;
+            this.EnabledPairs = enabledPairs;
         }
 
-        public static OptimizerOptions GetInstance(TickPeriod tickPeriod)
+        /* USED for locating best matches */
+        public static List<OptimizerOptions> GetInstances(TickPeriod tickPeriod)
         {
-            OptimizerOptions optimizerOptions = null;
-
+            List<OptimizerOptions> list = null;
             switch (tickPeriod)
             {
                 case TickPeriod.Daily:
+                    list = new List<OptimizerOptions>();
+                    //AvgIndicatorMin 47%
                     int recursiveTests = 2;
                     int nrOfTestValues = 90;
-                    bool isSellEnabled = false;
-                    bool isBuyEnabled = true;
-                    int minOrders = 7;
-                    int maxOrders = 8;
-                    int minProfitPct = 70;
+                    int minOrders = 18;
+                    int maxOrders = 19;
+                    int minProfitPct = 14;
                     decimal loseLimitMin = -0.04m;
-                    optimizerOptions = new OptimizerOptions(
+                    OptimizerOptions optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
-                        isSellEnabled,
-                        isBuyEnabled,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
                         minOrders,
                         maxOrders,
                         minProfitPct,
-                        loseLimitMin);
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator47
+                        );
+
+                    list.Add(optimizerOptions);
+
+                    //AvgIndicatorMin 70%
+                    recursiveTests = 2;
+                    nrOfTestValues = 90;
+                    minOrders = 12;
+                    maxOrders = 15;
+                    minProfitPct = 17;
+                    loseLimitMin = -0.17m;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator70
+                        );
+
+                    list.Add(optimizerOptions);
+
+
                     break;
             }
             
-            return optimizerOptions;
+            return list;
         }
 
         /* Legacy

@@ -119,7 +119,7 @@ namespace RealLib
                 StreamReader streamReader = new StreamReader($"{DataLocation}\\{fileName}");
                 CachedCsvReader csvReader = new CachedCsvReader(streamReader);
                 Optimizer optimizer = new Optimizer();
-                OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(tickPeriod);
+                //OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(tickPeriod);
 
                 while (csvReader.ReadNextRecord())
                 {
@@ -147,8 +147,8 @@ namespace RealLib
                     }
 
                     IndicatorPair indicatorPair = new IndicatorPair(null, null, loseLimit);
-                    bool isBuyEnabled = optimizerOptions.IsBuyEnabled;
-                    bool isSellEnabled = optimizerOptions.IsSellEnabled;
+                    bool isBuyEnabled = OptimizerOptions.IsBuyEnabled;
+                    bool isSellEnabled = OptimizerOptions.IsSellEnabled;
                     DateTime lastExecution = DateTime.ParseExact(csvReader["Last Execution"], "yyyy-MM-dd hh-mm", CultureInfo.InvariantCulture);
                     
                     if (!(securityInfo != null) || !(securityInfo.Candles != null))
@@ -166,7 +166,7 @@ namespace RealLib
                         List<Candle> initialCandles = new List<Candle>();
 
                         //Load Indicator
-                        indicatorPair = optimizer.FindIndicator(csvReader["Short Indicator"], csvReader["Long Indicator"], indicatorPair.LoseLimit, initialCandles);
+                        indicatorPair = optimizer.FindIndicator(ValueCollections.PermanentValues.TestPairs, csvReader["Short Indicator"], csvReader["Long Indicator"], indicatorPair.LoseLimit, initialCandles);
                         /* Initial Candles */                
                         foreach (Candle candle in securityInfo.Candles)
                         {

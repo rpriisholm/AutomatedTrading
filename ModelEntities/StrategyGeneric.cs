@@ -30,7 +30,7 @@ namespace StockSolution.ModelEntities.Models
 
         public StrategyGeneric(IConnection connection, SecurityInfo securityID, OptimizerOptions optimizerOptions, decimal loseLimit) :
             //base(connection, securityID, optimizerOptions.BestIndicatorPair.LongIndicator, optimizerOptions.BestIndicatorPair.ShortIndicator, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, optimizerOptions.LoseLimit)
-            base(connection, securityID, optimizerOptions.BestIndicatorPair, optimizerOptions.IsSellEnabled, optimizerOptions.IsBuyEnabled, loseLimit)
+            base(connection, securityID, optimizerOptions.BestIndicatorPair, OptimizerOptions.IsSellEnabled, OptimizerOptions.IsBuyEnabled, loseLimit)
         {
             if(!(this.IndicatorPair != null))
             {

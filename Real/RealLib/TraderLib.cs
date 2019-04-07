@@ -460,7 +460,8 @@ namespace RealLib
         {
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
             Optimizer optimizer = new Optimizer();
-            OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+            //OptimizerOptions optimizerOptions = OptimizerOptions.GetInstance(TickPeriod.Daily);
+            List<OptimizerOptions> optimizerOptionsList = OptimizerOptions.GetInstances(TickPeriod.Daily);
             //int nrOfTestValues = 90;
             int testMoney = 10000;
             int orderLimit = testMoney / 10;
@@ -505,7 +506,7 @@ namespace RealLib
                                     }
                                     //BEGIN
                                     securityInfo.Candles = candles;
-                                    StrategyGeneric strategy = FindStrategy(securityInfo, optimizer, optimizerOptions);
+                                    StrategyGeneric strategy = FindStrategy(securityInfo, optimizer, optimizerOptionsList);
 
 
                                     //Try To Add Strategy
@@ -580,72 +581,80 @@ namespace RealLib
         }
 
         /* TODO 06/12/2018 */
-        private static StrategyGeneric FindStrategy(SecurityInfo securityInfo, Optimizer optimizer, OptimizerOptions optimizerOptions)
+        private static StrategyGeneric FindStrategy(SecurityInfo securityInfo, Optimizer optimizer, List<OptimizerOptions> optimizerOptionsList)
         {
-            try
+            foreach (OptimizerOptions optimizerOptionsInList in optimizerOptionsList)
             {
-                #region Set Candles
-                //Get Test Candles
-                List<Candle> candles = securityInfo.Candles.ToList();
-                int keyCount = securityInfo.Candles.Count;
-                int beginIndexTest = keyCount - (optimizer.RecursiveTests * optimizerOptions.NrOfTestValues + optimizer.GetMaxIndicatorLength());
-                int testCount = optimizer.GetMaxIndicatorLength() + optimizer.RecursiveTests * optimizerOptions.NrOfTestValues;
-
-
-                List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
-                #endregion
-
+                OptimizerOptions optimizerOptions = optimizerOptionsInList;
 
                 try
                 {
-                    #region Find Strategy / Best Indicator Pairs + Its options
+                    #region Set Candles
+                    //Get Test Candles
+                    List<Candle> candles = securityInfo.Candles.ToList();
+                    int keyCount = securityInfo.Candles.Count;
+                    int beginIndexTest = keyCount - (optimizer.RecursiveTests * optimizerOptions.NrOfTestValues + optimizer.GetMaxIndicatorLength(optimizerOptions.EnabledPairs));
+                    int testCount = optimizer.GetMaxIndicatorLength(optimizerOptions.EnabledPairs) + optimizer.RecursiveTests * optimizerOptions.NrOfTestValues;
 
-                    optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 1);
+
+                    List<Candle> testCandles = candles.GetRange(beginIndexTest, testCount);
                     #endregion
 
-                    #region Create The Strategy
-                    //EmulationConnection emulationConnection = new EmulationConnection(testMoney, OrderLimitType.Value, orderLimit, 1, 80);
-                    if (optimizerOptions.BestIndicatorPair.ShortIndicator != null && optimizerOptions.BestIndicatorPair.LongIndicator != null)
+
+                    try
                     {
-                        decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
-                        StrategyGeneric strategy = new StrategyGeneric(TraderLib.emulationConnection, securityInfo, optimizerOptions, optimizerOptions.BestIndicatorPair.LoseLimit);
+                        #region Find Strategy / Best Indicator Pairs + Its options
 
-                        return strategy;
+                        optimizerOptions = optimizer.FindBestOptions(optimizerOptions, testCandles, 1);
+                        #endregion
+
+                        #region Create The Strategy
+                        //EmulationConnection emulationConnection = new EmulationConnection(testMoney, OrderLimitType.Value, orderLimit, 1, 80);
+                        if (optimizerOptions.BestIndicatorPair != null)
+                        {
+                            if (optimizerOptions.BestIndicatorPair.ShortIndicator != null && optimizerOptions.BestIndicatorPair.LongIndicator != null)
+                            {
+                                decimal lastResultPct = optimizerOptions.BestIndicatorPair.LastResult;
+                                StrategyGeneric strategy = new StrategyGeneric(TraderLib.emulationConnection, securityInfo, optimizerOptions, optimizerOptions.BestIndicatorPair.LoseLimit);
+
+                                return strategy;
+                            }
+                        }
+                        #endregion
                     }
-                    #endregion
-                }
-                catch (System.NullReferenceException e)
-                {
-                    Console.WriteLine("NullReferenceException - No Strategy Found - " + securityInfo);
-                    Debug.WriteLine(e.ToString());
-                    Debug.WriteLine(e.Message);
-                    Debug.WriteLine(e.Data.ToString());
-                }
+                    catch (System.NullReferenceException e)
+                    {
+                        Console.WriteLine("NullReferenceException - No Strategy Found - " + securityInfo);
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Message);
+                        Debug.WriteLine(e.Data.ToString());
+                    }
 
-                RaceCondition = false;
-            }
-            catch (Exception e)
-            {
-                while (RaceCondition) { Thread.Sleep(5); }
-                RaceCondition = true;
-                try
-                {
-                    ErrorWriter.WriteLineAsync(e.ToString()).Wait();
-                    ErrorWriter.WriteLineAsync(e.Message).Wait();
-                    ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
-                    ErrorWriter.WriteLineAsync(new StackTrace(e, true).GetFrame(0).GetFileLineNumber().ToString());
-                    ErrorWriter.FlushAsync().Wait();
-                    Debug.WriteLine(e.ToString());
-                    Debug.WriteLine(e.Message);
-                    Debug.WriteLine(e.Data.ToString());
+                    RaceCondition = false;
                 }
-                catch (Exception ei)
+                catch (Exception e)
                 {
-                    Debug.WriteLine(ei.ToString());
-                    Debug.WriteLine(ei.Message);
-                    Debug.WriteLine(ei.Data.ToString());
+                    while (RaceCondition) { Thread.Sleep(5); }
+                    RaceCondition = true;
+                    try
+                    {
+                        ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                        ErrorWriter.WriteLineAsync(e.Message).Wait();
+                        ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                        ErrorWriter.WriteLineAsync(new StackTrace(e, true).GetFrame(0).GetFileLineNumber().ToString());
+                        ErrorWriter.FlushAsync().Wait();
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Message);
+                        Debug.WriteLine(e.Data.ToString());
+                    }
+                    catch (Exception ei)
+                    {
+                        Debug.WriteLine(ei.ToString());
+                        Debug.WriteLine(ei.Message);
+                        Debug.WriteLine(ei.Data.ToString());
+                    }
+                    finally { RaceCondition = false; }
                 }
-                finally { RaceCondition = false; }
             }
 
             //If not suatable

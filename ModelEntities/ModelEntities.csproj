@@ -620,6 +620,10 @@
       <Project>{64c1cffd-b40d-4f65-ba6e-5f74bd3274b2}</Project>
       <Name>TickEnum</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ValueCollections\ValueCollections.csproj">
+      <Project>{2e8cd0a4-b397-494f-8f1e-b6c6d31d7219}</Project>
+      <Name>ValueCollections</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201807052315486_TEST.resx">

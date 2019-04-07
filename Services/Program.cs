@@ -18,8 +18,8 @@ namespace Services
         {
             Optimizer optimizer = new Optimizer();
             List<Candle> candles = new List<Candle>();
-            List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(candles);
-            int res1 = optimizer.GetMaxIndicatorLength();
+            List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(candles, ValueCollections.PermanentValues.TestPairs);
+            int res1 = optimizer.GetMaxIndicatorLength(ValueCollections.PermanentValues.TestPairs);
 
             Console.WriteLine();
         }

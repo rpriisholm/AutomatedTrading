@@ -166,8 +166,9 @@ namespace RealLib
         public static void RunTradingProgram(TickPeriod tickPeriod, TradingEnum tradingEnum)
         {
             ImportAndExport.MinStockPrice = 2m;
+            //TODO
+            //bool isDownloadEnabled = false;
             bool isDownloadEnabled = true;
-            //bool isDownloadEnabled = true;
             OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum, isDownloadEnabled);
 
             switch (tradingEnum)
@@ -275,30 +276,43 @@ namespace RealLib
                 //USED FOR WRITING
                 DateTime executionStart = strategies[symbol].LastExecution;
 
-                List<Candle> candles = CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol).Candles;
+                SecurityInfo securityInfo = CollectorLib.GetSecurityInfo(TickPeriod.Daily, symbol);
 
-                if (candles != null)
+                if (securityInfo.Candles != null)
                 {
-                    //Could OtherWise Cause Troubles With Disabling Strategies, should add another date to strategies instead of this
-                    foreach (Candle candle in candles)
+                    List<Candle> candles = securityInfo.Candles;
+
+
+                    if (candles != null)
                     {
-                        bool isNewerThanLastExecution = strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
-                        if (isNewerThanLastExecution)
+                        //Could OtherWise Cause Troubles With Disabling Strategies, should add another date to strategies instead of this
+                        foreach (Candle candle in candles)
                         {
-                            //Simulate Real Values
-                            strategies[symbol] = AddCandleToStrategy(strategies[symbol], candle);
+                            bool isNewerThanLastExecution = strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
+                            if (isNewerThanLastExecution)
+                            {
+                                //Simulate Real Values
+                                strategies[symbol] = AddCandleToStrategy(strategies[symbol], candle);
+                            }
                         }
+
+                        // strategies[symbol].LastExecution = executionStart;
+                    }
+                    else
+                    {
+                        strategies[symbol] = AddCandleToStrategy(strategies[symbol], null);
                     }
 
-                    // strategies[symbol].LastExecution = executionStart;
+                    //USED FOR WRITING
+                    strategies[symbol].LastExecution = executionStart;
                 }
                 else
                 {
-                    strategies[symbol] = AddCandleToStrategy(strategies[symbol], null);
+                    Console.WriteLine("Unable To load Candles See InvokeTrading In TraderLib.");
+                    Console.WriteLine("Problematic Symbol: " + symbol);
+                    Console.WriteLine("Press Enter To Continue");
+                    Console.ReadLine();
                 }
-
-                //USED FOR WRITING
-                strategies[symbol].LastExecution = executionStart;
             }
         }
 
@@ -485,6 +499,12 @@ namespace RealLib
                 //Parallel.ForEach(securityIDs, new ParallelOptions { MaxDegreeOfParallelism = 8 }, securityID =>
                 foreach (string securityID in securityIDs)
                 {
+                    try
+                    {
+                        Console.WriteLine(securityID);
+                    }
+                    catch { }
+
                     try
                     {
                         //Load Candles for ID
@@ -902,7 +922,7 @@ namespace RealLib
                             }
                             else
                             {
-                                if(!((j + 1) >= indicatorPairs.Count))
+                                if (!((j + 1) >= indicatorPairs.Count))
                                 {
                                     stream.Write(",");
                                     //insert += $",";

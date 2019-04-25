@@ -12,13 +12,13 @@ namespace RealLib
             //CollectorLib.DataLocation = @"c:\StockHistory\Real";
             try
             {
-
                 #region Empty Console  
                 TextWriter outTextWriter = Console.Out;
                 TextWriter errTextWriter = Console.Error;
                 //Console.SetOut(TextWriter.Null);
                 //Console.SetError(TextWriter.Null);
                 #endregion
+
 
                 if (args.Length != 0)
                 {
@@ -46,7 +46,8 @@ namespace RealLib
                 }
                 //SimulateSaveOnStartAndOnExit();
             }
-            catch (Exception e)
+            catch (ExecutionEngineException e)
+            //catch (Exception e)
             {
                 List<string> list = new List<string>();
                 list.Add(e.ToString());

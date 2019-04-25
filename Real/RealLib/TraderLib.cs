@@ -36,6 +36,7 @@ namespace RealLib
         public static Dictionary<string, StrategyGeneric> ExpiringStrategies = new Dictionary<string, StrategyGeneric>();
         public static bool RaceCondition = false;
 
+
         private static StreamWriter _TradingLogWriter = null;
         private static StreamWriter TradingLogWriter
         {
@@ -43,18 +44,19 @@ namespace RealLib
             {
                 if (!(_TradingLogWriter != null))
                 {
-                    try
+                    //try 
                     {
                         string partialPath = @"C:\StockHistory\Real";
                         Directory.CreateDirectory(partialPath);
                         _TradingLogWriter = new StreamWriter($"{partialPath}\\TradingLog", true);
                     }
-                    catch (Exception e)
+                   /* catch (Exception e)
                     {
                         Debug.WriteLine(e.ToString());
                         Debug.WriteLine(e.Message);
                         Debug.WriteLine(e.Data.ToString());
                     }
+                    */
                 }
 
                 return _TradingLogWriter;

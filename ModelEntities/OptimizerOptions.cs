@@ -85,10 +85,10 @@ namespace StockSolution.ModelEntities.Models
                     //AvgIndicatorMin 47%
                     int recursiveTests = 2;
                     int nrOfTestValues = 90;
-                    int minOrders = 18;
-                    int maxOrders = 19;
-                    int minProfitPct = 14;
-                    decimal loseLimitMin = -0.04m;
+                    int minOrders = 12;
+                    int maxOrders = 12;
+                    int minProfitPct = 20;
+                    decimal loseLimitMin = 0.00m;
                     OptimizerOptions optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
@@ -98,7 +98,7 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator47
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator111
                         );
 
                     list.Add(optimizerOptions);
@@ -106,10 +106,10 @@ namespace StockSolution.ModelEntities.Models
                     //AvgIndicatorMin 70%
                     recursiveTests = 2;
                     nrOfTestValues = 90;
-                    minOrders = 12;
-                    maxOrders = 15;
-                    minProfitPct = 17;
-                    loseLimitMin = -0.17m;
+                    minOrders = 20;
+                    maxOrders = 20;
+                    minProfitPct = 19;
+                    loseLimitMin = -0.14m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
@@ -119,7 +119,7 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator70
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator58
                         );
 
                     list.Add(optimizerOptions);

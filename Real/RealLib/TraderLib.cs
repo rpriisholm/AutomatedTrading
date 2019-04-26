@@ -171,6 +171,7 @@ namespace RealLib
             //TODO
             //bool isDownloadEnabled = false;
             bool isDownloadEnabled = true;
+
             OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum, isDownloadEnabled);
 
             switch (tradingEnum)

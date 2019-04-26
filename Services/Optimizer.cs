@@ -641,10 +641,11 @@ namespace StockSolution.Services
                             throw new ArgumentNullException();
                         }
 
+                        /*
                         if (loseLimit == 0)
                         {
                             throw new ArgumentNullException();
-                        }
+                        }*/
 
                         _LoseLimits.Add(loseLimit);
                         _ShortIndicators.Add(shortIndicator);

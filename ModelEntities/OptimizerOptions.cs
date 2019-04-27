@@ -155,7 +155,7 @@ namespace StockSolution.ModelEntities.Models
                     minOrders = 12;
                     maxOrders = 12;
                     minProfitPct = 16;
-                    loseLimitMin = 0.00;
+                    loseLimitMin = 0.00m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,

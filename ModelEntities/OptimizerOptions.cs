@@ -82,6 +82,8 @@ namespace StockSolution.ModelEntities.Models
             {
                 case TickPeriod.Daily:
                     list = new List<OptimizerOptions>();
+
+                    // AvgIndicatorMin: 119 - MinResult: 20.00 - MinOrders: 12 - MaxOrders: 12 - LoseLimitMin: 0.00
                     //AvgIndicatorMin 47%
                     int recursiveTests = 2;
                     int nrOfTestValues = 90;
@@ -98,11 +100,33 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator111
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator119
                         );
 
                     list.Add(optimizerOptions);
 
+                    // AvgIndicatorMin: 58 - MinResult: 19.00 - MinOrders: 12 - MaxOrders: 12 - LoseLimitMin: 0.00
+                    recursiveTests = 2;
+                    nrOfTestValues = 90;
+                    minOrders = 12;
+                    maxOrders = 12;
+                    minProfitPct = 19;
+                    loseLimitMin = 0.00m;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator58
+                        );
+
+                    list.Add(optimizerOptions);
+
+                    // AvgIndicatorMin: 58 - MinResult: 19.00 - MinOrders: 20 - MaxOrders: 20 - LoseLimitMin: -0.14
                     //AvgIndicatorMin 70%
                     recursiveTests = 2;
                     nrOfTestValues = 90;
@@ -120,6 +144,28 @@ namespace StockSolution.ModelEntities.Models
                         minProfitPct,
                         loseLimitMin,
                         ValueCollections.PermanentValues.EnabledPairs_AvgIndicator58
+                        );
+
+                    list.Add(optimizerOptions);
+
+                    // AvgIndicatorMin: 119 - MinResult: 16.00 - MinOrders: 12 - MaxOrders: 12 - LoseLimitMin: 0.00
+                    //AvgIndicatorMin 70%
+                    recursiveTests = 2;
+                    nrOfTestValues = 90;
+                    minOrders = 12;
+                    maxOrders = 12;
+                    minProfitPct = 16;
+                    loseLimitMin = 0.00;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator119
                         );
 
                     list.Add(optimizerOptions);

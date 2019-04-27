@@ -2068,21 +2068,21 @@ HMA 6 - Lowest 8 - 0.08
 LinearReg 6 - Lowest 8 - 0.11
 SMMA 4 - Lowest 8 - 0.11
 SMMA 6 - Lowest 8 - 0.11
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.09
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.09
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.08
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - Momentum 10 - 0.03
-MeanDeviatio - Momentum 10 - 0.01
+MeanDeviation 16 - MeanDeviation 18 - 0.10
+MeanDeviation 18 - MeanDeviation 24 - 0.11
+MeanDeviation 20 - MeanDeviation 28 - 0.09
+MeanDeviation 26 - MeanDeviation 28 - 0.11
+MeanDeviation 22 - MeanDeviation 32 - 0.09
+MeanDeviation 24 - MeanDeviation 32 - 0.10
+MeanDeviation 22 - MeanDeviation 34 - 0.08
+MeanDeviation 4 - MeanDeviation 6 - 0.11
+MeanDeviation 6 - MeanDeviation 8 - 0.11
+MeanDeviation 6 - Momentum 10 - 0.03
+MeanDeviation 8 - Momentum 10 - 0.01
 Momentum 2 - Momentum 10 - 0.11
 Momentum 6 - Momentum 12 - 0.09
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 12 - Momentum 14 - 0.10
+MeanDeviation 4 - Momentum 14 - 0.10
 EMA 16 - LinearReg 18 - 0.11
 EMA 6 - LinearReg 18 - 0.11
 Highest 10 - LinearReg 18 - 0.11
@@ -2180,48 +2180,48 @@ SMA 6 - LinearReg 18 - 0.11
 SMA 8 - LinearReg 18 - 0.11
 Momentum 4 - Momentum 14 - 0.11
 Momentum 8 - Momentum 14 - 0.11
-MeanDeviatio - Momentum 16 - 0.10
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 16 - 0.10
+MeanDeviation 16 - Momentum 18 - 0.09
+MeanDeviation 6 - Momentum 18 - 0.05
 Momentum 6 - Momentum 18 - 0.10
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 20 - 0.09
+MeanDeviation 16 - Momentum 20 - 0.10
+MeanDeviation 6 - Momentum 20 - 0.09
 Momentum 2 - Momentum 20 - 0.11
-MeanDeviatio - Momentum 22 - 0.10
+MeanDeviation 16 - Momentum 22 - 0.10
 Momentum 6 - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 26 - 0.10
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.10
+MeanDeviation 12 - Momentum 24 - 0.10
+MeanDeviation 22 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 26 - 0.10
+MeanDeviation 22 - Momentum 26 - 0.11
+MeanDeviation 4 - Momentum 26 - 0.11
+MeanDeviation 28 - Momentum 28 - 0.11
+MeanDeviation 6 - Momentum 28 - 0.10
 Momentum 26 - Momentum 28 - 0.11
 Momentum 6 - Momentum 28 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
+MeanDeviation 10 - Momentum 30 - 0.11
+MeanDeviation 12 - Momentum 30 - 0.11
+MeanDeviation 14 - Momentum 30 - 0.11
+MeanDeviation 20 - Momentum 30 - 0.11
+MeanDeviation 26 - Momentum 30 - 0.11
 Momentum 10 - Momentum 30 - 0.11
 Momentum 12 - Momentum 30 - 0.11
 Momentum 20 - Momentum 30 - 0.11
 Momentum 26 - Momentum 30 - 0.11
 Momentum 8 - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
+MeanDeviation 14 - Momentum 32 - 0.11
+MeanDeviation 20 - Momentum 32 - 0.11
 Momentum 10 - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
+MeanDeviation 18 - Momentum 34 - 0.11
+MeanDeviation 28 - Momentum 34 - 0.11
+MeanDeviation 30 - Momentum 34 - 0.11
+MeanDeviation 34 - Momentum 34 - 0.11
+MeanDeviation 6 - Momentum 34 - 0.11
+MeanDeviation 8 - Momentum 34 - 0.11
 Momentum 2 - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 36 - 0.11
+MeanDeviation 34 - Momentum 36 - 0.11
+MeanDeviation 6 - Momentum 36 - 0.11
+MeanDeviation 12 - Momentum 38 - 0.11
 SMA 22 - JMA 22 - 0.08
 SMA 6 - JMA 22 - 0.11
 SMA 8 - JMA 22 - 0.10
@@ -2367,33 +2367,33 @@ SMA 20 - LinearReg 24 - 0.11
 EMA 14 - LinearReg 26 - 0.11
 EMA 16 - LinearReg 26 - 0.10
 EMA 8 - LinearReg 26 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 14 - Momentum 38 - 0.11
+MeanDeviation 20 - Momentum 38 - 0.11
+MeanDeviation 24 - Momentum 38 - 0.11
+MeanDeviation 38 - Momentum 38 - 0.11
 Momentum 4 - Momentum 38 - 0.11
 Momentum 8 - Momentum 38 - 0.11
-MeanDeviatio - Momentum 4 - 0.02
+MeanDeviation 2 - Momentum 4 - 0.02
 Momentum 2 - Momentum 4 - 0.00
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
+MeanDeviation 22 - Momentum 40 - 0.10
+MeanDeviation 38 - Momentum 40 - 0.10
 Momentum 4 - Momentum 40 - 0.10
 Momentum 8 - Momentum 40 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
+MeanDeviation 22 - Momentum 42 - 0.11
+MeanDeviation 36 - Momentum 42 - 0.11
+MeanDeviation 42 - Momentum 42 - 0.11
+MeanDeviation 2 - Momentum 44 - 0.11
+MeanDeviation 32 - Momentum 44 - 0.11
+MeanDeviation 34 - Momentum 44 - 0.11
 Momentum 6 - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
+MeanDeviation 10 - Momentum 46 - 0.11
+MeanDeviation 14 - Momentum 46 - 0.11
+MeanDeviation 26 - Momentum 46 - 0.11
+MeanDeviation 46 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 46 - 0.11
+MeanDeviation 8 - Momentum 46 - 0.11
 Momentum 6 - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.03
+MeanDeviation 4 - Momentum 6 - 0.03
 Momentum 4 - Momentum 6 - 0.11
 Momentum 6 - Momentum 8 - 0.11
 SMMA 10 - SMA 10 - 0.11
@@ -2776,35 +2776,35 @@ LinearReg 4 - Lowest 6 - 0.11
 LinearReg 6 - Lowest 6 - 0.11
 HMA 2 - Lowest 8 - 0.08
 LinearReg 4 - Lowest 8 - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.09
-MeanDeviatio - Momentum 10 - 0.01
+MeanDeviation 12 - MeanDeviation 14 - 0.11
+MeanDeviation 10 - MeanDeviation 18 - 0.10
+MeanDeviation 14 - MeanDeviation 18 - 0.11
+MeanDeviation 14 - MeanDeviation 20 - 0.11
+MeanDeviation 18 - MeanDeviation 28 - 0.11
+MeanDeviation 22 - MeanDeviation 28 - 0.11
+MeanDeviation 24 - MeanDeviation 28 - 0.11
+MeanDeviation 18 - MeanDeviation 32 - 0.09
+MeanDeviation 10 - Momentum 10 - 0.01
 Momentum 6 - Momentum 10 - 0.01
-MeanDeviatio - Momentum 12 - 0.04
+MeanDeviation 10 - Momentum 12 - 0.04
 Momentum 10 - Momentum 12 - 0.11
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 14 - 0.10
+MeanDeviation 14 - Momentum 14 - 0.10
 Momentum 10 - Momentum 14 - 0.11
 Momentum 12 - Momentum 14 - 0.11
 Momentum 6 - Momentum 14 - 0.11
-MeanDeviatio - Momentum 16 - 0.09
+MeanDeviation 6 - Momentum 16 - 0.09
 Momentum 2 - Momentum 16 - 0.11
-MeanDeviatio - Momentum 18 - 0.07
-MeanDeviatio - Momentum 18 - 0.05
+MeanDeviation 18 - Momentum 18 - 0.07
+MeanDeviation 8 - Momentum 18 - 0.05
 Momentum 2 - Momentum 18 - 0.11
-MeanDeviatio - Momentum 20 - 0.09
-MeanDeviatio - Momentum 20 - 0.10
+MeanDeviation 10 - Momentum 20 - 0.09
+MeanDeviation 14 - Momentum 20 - 0.10
 Momentum 6 - Momentum 20 - 0.11
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
+MeanDeviation 10 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 22 - 0.10
+MeanDeviation 14 - Momentum 22 - 0.10
+MeanDeviation 20 - Momentum 22 - 0.10
 LinearReg 8 - Lowest 10 - 0.11
 SMMA 6 - Lowest 10 - 0.11
 HMA 2 - Lowest 12 - 0.11
@@ -2908,46 +2908,46 @@ Momentum 10 - Momentum 22 - 0.11
 Momentum 12 - Momentum 22 - 0.10
 Momentum 4 - Momentum 22 - 0.10
 Momentum 8 - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.11
+MeanDeviation 10 - Momentum 24 - 0.10
+MeanDeviation 14 - Momentum 24 - 0.11
 Momentum 10 - Momentum 24 - 0.11
 Momentum 6 - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
+MeanDeviation 18 - Momentum 26 - 0.11
+MeanDeviation 6 - Momentum 26 - 0.11
+MeanDeviation 8 - Momentum 26 - 0.11
 Momentum 2 - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
+MeanDeviation 18 - Momentum 28 - 0.11
+MeanDeviation 8 - Momentum 28 - 0.11
 Momentum 2 - Momentum 28 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
+MeanDeviation 22 - Momentum 30 - 0.11
+MeanDeviation 24 - Momentum 30 - 0.11
+MeanDeviation 4 - Momentum 30 - 0.11
 Momentum 22 - Momentum 30 - 0.11
 Momentum 24 - Momentum 30 - 0.11
 Momentum 28 - Momentum 30 - 0.11
 Momentum 4 - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
+MeanDeviation 18 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 32 - 0.11
+MeanDeviation 22 - Momentum 32 - 0.11
 Momentum 26 - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
+MeanDeviation 2 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 34 - 0.11
+MeanDeviation 24 - Momentum 34 - 0.11
+MeanDeviation 32 - Momentum 34 - 0.11
+MeanDeviation 4 - Momentum 34 - 0.11
 Momentum 26 - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
+MeanDeviation 10 - Momentum 36 - 0.11
+MeanDeviation 14 - Momentum 36 - 0.11
+MeanDeviation 26 - Momentum 36 - 0.11
+MeanDeviation 30 - Momentum 36 - 0.11
 Momentum 10 - Momentum 36 - 0.11
 Momentum 6 - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 10 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 38 - 0.11
+MeanDeviation 26 - Momentum 38 - 0.11
+MeanDeviation 36 - Momentum 38 - 0.11
 Momentum 6 - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
+MeanDeviation 18 - Momentum 40 - 0.11
 LinearReg 10 - Lowest 32 - 0.11
 LinearReg 16 - Lowest 32 - 0.11
 LinearReg 24 - Lowest 32 - 0.11
@@ -2980,42 +2980,42 @@ SMMA 4 - Lowest 6 - 0.11
 HMA 8 - Lowest 8 - 0.06
 SMMA 2 - Lowest 8 - 0.03
 SMMA 8 - Lowest 8 - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.08
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.08
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - Momentum 10 - 0.02
-MeanDeviatio - Momentum 12 - 0.04
+MeanDeviation 20 - MeanDeviation 22 - 0.11
+MeanDeviation 16 - MeanDeviation 26 - 0.11
+MeanDeviation 18 - MeanDeviation 30 - 0.10
+MeanDeviation 22 - MeanDeviation 30 - 0.08
+MeanDeviation 20 - MeanDeviation 32 - 0.10
+MeanDeviation 26 - MeanDeviation 32 - 0.10
+MeanDeviation 30 - MeanDeviation 32 - 0.11
+MeanDeviation 20 - MeanDeviation 34 - 0.08
+MeanDeviation 22 - MeanDeviation 36 - 0.10
+MeanDeviation 2 - Momentum 10 - 0.02
+MeanDeviation 6 - Momentum 12 - 0.04
 Momentum 2 - Momentum 12 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 2 - Momentum 14 - 0.10
+MeanDeviation 8 - Momentum 14 - 0.10
 Momentum 2 - Momentum 40 - 0.11
-MeanDeviatio - Momentum 42 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
+MeanDeviation 18 - Momentum 42 - 0.10
+MeanDeviation 2 - Momentum 42 - 0.11
+MeanDeviation 28 - Momentum 42 - 0.11
+MeanDeviation 38 - Momentum 42 - 0.11
+MeanDeviation 4 - Momentum 42 - 0.11
+MeanDeviation 40 - Momentum 42 - 0.11
 Momentum 2 - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
+MeanDeviation 18 - Momentum 44 - 0.10
+MeanDeviation 38 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 44 - 0.11
 Momentum 2 - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
+MeanDeviation 12 - Momentum 46 - 0.11
+MeanDeviation 20 - Momentum 46 - 0.11
+MeanDeviation 22 - Momentum 46 - 0.11
+MeanDeviation 24 - Momentum 46 - 0.11
+MeanDeviation 32 - Momentum 46 - 0.11
+MeanDeviation 34 - Momentum 46 - 0.11
 Momentum 10 - Momentum 46 - 0.11
 Momentum 4 - Momentum 46 - 0.11
 Momentum 8 - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.03
+MeanDeviation 2 - Momentum 6 - 0.03
 SMMA 8 - SMA 10 - 0.11
 SMMA 10 - SMA 12 - 0.11
 SMMA 12 - SMA 12 - 0.11
@@ -3038,85 +3038,85 @@ HMA 10 - SMMA 18 - 0.03
 HMA 10 - SMMA 20 - 0.03
 HMA 12 - SMMA 22 - 0.02
 Momentum 2 - Momentum 14 - 0.11
-MeanDeviatio - Momentum 16 - 0.09
+MeanDeviation 14 - Momentum 16 - 0.09
 Momentum 10 - Momentum 16 - 0.11
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 18 - 0.09
+MeanDeviation 10 - Momentum 18 - 0.05
+MeanDeviation 12 - Momentum 18 - 0.09
+MeanDeviation 14 - Momentum 18 - 0.09
 Momentum 10 - Momentum 18 - 0.11
 Momentum 8 - Momentum 18 - 0.11
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 20 - 0.05
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.09
-MeanDeviatio - Momentum 22 - 0.10
+MeanDeviation 18 - Momentum 20 - 0.10
+MeanDeviation 2 - Momentum 20 - 0.05
+MeanDeviation 18 - Momentum 22 - 0.10
+MeanDeviation 6 - Momentum 22 - 0.09
+MeanDeviation 8 - Momentum 22 - 0.10
 Momentum 2 - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
+MeanDeviation 18 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 24 - 0.11
+MeanDeviation 8 - Momentum 24 - 0.11
+MeanDeviation 12 - Momentum 26 - 0.11
+MeanDeviation 14 - Momentum 26 - 0.11
+MeanDeviation 20 - Momentum 26 - 0.11
+MeanDeviation 24 - Momentum 26 - 0.11
 Momentum 10 - Momentum 26 - 0.11
 Momentum 12 - Momentum 26 - 0.11
 Momentum 4 - Momentum 26 - 0.11
 Momentum 8 - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
+MeanDeviation 10 - Momentum 28 - 0.11
+MeanDeviation 14 - Momentum 28 - 0.11
+MeanDeviation 20 - Momentum 28 - 0.11
+MeanDeviation 26 - Momentum 28 - 0.11
 Momentum 10 - Momentum 28 - 0.11
 Momentum 12 - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
+MeanDeviation 16 - Momentum 30 - 0.11
+MeanDeviation 28 - Momentum 30 - 0.11
+MeanDeviation 6 - Momentum 30 - 0.11
 Momentum 6 - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
+MeanDeviation 10 - Momentum 32 - 0.11
+MeanDeviation 26 - Momentum 32 - 0.11
 Momentum 6 - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
+MeanDeviation 16 - Momentum 34 - 0.11
+MeanDeviation 26 - Momentum 34 - 0.11
 Momentum 6 - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
+MeanDeviation 18 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 36 - 0.11
 Momentum 2 - Momentum 36 - 0.11
 Momentum 26 - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 2 - Momentum 38 - 0.11
+MeanDeviation 22 - Momentum 38 - 0.11
+MeanDeviation 4 - Momentum 38 - 0.11
 Momentum 26 - Momentum 38 - 0.08
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.11
+MeanDeviation 10 - Momentum 40 - 0.11
+MeanDeviation 14 - Momentum 40 - 0.11
+MeanDeviation 26 - Momentum 40 - 0.10
+MeanDeviation 30 - Momentum 40 - 0.10
+MeanDeviation 36 - Momentum 40 - 0.10
+MeanDeviation 6 - Momentum 40 - 0.11
 Momentum 6 - Momentum 40 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
+MeanDeviation 12 - Momentum 42 - 0.11
+MeanDeviation 14 - Momentum 42 - 0.11
+MeanDeviation 20 - Momentum 42 - 0.11
+MeanDeviation 24 - Momentum 42 - 0.11
+MeanDeviation 30 - Momentum 42 - 0.11
+MeanDeviation 32 - Momentum 42 - 0.11
+MeanDeviation 34 - Momentum 42 - 0.11
 Momentum 4 - Momentum 42 - 0.11
 Momentum 8 - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
+MeanDeviation 10 - Momentum 44 - 0.11
+MeanDeviation 14 - Momentum 44 - 0.11
+MeanDeviation 20 - Momentum 44 - 0.11
+MeanDeviation 26 - Momentum 44 - 0.10
+MeanDeviation 30 - Momentum 44 - 0.11
+MeanDeviation 6 - Momentum 44 - 0.11
 Momentum 8 - Momentum 44 - 0.10
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
+MeanDeviation 16 - Momentum 46 - 0.11
+MeanDeviation 2 - Momentum 46 - 0.11
+MeanDeviation 28 - Momentum 46 - 0.11
+MeanDeviation 38 - Momentum 46 - 0.11
+MeanDeviation 40 - Momentum 46 - 0.11
+MeanDeviation 44 - Momentum 46 - 0.11
 Momentum 2 - Momentum 46 - 0.11
-MeanDeviatio - Momentum 8 - 0.01
+MeanDeviation 6 - Momentum 8 - 0.01
 Momentum 2 - Momentum 8 - 0.11
 HMA 10 - SMA 10 - 0.11
 HMA 6 - SMA 10 - 0.11
@@ -3413,93 +3413,93 @@ LinearReg 44 - Lowest 46 - 0.11
 SMMA 2 - Lowest 6 - 0.07
 EMA 2 - Lowest 8 - 0.07
 EMA 8 - Lowest 8 - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.11
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - MeanDeviatio - 0.10
-MeanDeviatio - Momentum 10 - 0.03
+MeanDeviation 14 - MeanDeviation 16 - 0.11
+MeanDeviation 12 - MeanDeviation 18 - 0.11
+MeanDeviation 12 - MeanDeviation 20 - 0.11
+MeanDeviation 18 - MeanDeviation 26 - 0.11
+MeanDeviation 20 - MeanDeviation 26 - 0.10
+MeanDeviation 22 - MeanDeviation 26 - 0.11
+MeanDeviation 24 - MeanDeviation 26 - 0.11
+MeanDeviation 16 - MeanDeviation 28 - 0.10
+MeanDeviation 20 - MeanDeviation 30 - 0.10
+MeanDeviation 24 - MeanDeviation 30 - 0.10
+MeanDeviation 28 - MeanDeviation 32 - 0.10
+MeanDeviation 20 - MeanDeviation 36 - 0.10
+MeanDeviation 4 - Momentum 10 - 0.03
 Momentum 4 - Momentum 10 - 0.11
 Momentum 8 - Momentum 10 - 0.11
-MeanDeviatio - Momentum 12 - 0.03
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 16 - 0.09
+MeanDeviation 2 - Momentum 12 - 0.03
+MeanDeviation 6 - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 16 - 0.09
 Momentum 12 - Momentum 16 - 0.10
 Momentum 6 - Momentum 16 - 0.11
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 18 - 0.05
+MeanDeviation 4 - Momentum 18 - 0.05
 Momentum 4 - Momentum 18 - 0.11
-MeanDeviatio - Momentum 2 - 0.06
+MeanDeviation 2 - Momentum 2 - 0.06
 Momentum 10 - Momentum 20 - 0.11
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
+MeanDeviation 2 - Momentum 22 - 0.10
+MeanDeviation 22 - Momentum 22 - 0.10
+MeanDeviation 4 - Momentum 22 - 0.11
+MeanDeviation 16 - Momentum 24 - 0.11
+MeanDeviation 6 - Momentum 24 - 0.11
 Momentum 2 - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
+MeanDeviation 10 - Momentum 26 - 0.11
+MeanDeviation 16 - Momentum 26 - 0.11
+MeanDeviation 26 - Momentum 26 - 0.11
 Momentum 6 - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
+MeanDeviation 2 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 28 - 0.11
+MeanDeviation 4 - Momentum 28 - 0.10
+MeanDeviation 18 - Momentum 30 - 0.11
+MeanDeviation 2 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 30 - 0.11
+MeanDeviation 8 - Momentum 30 - 0.11
 Momentum 2 - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.10
-MeanDeviatio - Momentum 32 - 0.10
+MeanDeviation 30 - Momentum 32 - 0.11
+MeanDeviation 32 - Momentum 32 - 0.10
+MeanDeviation 6 - Momentum 32 - 0.10
 Momentum 2 - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
+MeanDeviation 10 - Momentum 34 - 0.11
+MeanDeviation 12 - Momentum 34 - 0.11
+MeanDeviation 14 - Momentum 34 - 0.11
+MeanDeviation 20 - Momentum 34 - 0.11
 Momentum 10 - Momentum 34 - 0.11
 Momentum 4 - Momentum 34 - 0.11
 Momentum 8 - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 22 - Momentum 36 - 0.11
+MeanDeviation 24 - Momentum 36 - 0.11
+MeanDeviation 18 - Momentum 38 - 0.11
+MeanDeviation 28 - Momentum 38 - 0.11
+MeanDeviation 30 - Momentum 38 - 0.11
+MeanDeviation 32 - Momentum 38 - 0.11
+MeanDeviation 34 - Momentum 38 - 0.11
+MeanDeviation 6 - Momentum 38 - 0.11
+MeanDeviation 8 - Momentum 38 - 0.11
 Momentum 2 - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
+MeanDeviation 16 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 40 - 0.11
+MeanDeviation 34 - Momentum 40 - 0.10
+MeanDeviation 10 - Momentum 42 - 0.11
+MeanDeviation 16 - Momentum 42 - 0.10
+MeanDeviation 26 - Momentum 42 - 0.11
+MeanDeviation 6 - Momentum 42 - 0.11
+MeanDeviation 8 - Momentum 42 - 0.11
 Momentum 6 - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
+MeanDeviation 22 - Momentum 44 - 0.11
+MeanDeviation 24 - Momentum 44 - 0.10
+MeanDeviation 40 - Momentum 44 - 0.11
+MeanDeviation 42 - Momentum 44 - 0.11
+MeanDeviation 44 - Momentum 44 - 0.11
 Momentum 4 - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.02
+MeanDeviation 18 - Momentum 46 - 0.11
+MeanDeviation 30 - Momentum 46 - 0.11
+MeanDeviation 36 - Momentum 46 - 0.11
+MeanDeviation 4 - Momentum 46 - 0.11
+MeanDeviation 42 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 6 - 0.02
 Momentum 2 - Momentum 6 - 0.10
-MeanDeviatio - Momentum 8 - 0.02
+MeanDeviation 2 - Momentum 8 - 0.02
 HMA 10 - SMA 12 - 0.11
 HMA 6 - SMA 12 - 0.11
 HMA 12 - SMA 14 - 0.03
@@ -3530,7 +3530,796 @@ HMA 12 - SMMA 26 - 0.02";
     #endregion
 
         #region
-        public static readonly string EnabledPairs_AvgIndicator111 = @"SMMA 8 - EMA 12 - 0.09
+        public static readonly string EnabledPairs_AvgIndicator119 = @"SMMA 8 - EMA 12 - 0.09
+SMMA 12 - EMA 14 - 0.11
+SMMA 14 - EMA 16 - 0.11
+SMMA 2 - EMA 2 - 0.03
+SMA 22 - EMA 24 - 0.00
+SMA 28 - EMA 28 - 0.10
+SMMA 10 - EMA 12 - 0.11
+SMMA 12 - EMA 12 - 0.11
+SMMA 14 - EMA 14 - 0.11
+SMMA 12 - EMA 16 - 0.11
+SMMA 10 - EMA 18 - 0.11
+SMA 22 - EMA 22 - 0.00
+SMMA 4 - EMA 6 - 0.02
+SMMA 10 - EMA 10 - 0.09
+SMMA 10 - EMA 14 - 0.11
+SMMA 8 - EMA 14 - 0.10
+SMA 12 - EMA 16 - 0.00
+SMMA 12 - EMA 18 - 0.11
+SMA 20 - EMA 20 - 0.00
+SMA 26 - EMA 26 - 0.07
+SMMA 10 - EMA 16 - 0.11
+SMMA 16 - HMA 16 - 0.09
+EMA 18 - HMA 18 - 0.09
+SMMA 14 - HMA 18 - 0.08
+KAMA 2 - HMA 2 - 0.05
+LinearReg 2 - HMA 2 - 0.11
+Lowest 2 - HMA 2 - 0.11
+SMA 2 - HMA 2 - 0.11
+EMA 20 - HMA 20 - 0.09
+SMMA 16 - HMA 20 - 0.10
+SMMA 20 - HMA 20 - 0.11
+SMMA 16 - HMA 22 - 0.10
+SMMA 20 - HMA 22 - 0.11
+SMMA 14 - HMA 24 - 0.11
+SMMA 18 - HMA 24 - 0.11
+SMA 16 - HMA 28 - 0.04
+SMA 24 - HMA 28 - 0.09
+SMA 26 - HMA 28 - 0.10
+SMA 28 - HMA 28 - 0.10
+HMA 8 - JMA 10 - 0.11
+LinearReg 4 - JMA 10 - 0.11
+LinearReg 8 - JMA 10 - 0.11
+SMA 10 - JMA 10 - 0.01
+HMA 8 - JMA 12 - 0.11
+LinearReg 10 - JMA 12 - 0.11
+LinearReg 8 - JMA 12 - 0.10
+Lowest 2 - JMA 12 - 0.10
+Lowest 8 - JMA 12 - 0.00
+SMA 10 - JMA 12 - 0.06
+SMA 12 - JMA 12 - 0.09
+EMA 10 - JMA 14 - 0.06
+EMA 12 - JMA 14 - 0.03
+HMA 12 - JMA 14 - 0.09
+LinearReg 14 - JMA 14 - 0.11
+Lowest 6 - JMA 14 - 0.02
+SMMA 10 - JMA 14 - 0.05
+SMMA 2 - JMA 14 - 0.08
+SMMA 8 - JMA 14 - 0.10
+EMA 14 - JMA 16 - 0.07
+EMA 16 - JMA 16 - 0.11
+EMA 14 - HMA 18 - 0.02
+EMA 16 - HMA 18 - 0.03
+SMA 16 - HMA 18 - 0.10
+SMMA 18 - HMA 18 - 0.05
+SMMA 2 - HMA 2 - 0.06
+SMMA 14 - HMA 20 - 0.09
+SMA 12 - HMA 22 - 0.09
+SMA 6 - JMA 16 - 0.08
+SMA 8 - JMA 16 - 0.08
+SMMA 14 - JMA 16 - 0.10
+SMMA 6 - JMA 16 - 0.07
+EMA 10 - JMA 18 - 0.08
+EMA 6 - JMA 18 - 0.11
+EMA 8 - JMA 18 - 0.11
+HMA 16 - JMA 18 - 0.09
+LinearReg 18 - JMA 18 - 0.05
+SMA 4 - JMA 18 - 0.11
+SMMA 12 - JMA 18 - 0.11
+SMMA 16 - JMA 18 - 0.11
+SMMA 8 - JMA 18 - 0.10
+EMA 2 - JMA 2 - 0.04
+SMMA 2 - JMA 2 - 0.06
+EMA 10 - JMA 20 - 0.09
+EMA 12 - JMA 20 - 0.09
+EMA 6 - JMA 20 - 0.11
+SMMA 12 - JMA 20 - 0.10
+EMA 10 - JMA 22 - 0.11
+EMA 20 - JMA 22 - 0.10
+EMA 8 - JMA 22 - 0.11
+HMA 16 - JMA 22 - 0.11
+LinearReg 18 - JMA 22 - 0.06
+SMMA 12 - JMA 22 - 0.10
+EMA 14 - JMA 24 - 0.10
+EMA 16 - JMA 24 - 0.11
+SMMA 14 - HMA 16 - 0.09
+SMA 18 - HMA 18 - 0.09
+SMMA 10 - HMA 18 - 0.09
+SMMA 12 - HMA 18 - 0.09
+SMMA 8 - HMA 18 - 0.02
+EMA 2 - HMA 2 - 0.09
+Highest 2 - HMA 2 - 0.11
+SMA 14 - HMA 20 - 0.11
+SMA 16 - HMA 20 - 0.10
+SMMA 10 - HMA 20 - 0.09
+SMA 14 - HMA 22 - 0.09
+SMMA 18 - HMA 22 - 0.10
+SMMA 16 - HMA 24 - 0.11
+SMMA 16 - HMA 18 - 0.09
+JMA 2 - HMA 2 - 0.11
+SMMA 12 - HMA 20 - 0.08
+SMMA 18 - HMA 20 - 0.10
+EMA 22 - HMA 22 - 0.08
+SMMA 12 - HMA 22 - 0.09
+SMMA 22 - HMA 22 - 0.10
+SMA 12 - HMA 24 - 0.09
+SMMA 14 - HMA 22 - 0.09
+SMMA 2 - HMA 4 - 0.03
+EMA 6 - HMA 6 - 0.03
+SMA 4 - HMA 6 - 0.03
+SMA 6 - HMA 8 - 0.03
+EMA 6 - JMA 10 - 0.02
+EMA 8 - JMA 10 - 0.06
+Lowest 2 - JMA 10 - 0.10
+SMA 4 - JMA 10 - 0.04
+SMA 14 - JMA 24 - 0.06
+SMA 22 - JMA 24 - 0.09
+SMMA 14 - JMA 24 - 0.11
+SMMA 22 - JMA 24 - 0.11
+SMMA 6 - JMA 24 - 0.09
+LinearReg 24 - JMA 26 - 0.05
+SMA 20 - JMA 26 - 0.08
+SMMA 16 - JMA 26 - 0.11
+SMMA 20 - JMA 26 - 0.11
+EMA 12 - JMA 28 - 0.09
+EMA 24 - JMA 28 - 0.11
+EMA 26 - JMA 28 - 0.11
+SMA 14 - JMA 28 - 0.09
+SMA 16 - JMA 28 - 0.09
+SMA 18 - JMA 28 - 0.09
+SMA 24 - JMA 28 - 0.09
+SMA 18 - HMA 30 - 0.09
+SMA 26 - HMA 30 - 0.10
+EMA 4 - HMA 6 - 0.00
+SMA 6 - HMA 6 - 0.03
+SMMA 4 - HMA 6 - 0.03
+SMMA 6 - HMA 6 - 0.03
+EMA 10 - JMA 10 - 0.08
+EMA 4 - JMA 10 - 0.02
+LinearReg 6 - JMA 10 - 0.11
+SMA 2 - JMA 10 - 0.10
+SMA 6 - JMA 10 - 0.00
+SMA 8 - JMA 10 - 0.09
+SMMA 4 - JMA 10 - 0.04
+SMMA 6 - JMA 10 - 0.08
+LinearReg 6 - JMA 12 - 0.11
+SMA 6 - JMA 12 - 0.03
+SMA 8 - JMA 12 - 0.07
+SMMA 12 - JMA 12 - 0.07
+SMMA 6 - JMA 12 - 0.06
+EMA 14 - JMA 14 - 0.11
+EMA 6 - JMA 12 - 0.02
+HMA 10 - JMA 12 - 0.11
+Lowest 6 - JMA 12 - 0.00
+SMA 4 - JMA 12 - 0.05
+EMA 4 - JMA 14 - 0.08
+LinearReg 6 - JMA 14 - 0.10
+SMA 6 - JMA 14 - 0.06
+SMA 8 - JMA 14 - 0.06
+SMMA 12 - JMA 14 - 0.07
+SMMA 4 - JMA 14 - 0.06
+SMMA 6 - JMA 14 - 0.06
+EMA 12 - JMA 16 - 0.06
+HMA 14 - JMA 16 - 0.11
+LinearReg 6 - JMA 16 - 0.11
+LinearReg 8 - JMA 16 - 0.11
+SMA 14 - JMA 16 - 0.07
+SMA 16 - JMA 16 - 0.06
+SMMA 10 - JMA 16 - 0.08
+HMA 12 - JMA 18 - 0.11
+HMA 8 - JMA 18 - 0.11
+Lowest 2 - JMA 18 - 0.11
+Lowest 4 - JMA 18 - 0.08
+SMA 10 - JMA 18 - 0.06
+SMMA 2 - JMA 18 - 0.10
+EMA 20 - JMA 20 - 0.07
+SMA 10 - JMA 20 - 0.06
+SMA 12 - JMA 20 - 0.08
+SMA 20 - JMA 20 - 0.06
+SMMA 16 - JMA 20 - 0.11
+SMA 26 - JMA 28 - 0.11
+SMA 28 - JMA 28 - 0.11
+SMMA 18 - JMA 28 - 0.11
+EMA 24 - JMA 30 - 0.11
+EMA 26 - JMA 30 - 0.11
+EMA 30 - JMA 30 - 0.11
+SMMA 24 - JMA 30 - 0.11
+EMA 30 - JMA 32 - 0.11
+SMMA 8 - JMA 32 - 0.10
+SMA 22 - JMA 34 - 0.11
+SMA 32 - JMA 34 - 0.10
+EMA 6 - JMA 14 - 0.05
+EMA 8 - JMA 14 - 0.06
+HMA 10 - JMA 14 - 0.11
+LinearReg 12 - JMA 14 - 0.10
+Lowest 2 - JMA 14 - 0.11
+Lowest 4 - JMA 14 - 0.05
+Lowest 8 - JMA 14 - 0.00
+SMA 14 - JMA 14 - 0.08
+SMA 4 - JMA 14 - 0.11
+SMMA 14 - JMA 14 - 0.07
+HMA 12 - JMA 16 - 0.11
+Lowest 2 - JMA 16 - 0.11
+SMA 10 - JMA 16 - 0.07
+SMMA 2 - JMA 16 - 0.10
+EMA 12 - JMA 18 - 0.10
+HMA 14 - JMA 18 - 0.11
+LinearReg 16 - JMA 18 - 0.07
+SMA 14 - JMA 18 - 0.06
+SMA 16 - JMA 18 - 0.07
+SMA 18 - JMA 18 - 0.07
+SMMA 10 - JMA 18 - 0.11
+SMMA 18 - JMA 18 - 0.11
+SMA 2 - JMA 2 - 0.11
+EMA 14 - JMA 20 - 0.10
+EMA 16 - JMA 20 - 0.07
+HMA 14 - JMA 20 - 0.10
+LinearReg 18 - JMA 20 - 0.09
+SMA 16 - JMA 20 - 0.08
+SMA 18 - JMA 20 - 0.06
+SMMA 10 - JMA 20 - 0.10
+SMMA 18 - JMA 20 - 0.11
+SMMA 20 - JMA 20 - 0.11
+SMMA 8 - JMA 20 - 0.10
+EMA 18 - JMA 22 - 0.10
+LinearReg 20 - JMA 22 - 0.05
+LinearReg 22 - JMA 22 - 0.03
+SMA 10 - JMA 22 - 0.10
+SMA 12 - JMA 22 - 0.11
+SMA 20 - JMA 22 - 0.06
+SMMA 16 - JMA 22 - 0.11
+SMMA 8 - JMA 22 - 0.10
+EMA 12 - JMA 24 - 0.08
+LinearReg 16 - JMA 24 - 0.05
+SMA 16 - JMA 24 - 0.08
+SMA 18 - JMA 24 - 0.09
+SMA 24 - JMA 24 - 0.08
+SMMA 10 - JMA 24 - 0.11
+SMMA 18 - JMA 24 - 0.11
+SMMA 20 - JMA 24 - 0.11
+EMA 14 - JMA 26 - 0.09
+EMA 16 - JMA 26 - 0.09
+EMA 18 - JMA 26 - 0.09
+SMA 20 - JMA 36 - 0.11
+SMA 30 - JMA 36 - 0.10
+SMA 32 - JMA 36 - 0.11
+SMA 16 - JMA 38 - 0.11
+SMA 18 - JMA 38 - 0.11
+SMA 24 - JMA 38 - 0.10
+SMA 26 - JMA 38 - 0.09
+SMA 28 - JMA 38 - 0.10
+SMA 2 - JMA 4 - 0.06
+EMA 12 - JMA 22 - 0.07
+EMA 22 - JMA 22 - 0.11
+LinearReg 16 - JMA 22 - 0.11
+SMA 16 - JMA 22 - 0.06
+SMA 18 - JMA 22 - 0.07
+SMMA 10 - JMA 22 - 0.10
+SMMA 18 - JMA 22 - 0.11
+SMMA 20 - JMA 22 - 0.11
+EMA 18 - JMA 24 - 0.10
+EMA 20 - JMA 24 - 0.08
+LinearReg 22 - JMA 24 - 0.06
+SMA 12 - JMA 24 - 0.06
+SMA 20 - JMA 24 - 0.10
+SMMA 16 - JMA 24 - 0.11
+SMMA 8 - JMA 24 - 0.10
+EMA 10 - JMA 26 - 0.09
+EMA 20 - JMA 26 - 0.11
+EMA 22 - JMA 26 - 0.11
+SMMA 10 - JMA 26 - 0.10
+SMMA 12 - JMA 26 - 0.11
+SMMA 22 - JMA 26 - 0.11
+SMMA 6 - JMA 26 - 0.09
+EMA 14 - JMA 28 - 0.08
+EMA 16 - JMA 28 - 0.11
+EMA 18 - JMA 28 - 0.10
+EMA 28 - JMA 28 - 0.10
+LinearReg 26 - JMA 26 - 0.03
+SMA 12 - JMA 26 - 0.08
+SMA 22 - JMA 26 - 0.11
+SMMA 14 - JMA 26 - 0.11
+SMMA 24 - JMA 26 - 0.11
+SMMA 8 - JMA 26 - 0.11
+EMA 20 - JMA 28 - 0.09
+EMA 22 - JMA 28 - 0.11
+SMMA 10 - JMA 28 - 0.09
+SMMA 12 - JMA 28 - 0.11
+SMMA 22 - JMA 28 - 0.11
+SMMA 6 - JMA 28 - 0.09
+SMA 30 - JMA 30 - 0.11
+SMMA 16 - JMA 30 - 0.11
+SMA 26 - JMA 40 - 0.10
+SMA 28 - JMA 40 - 0.10
+SMA 26 - JMA 42 - 0.09
+SMA 28 - JMA 42 - 0.10
+SMA 12 - JMA 28 - 0.09
+SMA 22 - JMA 28 - 0.08
+SMMA 14 - JMA 28 - 0.11
+SMMA 24 - JMA 28 - 0.11
+SMMA 8 - JMA 28 - 0.08
+EMA 28 - JMA 30 - 0.11
+Lowest 6 - JMA 30 - 0.06
+SMA 24 - JMA 30 - 0.11
+SMA 26 - JMA 30 - 0.11
+SMA 28 - JMA 30 - 0.11
+SMMA 18 - JMA 30 - 0.11
+SMMA 20 - JMA 30 - 0.11
+SMA 20 - JMA 32 - 0.08
+SMA 30 - JMA 32 - 0.11
+SMMA 16 - JMA 32 - 0.11
+SMA 16 - JMA 34 - 0.09
+SMA 18 - JMA 34 - 0.10
+SMA 24 - JMA 34 - 0.11
+SMA 26 - JMA 34 - 0.11
+SMA 28 - JMA 34 - 0.10
+SMA 34 - JMA 34 - 0.11
+SMMA 20 - JMA 34 - 0.11
+SMA 2 - HMA 4 - 0.01
+SMMA 10 - JMA 10 - 0.07
+SMMA 2 - JMA 10 - 0.00
+SMMA 8 - JMA 10 - 0.07
+EMA 10 - JMA 12 - 0.06
+EMA 12 - JMA 12 - 0.11
+SMMA 10 - JMA 12 - 0.05
+SMMA 2 - JMA 12 - 0.04
+SMMA 8 - JMA 12 - 0.06
+HMA 14 - JMA 14 - 0.11
+HMA 8 - JMA 14 - 0.11
+LinearReg 8 - JMA 14 - 0.11
+SMA 10 - JMA 14 - 0.06
+SMA 12 - JMA 14 - 0.07
+EMA 10 - JMA 16 - 0.06
+SMA 12 - JMA 44 - 0.10
+SMA 30 - JMA 44 - 0.11
+SMMA 2 - JMA 6 - 0.02
+SMMA 2 - JMA 8 - 0.02
+SMA 18 - JMA 32 - 0.10
+SMA 24 - JMA 32 - 0.11
+SMA 26 - JMA 32 - 0.11
+SMA 28 - JMA 32 - 0.11
+SMMA 18 - JMA 32 - 0.11
+SMMA 20 - JMA 32 - 0.11
+SMA 20 - JMA 34 - 0.11
+SMA 30 - JMA 34 - 0.10
+SMA 22 - JMA 36 - 0.11
+LinearReg 4 - JMA 4 - 0.11
+EMA 6 - JMA 16 - 0.06
+EMA 8 - JMA 16 - 0.08
+HMA 10 - JMA 16 - 0.11
+SMMA 12 - JMA 16 - 0.08
+SMMA 16 - JMA 16 - 0.10
+SMMA 8 - JMA 16 - 0.10
+EMA 14 - JMA 18 - 0.07
+EMA 16 - JMA 18 - 0.08
+EMA 18 - JMA 18 - 0.11
+EMA 4 - JMA 18 - 0.11
+HMA 18 - JMA 18 - 0.09
+LinearReg 6 - JMA 18 - 0.11
+LinearReg 8 - JMA 18 - 0.11
+Lowest 6 - JMA 18 - 0.01
+Lowest 8 - JMA 18 - 0.00
+SMA 12 - JMA 18 - 0.06
+SMA 6 - JMA 18 - 0.11
+SMA 8 - JMA 18 - 0.10
+SMMA 14 - JMA 18 - 0.09
+SMMA 4 - JMA 18 - 0.11
+SMMA 6 - JMA 18 - 0.07
+Lowest 2 - JMA 2 - 0.06
+EMA 18 - JMA 20 - 0.07
+HMA 18 - JMA 20 - 0.11
+Lowest 2 - JMA 20 - 0.11
+SMA 14 - JMA 20 - 0.05
+SMA 6 - JMA 20 - 0.11
+SMMA 14 - JMA 20 - 0.10
+SMMA 6 - JMA 20 - 0.11
+EMA 14 - JMA 22 - 0.08
+EMA 16 - JMA 22 - 0.10
+SMA 14 - JMA 22 - 0.08
+SMA 6 - LinearReg 12 - 0.02
+EMA 12 - LinearReg 14 - 0.10
+SMMA 12 - LinearReg 14 - 0.09
+SMMA 8 - LinearReg 14 - 0.09
+SMMA 16 - LinearReg 16 - 0.09
+SMA 12 - LinearReg 18 - 0.09
+JMA 2 - LinearReg 2 - 0.11
+SMMA 2 - LinearReg 2 - 0.06
+HMA 20 - LinearReg 20 - 0.11
+SMMA 10 - LinearReg 20 - 0.11
+SMMA 12 - LinearReg 20 - 0.10
+HMA 22 - LinearReg 22 - 0.11
+SMA 12 - LinearReg 24 - 0.10
+SMA 22 - LinearReg 24 - 0.10
+SMMA 10 - LinearReg 26 - 0.11
+SMA 22 - JMA 38 - 0.11
+SMA 30 - JMA 38 - 0.10
+SMA 32 - JMA 38 - 0.11
+Lowest 2 - JMA 4 - 0.10
+SMMA 2 - JMA 4 - 0.01
+SMA 24 - JMA 40 - 0.11
+SMA 18 - LinearReg 30 - 0.11
+SMA 26 - LinearReg 30 - 0.11
+SMA 24 - JMA 42 - 0.11
+EMA 6 - JMA 6 - 0.00
+SMA 4 - JMA 6 - 0.03
+SMA 2 - JMA 8 - 0.10
+SMA 6 - JMA 8 - 0.00
+EMA 10 - LinearReg 14 - 0.11
+EMA 14 - LinearReg 16 - 0.09
+EMA 16 - LinearReg 16 - 0.09
+SMA 14 - LinearReg 16 - 0.10
+SMMA 14 - LinearReg 16 - 0.09
+JMA 32 - LinearReg 34 - 0.07
+JMA 34 - LinearReg 34 - 0.07
+SMA 14 - LinearReg 36 - 0.11
+SMA 16 - LinearReg 38 - 0.11
+EMA 4 - LinearReg 4 - 0.03
+EMA 6 - LinearReg 6 - 0.03
+SMA 4 - LinearReg 6 - 0.03
+MeanDeviation 6 - Momentum 10 - 0.03
+MeanDeviation 8 - Momentum 10 - 0.01
+MeanDeviation 12 - Momentum 14 - 0.10
+MeanDeviation 4 - Momentum 14 - 0.10
+SMA 2 - LinearReg 2 - 0.11
+EMA 20 - LinearReg 20 - 0.11
+SMMA 16 - LinearReg 20 - 0.10
+SMA 12 - LinearReg 22 - 0.04
+SMA 22 - LinearReg 22 - 0.09
+EMA 14 - LinearReg 24 - 0.10
+EMA 16 - LinearReg 24 - 0.11
+SMA 2 - JMA 6 - 0.11
+SMA 6 - JMA 6 - 0.03
+SMMA 4 - JMA 6 - 0.02
+EMA 6 - JMA 8 - 0.04
+EMA 14 - LinearReg 14 - 0.09
+SMMA 10 - LinearReg 14 - 0.09
+SMMA 12 - LinearReg 16 - 0.09
+SMMA 6 - LinearReg 16 - 0.08
+MeanDeviation 2 - Momentum 16 - 0.10
+MeanDeviation 16 - Momentum 18 - 0.09
+MeanDeviation 6 - Momentum 18 - 0.05
+Momentum 6 - Momentum 18 - 0.10
+MeanDeviation 16 - Momentum 20 - 0.10
+MeanDeviation 6 - Momentum 20 - 0.09
+MeanDeviation 16 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 24 - 0.10
+MeanDeviation 22 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 26 - 0.10
+MeanDeviation 22 - Momentum 26 - 0.11
+MeanDeviation 4 - Momentum 26 - 0.11
+MeanDeviation 28 - Momentum 28 - 0.11
+MeanDeviation 6 - Momentum 28 - 0.10
+MeanDeviation 10 - Momentum 30 - 0.11
+MeanDeviation 12 - Momentum 30 - 0.11
+MeanDeviation 14 - Momentum 30 - 0.11
+MeanDeviation 20 - Momentum 30 - 0.11
+MeanDeviation 26 - Momentum 30 - 0.11
+Momentum 12 - Momentum 30 - 0.11
+MeanDeviation 14 - Momentum 32 - 0.11
+MeanDeviation 20 - Momentum 32 - 0.11
+MeanDeviation 18 - Momentum 34 - 0.11
+MeanDeviation 28 - Momentum 34 - 0.11
+MeanDeviation 30 - Momentum 34 - 0.11
+MeanDeviation 34 - Momentum 34 - 0.11
+MeanDeviation 6 - Momentum 34 - 0.11
+MeanDeviation 8 - Momentum 34 - 0.11
+MeanDeviation 16 - Momentum 36 - 0.11
+MeanDeviation 34 - Momentum 36 - 0.11
+MeanDeviation 6 - Momentum 36 - 0.11
+MeanDeviation 12 - Momentum 38 - 0.11
+SMA 22 - JMA 22 - 0.08
+SMA 6 - JMA 22 - 0.11
+SMA 8 - JMA 22 - 0.10
+SMMA 14 - JMA 22 - 0.10
+SMMA 22 - JMA 22 - 0.11
+SMMA 6 - JMA 22 - 0.11
+EMA 10 - JMA 24 - 0.08
+EMA 22 - JMA 24 - 0.10
+EMA 24 - JMA 24 - 0.11
+LinearReg 18 - JMA 24 - 0.07
+SMMA 12 - JMA 24 - 0.10
+SMMA 24 - JMA 24 - 0.11
+EMA 12 - JMA 26 - 0.09
+EMA 24 - JMA 26 - 0.11
+EMA 26 - JMA 26 - 0.11
+SMA 14 - JMA 26 - 0.09
+SMA 16 - JMA 26 - 0.08
+SMA 18 - JMA 26 - 0.08
+SMA 24 - JMA 26 - 0.08
+SMA 26 - JMA 26 - 0.11
+SMMA 18 - JMA 26 - 0.11
+SMA 20 - JMA 28 - 0.11
+EMA 24 - LinearReg 26 - 0.11
+EMA 26 - LinearReg 26 - 0.11
+SMA 8 - LinearReg 26 - 0.11
+SMMA 12 - LinearReg 26 - 0.11
+SMMA 18 - LinearReg 26 - 0.11
+SMMA 22 - LinearReg 26 - 0.11
+SMA 8 - LinearReg 28 - 0.11
+SMA 8 - LinearReg 30 - 0.09
+EMA 2 - LinearReg 2 - 0.06
+EMA 12 - LinearReg 20 - 0.09
+SMA 16 - LinearReg 20 - 0.09
+SMA 18 - LinearReg 20 - 0.09
+SMMA 18 - LinearReg 20 - 0.11
+SMA 20 - LinearReg 24 - 0.11
+EMA 14 - LinearReg 26 - 0.11
+EMA 16 - LinearReg 26 - 0.10
+MeanDeviation 14 - Momentum 38 - 0.11
+MeanDeviation 20 - Momentum 38 - 0.11
+MeanDeviation 24 - Momentum 38 - 0.11
+MeanDeviation 38 - Momentum 38 - 0.11
+MeanDeviation 2 - Momentum 4 - 0.02
+Momentum 2 - Momentum 4 - 0.00
+MeanDeviation 22 - Momentum 40 - 0.10
+MeanDeviation 38 - Momentum 40 - 0.10
+MeanDeviation 22 - Momentum 42 - 0.11
+MeanDeviation 36 - Momentum 42 - 0.11
+MeanDeviation 42 - Momentum 42 - 0.11
+MeanDeviation 2 - Momentum 44 - 0.11
+MeanDeviation 32 - Momentum 44 - 0.11
+MeanDeviation 34 - Momentum 44 - 0.11
+MeanDeviation 46 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 46 - 0.11
+MeanDeviation 4 - Momentum 6 - 0.03
+SMMA 16 - JMA 28 - 0.11
+SMMA 20 - JMA 28 - 0.11
+Lowest 2 - JMA 30 - 0.11
+Lowest 4 - JMA 30 - 0.11
+Lowest 8 - JMA 30 - 0.04
+SMA 22 - JMA 30 - 0.10
+SMMA 14 - JMA 30 - 0.11
+SMMA 22 - JMA 30 - 0.11
+EMA 16 - JMA 32 - 0.08
+SMA 22 - JMA 32 - 0.11
+SMA 32 - JMA 32 - 0.10
+SMA 14 - LinearReg 34 - 0.11
+SMA 26 - LinearReg 34 - 0.11
+JMA 32 - LinearReg 36 - 0.07
+JMA 34 - LinearReg 36 - 0.07
+SMMA 4 - LinearReg 4 - 0.03
+KAMA 2 - LinearReg 6 - 0.03
+SMA 12 - LinearReg 26 - 0.11
+SMMA 14 - LinearReg 26 - 0.11
+SMMA 8 - LinearReg 26 - 0.10
+SMA 16 - JMA 36 - 0.10
+SMA 18 - JMA 36 - 0.11
+SMA 26 - JMA 36 - 0.09
+SMA 28 - JMA 36 - 0.10
+SMA 20 - JMA 38 - 0.10
+SMA 4 - JMA 4 - 0.03
+SMA 14 - LinearReg 30 - 0.11
+SMA 16 - LinearReg 30 - 0.10
+JMA 32 - LinearReg 32 - 0.07
+JMA 36 - LinearReg 38 - 0.08
+SMA 22 - JMA 40 - 0.10
+SMA 30 - JMA 40 - 0.10
+SMA 30 - JMA 42 - 0.10
+MeanDeviation 10 - Momentum 10 - 0.01
+MeanDeviation 10 - Momentum 12 - 0.04
+MeanDeviation 10 - Momentum 14 - 0.10
+MeanDeviation 14 - Momentum 14 - 0.10
+Momentum 12 - Momentum 14 - 0.11
+MeanDeviation 6 - Momentum 16 - 0.09
+MeanDeviation 18 - Momentum 18 - 0.07
+MeanDeviation 8 - Momentum 18 - 0.05
+MeanDeviation 10 - Momentum 20 - 0.09
+MeanDeviation 14 - Momentum 20 - 0.10
+MeanDeviation 10 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 22 - 0.10
+MeanDeviation 14 - Momentum 22 - 0.10
+MeanDeviation 20 - Momentum 22 - 0.10
+SMA 28 - JMA 44 - 0.10
+EMA 4 - JMA 6 - 0.00
+LinearReg 4 - JMA 6 - 0.11
+LinearReg 6 - JMA 6 - 0.11
+Lowest 2 - JMA 6 - 0.11
+SMMA 6 - JMA 6 - 0.03
+EMA 4 - JMA 8 - 0.02
+LinearReg 4 - JMA 8 - 0.11
+LinearReg 6 - JMA 8 - 0.10
+LinearReg 8 - JMA 8 - 0.10
+Lowest 2 - JMA 8 - 0.11
+Momentum 12 - Momentum 22 - 0.10
+Momentum 8 - Momentum 22 - 0.11
+MeanDeviation 10 - Momentum 24 - 0.10
+MeanDeviation 14 - Momentum 24 - 0.11
+MeanDeviation 18 - Momentum 26 - 0.11
+MeanDeviation 6 - Momentum 26 - 0.11
+MeanDeviation 8 - Momentum 26 - 0.11
+MeanDeviation 18 - Momentum 28 - 0.11
+MeanDeviation 8 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 30 - 0.11
+MeanDeviation 24 - Momentum 30 - 0.11
+MeanDeviation 4 - Momentum 30 - 0.11
+MeanDeviation 18 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 32 - 0.11
+MeanDeviation 22 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 34 - 0.11
+MeanDeviation 24 - Momentum 34 - 0.11
+MeanDeviation 32 - Momentum 34 - 0.11
+MeanDeviation 4 - Momentum 34 - 0.11
+MeanDeviation 10 - Momentum 36 - 0.11
+MeanDeviation 14 - Momentum 36 - 0.11
+MeanDeviation 26 - Momentum 36 - 0.11
+MeanDeviation 30 - Momentum 36 - 0.11
+MeanDeviation 10 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 38 - 0.11
+MeanDeviation 26 - Momentum 38 - 0.11
+MeanDeviation 36 - Momentum 38 - 0.11
+MeanDeviation 18 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 10 - 0.02
+MeanDeviation 6 - Momentum 12 - 0.04
+MeanDeviation 2 - Momentum 14 - 0.10
+MeanDeviation 8 - Momentum 14 - 0.10
+MeanDeviation 18 - Momentum 42 - 0.10
+MeanDeviation 2 - Momentum 42 - 0.11
+MeanDeviation 28 - Momentum 42 - 0.11
+MeanDeviation 38 - Momentum 42 - 0.11
+MeanDeviation 4 - Momentum 42 - 0.11
+MeanDeviation 40 - Momentum 42 - 0.11
+MeanDeviation 18 - Momentum 44 - 0.10
+MeanDeviation 38 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 44 - 0.11
+MeanDeviation 2 - Momentum 6 - 0.03
+SMMA 12 - SMA 12 - 0.11
+MeanDeviation 14 - Momentum 16 - 0.09
+MeanDeviation 10 - Momentum 18 - 0.05
+MeanDeviation 12 - Momentum 18 - 0.09
+MeanDeviation 14 - Momentum 18 - 0.09
+MeanDeviation 18 - Momentum 20 - 0.10
+MeanDeviation 2 - Momentum 20 - 0.05
+MeanDeviation 18 - Momentum 22 - 0.10
+MeanDeviation 6 - Momentum 22 - 0.09
+MeanDeviation 8 - Momentum 22 - 0.10
+MeanDeviation 18 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 24 - 0.11
+MeanDeviation 8 - Momentum 24 - 0.11
+MeanDeviation 12 - Momentum 26 - 0.11
+MeanDeviation 14 - Momentum 26 - 0.11
+MeanDeviation 20 - Momentum 26 - 0.11
+MeanDeviation 24 - Momentum 26 - 0.11
+MeanDeviation 10 - Momentum 28 - 0.11
+MeanDeviation 14 - Momentum 28 - 0.11
+MeanDeviation 20 - Momentum 28 - 0.11
+MeanDeviation 26 - Momentum 28 - 0.11
+Momentum 10 - Momentum 28 - 0.11
+Momentum 12 - Momentum 28 - 0.10
+MeanDeviation 16 - Momentum 30 - 0.11
+MeanDeviation 28 - Momentum 30 - 0.11
+MeanDeviation 6 - Momentum 30 - 0.11
+MeanDeviation 10 - Momentum 32 - 0.11
+MeanDeviation 26 - Momentum 32 - 0.11
+MeanDeviation 16 - Momentum 34 - 0.11
+MeanDeviation 26 - Momentum 34 - 0.11
+MeanDeviation 18 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 38 - 0.11
+MeanDeviation 22 - Momentum 38 - 0.11
+MeanDeviation 4 - Momentum 38 - 0.11
+MeanDeviation 10 - Momentum 40 - 0.11
+MeanDeviation 14 - Momentum 40 - 0.11
+MeanDeviation 26 - Momentum 40 - 0.10
+MeanDeviation 30 - Momentum 40 - 0.10
+MeanDeviation 36 - Momentum 40 - 0.10
+MeanDeviation 6 - Momentum 40 - 0.11
+MeanDeviation 12 - Momentum 42 - 0.11
+MeanDeviation 14 - Momentum 42 - 0.11
+MeanDeviation 20 - Momentum 42 - 0.11
+MeanDeviation 24 - Momentum 42 - 0.11
+MeanDeviation 30 - Momentum 42 - 0.11
+MeanDeviation 32 - Momentum 42 - 0.11
+MeanDeviation 34 - Momentum 42 - 0.11
+MeanDeviation 10 - Momentum 44 - 0.11
+MeanDeviation 14 - Momentum 44 - 0.11
+MeanDeviation 20 - Momentum 44 - 0.11
+MeanDeviation 26 - Momentum 44 - 0.10
+MeanDeviation 30 - Momentum 44 - 0.11
+MeanDeviation 6 - Momentum 44 - 0.11
+MeanDeviation 2 - Momentum 46 - 0.11
+MeanDeviation 38 - Momentum 46 - 0.11
+MeanDeviation 40 - Momentum 46 - 0.11
+MeanDeviation 44 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 8 - 0.01
+SMA 8 - JMA 8 - 0.00
+SMMA 6 - JMA 8 - 0.09
+SMMA 14 - LinearReg 14 - 0.04
+SMMA 6 - LinearReg 14 - 0.03
+EMA 10 - LinearReg 16 - 0.09
+EMA 12 - LinearReg 16 - 0.09
+SMA 16 - LinearReg 16 - 0.10
+SMMA 10 - LinearReg 16 - 0.09
+SMMA 8 - LinearReg 16 - 0.09
+Lowest 2 - LinearReg 2 - 0.11
+EMA 18 - LinearReg 20 - 0.11
+HMA 18 - LinearReg 20 - 0.11
+SMA 12 - LinearReg 20 - 0.09
+SMMA 14 - LinearReg 20 - 0.10
+SMMA 20 - LinearReg 20 - 0.11
+SMA 14 - LinearReg 22 - 0.09
+SMA 16 - LinearReg 22 - 0.11
+EMA 12 - LinearReg 24 - 0.10
+SMMA 8 - LinearReg 24 - 0.10
+EMA 18 - LinearReg 26 - 0.10
+EMA 20 - LinearReg 26 - 0.09
+EMA 22 - LinearReg 26 - 0.09
+HMA 26 - LinearReg 26 - 0.09
+SMA 20 - LinearReg 26 - 0.10
+SMMA 16 - LinearReg 26 - 0.11
+SMMA 20 - LinearReg 26 - 0.11
+SMA 12 - LinearReg 28 - 0.10
+SMA 12 - LinearReg 30 - 0.11
+SMA 14 - LinearReg 32 - 0.11
+SMA 16 - LinearReg 32 - 0.11
+JMA 36 - LinearReg 36 - 0.07
+SMMA 2 - LinearReg 4 - 0.02
+SMA 2 - LinearReg 6 - 0.00
+SMA 6 - LinearReg 6 - 0.03
+SMMA 4 - LinearReg 6 - 0.03
+SMMA 6 - LinearReg 6 - 0.03
+MeanDeviation 4 - Momentum 10 - 0.03
+MeanDeviation 2 - Momentum 12 - 0.03
+MeanDeviation 6 - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 16 - 0.09
+Momentum 12 - Momentum 16 - 0.10
+MeanDeviation 2 - Momentum 18 - 0.05
+MeanDeviation 4 - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 2 - 0.06
+MeanDeviation 2 - Momentum 22 - 0.10
+MeanDeviation 22 - Momentum 22 - 0.10
+MeanDeviation 4 - Momentum 22 - 0.11
+MeanDeviation 16 - Momentum 24 - 0.11
+MeanDeviation 6 - Momentum 24 - 0.11
+MeanDeviation 10 - Momentum 26 - 0.11
+MeanDeviation 16 - Momentum 26 - 0.11
+MeanDeviation 26 - Momentum 26 - 0.11
+MeanDeviation 2 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 28 - 0.11
+MeanDeviation 4 - Momentum 28 - 0.10
+MeanDeviation 18 - Momentum 30 - 0.11
+MeanDeviation 2 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 30 - 0.11
+MeanDeviation 8 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 32 - 0.11
+MeanDeviation 32 - Momentum 32 - 0.10
+MeanDeviation 6 - Momentum 32 - 0.10
+MeanDeviation 10 - Momentum 34 - 0.11
+MeanDeviation 12 - Momentum 34 - 0.11
+MeanDeviation 14 - Momentum 34 - 0.11
+MeanDeviation 20 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 36 - 0.11
+MeanDeviation 24 - Momentum 36 - 0.11
+MeanDeviation 18 - Momentum 38 - 0.11
+MeanDeviation 28 - Momentum 38 - 0.11
+MeanDeviation 30 - Momentum 38 - 0.11
+MeanDeviation 32 - Momentum 38 - 0.11
+MeanDeviation 34 - Momentum 38 - 0.11
+MeanDeviation 6 - Momentum 38 - 0.11
+MeanDeviation 8 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 40 - 0.11
+MeanDeviation 34 - Momentum 40 - 0.10
+MeanDeviation 10 - Momentum 42 - 0.11
+MeanDeviation 16 - Momentum 42 - 0.10
+MeanDeviation 26 - Momentum 42 - 0.11
+MeanDeviation 6 - Momentum 42 - 0.11
+MeanDeviation 8 - Momentum 42 - 0.11
+MeanDeviation 22 - Momentum 44 - 0.11
+MeanDeviation 24 - Momentum 44 - 0.10
+MeanDeviation 40 - Momentum 44 - 0.11
+MeanDeviation 42 - Momentum 44 - 0.11
+MeanDeviation 44 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 46 - 0.11
+MeanDeviation 42 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 6 - 0.02
+MeanDeviation 2 - Momentum 8 - 0.02";
+        #endregion
+
+        #region
+        public static readonly string EnabledPairs_AvgIndicator116 = @"SMMA 8 - EMA 12 - 0.09
 SMMA 12 - EMA 14 - 0.11
 SMMA 14 - EMA 16 - 0.11
 SMMA 2 - EMA 2 - 0.03
@@ -3657,12 +4446,10 @@ SMA 4 - JMA 10 - 0.04
 Lowest 2 - JMA 24 - 0.11
 SMA 14 - JMA 24 - 0.06
 SMA 22 - JMA 24 - 0.09
-SMA 8 - JMA 24 - 0.11
 SMMA 14 - JMA 24 - 0.11
 SMMA 22 - JMA 24 - 0.11
 SMMA 6 - JMA 24 - 0.09
 LinearReg 24 - JMA 26 - 0.05
-Lowest 4 - JMA 26 - 0.08
 SMA 10 - JMA 26 - 0.10
 SMA 20 - JMA 26 - 0.08
 SMMA 16 - JMA 26 - 0.11
@@ -3770,8 +4557,6 @@ SMMA 8 - JMA 20 - 0.10
 EMA 18 - JMA 22 - 0.10
 LinearReg 20 - JMA 22 - 0.05
 LinearReg 22 - JMA 22 - 0.03
-Lowest 2 - JMA 22 - 0.11
-Lowest 4 - JMA 22 - 0.10
 SMA 10 - JMA 22 - 0.10
 SMA 12 - JMA 22 - 0.11
 SMA 20 - JMA 22 - 0.06
@@ -3788,7 +4573,6 @@ SMMA 20 - JMA 24 - 0.11
 EMA 14 - JMA 26 - 0.09
 EMA 16 - JMA 26 - 0.09
 EMA 18 - JMA 26 - 0.09
-SMMA 22 - JMA 34 - 0.11
 SMA 20 - JMA 36 - 0.11
 SMA 30 - JMA 36 - 0.10
 SMA 32 - JMA 36 - 0.11
@@ -3844,7 +4628,6 @@ SMA 26 - JMA 40 - 0.10
 SMA 28 - JMA 40 - 0.10
 SMA 26 - JMA 42 - 0.09
 SMA 28 - JMA 42 - 0.10
-Lowest 2 - JMA 28 - 0.10
 SMA 12 - JMA 28 - 0.09
 SMA 22 - JMA 28 - 0.08
 SMMA 14 - JMA 28 - 0.11
@@ -3933,7 +4716,6 @@ EMA 12 - LinearReg 14 - 0.10
 SMMA 12 - LinearReg 14 - 0.09
 SMMA 8 - LinearReg 14 - 0.09
 SMMA 16 - LinearReg 16 - 0.09
-HMA 18 - LinearReg 18 - 0.10
 SMA 12 - LinearReg 18 - 0.09
 JMA 2 - LinearReg 2 - 0.11
 SMMA 2 - LinearReg 2 - 0.06
@@ -3969,10 +4751,10 @@ SMA 16 - LinearReg 38 - 0.11
 EMA 4 - LinearReg 4 - 0.03
 EMA 6 - LinearReg 6 - 0.03
 SMA 4 - LinearReg 6 - 0.03
-MeanDeviatio - Momentum 10 - 0.03
-MeanDeviatio - Momentum 10 - 0.01
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 6 - Momentum 10 - 0.03
+MeanDeviation 8 - Momentum 10 - 0.01
+MeanDeviation 12 - Momentum 14 - 0.10
+MeanDeviation 4 - Momentum 14 - 0.10
 SMA 2 - LinearReg 2 - 0.11
 EMA 20 - LinearReg 20 - 0.11
 SMMA 16 - LinearReg 20 - 0.10
@@ -3988,38 +4770,38 @@ EMA 14 - LinearReg 14 - 0.09
 SMMA 10 - LinearReg 14 - 0.09
 SMMA 12 - LinearReg 16 - 0.09
 SMMA 6 - LinearReg 16 - 0.08
-MeanDeviatio - Momentum 16 - 0.10
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 16 - 0.10
+MeanDeviation 16 - Momentum 18 - 0.09
+MeanDeviation 6 - Momentum 18 - 0.05
 Momentum 6 - Momentum 18 - 0.10
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 20 - 0.09
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 26 - 0.10
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
+MeanDeviation 16 - Momentum 20 - 0.10
+MeanDeviation 6 - Momentum 20 - 0.09
+MeanDeviation 16 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 24 - 0.10
+MeanDeviation 22 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 26 - 0.10
+MeanDeviation 22 - Momentum 26 - 0.11
+MeanDeviation 4 - Momentum 26 - 0.11
+MeanDeviation 28 - Momentum 28 - 0.11
+MeanDeviation 6 - Momentum 28 - 0.10
+MeanDeviation 10 - Momentum 30 - 0.11
+MeanDeviation 12 - Momentum 30 - 0.11
+MeanDeviation 14 - Momentum 30 - 0.11
+MeanDeviation 20 - Momentum 30 - 0.11
+MeanDeviation 26 - Momentum 30 - 0.11
 Momentum 12 - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 14 - Momentum 32 - 0.11
+MeanDeviation 20 - Momentum 32 - 0.11
+MeanDeviation 18 - Momentum 34 - 0.11
+MeanDeviation 28 - Momentum 34 - 0.11
+MeanDeviation 30 - Momentum 34 - 0.11
+MeanDeviation 34 - Momentum 34 - 0.11
+MeanDeviation 6 - Momentum 34 - 0.11
+MeanDeviation 8 - Momentum 34 - 0.11
+MeanDeviation 16 - Momentum 36 - 0.11
+MeanDeviation 34 - Momentum 36 - 0.11
+MeanDeviation 6 - Momentum 36 - 0.11
+MeanDeviation 12 - Momentum 38 - 0.11
 SMA 22 - JMA 22 - 0.08
 SMA 6 - JMA 22 - 0.11
 SMA 8 - JMA 22 - 0.10
@@ -4059,23 +4841,23 @@ SMMA 18 - LinearReg 20 - 0.11
 SMA 20 - LinearReg 24 - 0.11
 EMA 14 - LinearReg 26 - 0.11
 EMA 16 - LinearReg 26 - 0.10
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 4 - 0.02
+MeanDeviation 14 - Momentum 38 - 0.11
+MeanDeviation 20 - Momentum 38 - 0.11
+MeanDeviation 24 - Momentum 38 - 0.11
+MeanDeviation 38 - Momentum 38 - 0.11
+MeanDeviation 2 - Momentum 4 - 0.02
 Momentum 2 - Momentum 4 - 0.00
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.03
+MeanDeviation 22 - Momentum 40 - 0.10
+MeanDeviation 38 - Momentum 40 - 0.10
+MeanDeviation 22 - Momentum 42 - 0.11
+MeanDeviation 36 - Momentum 42 - 0.11
+MeanDeviation 42 - Momentum 42 - 0.11
+MeanDeviation 2 - Momentum 44 - 0.11
+MeanDeviation 32 - Momentum 44 - 0.11
+MeanDeviation 34 - Momentum 44 - 0.11
+MeanDeviation 46 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 46 - 0.11
+MeanDeviation 4 - Momentum 6 - 0.03
 SMMA 16 - JMA 28 - 0.11
 SMMA 20 - JMA 28 - 0.11
 Lowest 2 - JMA 30 - 0.11
@@ -4087,7 +4869,6 @@ SMMA 22 - JMA 30 - 0.11
 EMA 16 - JMA 32 - 0.08
 SMA 22 - JMA 32 - 0.11
 SMA 32 - JMA 32 - 0.10
-SMMA 22 - JMA 32 - 0.11
 SMA 14 - LinearReg 34 - 0.11
 SMA 26 - LinearReg 34 - 0.11
 JMA 32 - LinearReg 36 - 0.07
@@ -4107,24 +4888,23 @@ SMA 14 - LinearReg 30 - 0.11
 SMA 16 - LinearReg 30 - 0.10
 JMA 32 - LinearReg 32 - 0.07
 JMA 36 - LinearReg 38 - 0.08
-EMA 2 - LinearReg 4 - 0.01
 SMA 22 - JMA 40 - 0.10
 SMA 30 - JMA 40 - 0.10
 SMA 30 - JMA 42 - 0.10
-MeanDeviatio - Momentum 10 - 0.01
-MeanDeviatio - Momentum 12 - 0.04
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 10 - 0.01
+MeanDeviation 10 - Momentum 12 - 0.04
+MeanDeviation 10 - Momentum 14 - 0.10
+MeanDeviation 14 - Momentum 14 - 0.10
 Momentum 12 - Momentum 14 - 0.11
-MeanDeviatio - Momentum 16 - 0.09
-MeanDeviatio - Momentum 18 - 0.07
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 20 - 0.09
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
+MeanDeviation 6 - Momentum 16 - 0.09
+MeanDeviation 18 - Momentum 18 - 0.07
+MeanDeviation 8 - Momentum 18 - 0.05
+MeanDeviation 10 - Momentum 20 - 0.09
+MeanDeviation 14 - Momentum 20 - 0.10
+MeanDeviation 10 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 22 - 0.10
+MeanDeviation 14 - Momentum 22 - 0.10
+MeanDeviation 20 - Momentum 22 - 0.10
 SMA 28 - JMA 44 - 0.10
 EMA 4 - JMA 6 - 0.00
 LinearReg 4 - JMA 6 - 0.11
@@ -4138,106 +4918,106 @@ LinearReg 8 - JMA 8 - 0.10
 Lowest 2 - JMA 8 - 0.11
 Momentum 12 - Momentum 22 - 0.10
 Momentum 8 - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 10 - 0.02
-MeanDeviatio - Momentum 12 - 0.04
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 42 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 6 - 0.03
+MeanDeviation 10 - Momentum 24 - 0.10
+MeanDeviation 14 - Momentum 24 - 0.11
+MeanDeviation 18 - Momentum 26 - 0.11
+MeanDeviation 6 - Momentum 26 - 0.11
+MeanDeviation 8 - Momentum 26 - 0.11
+MeanDeviation 18 - Momentum 28 - 0.11
+MeanDeviation 8 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 30 - 0.11
+MeanDeviation 24 - Momentum 30 - 0.11
+MeanDeviation 4 - Momentum 30 - 0.11
+MeanDeviation 18 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 32 - 0.11
+MeanDeviation 22 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 34 - 0.11
+MeanDeviation 24 - Momentum 34 - 0.11
+MeanDeviation 32 - Momentum 34 - 0.11
+MeanDeviation 4 - Momentum 34 - 0.11
+MeanDeviation 10 - Momentum 36 - 0.11
+MeanDeviation 14 - Momentum 36 - 0.11
+MeanDeviation 26 - Momentum 36 - 0.11
+MeanDeviation 30 - Momentum 36 - 0.11
+MeanDeviation 10 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 38 - 0.11
+MeanDeviation 26 - Momentum 38 - 0.11
+MeanDeviation 36 - Momentum 38 - 0.11
+MeanDeviation 18 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 10 - 0.02
+MeanDeviation 6 - Momentum 12 - 0.04
+MeanDeviation 2 - Momentum 14 - 0.10
+MeanDeviation 8 - Momentum 14 - 0.10
+MeanDeviation 18 - Momentum 42 - 0.10
+MeanDeviation 2 - Momentum 42 - 0.11
+MeanDeviation 28 - Momentum 42 - 0.11
+MeanDeviation 38 - Momentum 42 - 0.11
+MeanDeviation 4 - Momentum 42 - 0.11
+MeanDeviation 40 - Momentum 42 - 0.11
+MeanDeviation 18 - Momentum 44 - 0.10
+MeanDeviation 38 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 44 - 0.11
+MeanDeviation 2 - Momentum 6 - 0.03
 SMMA 12 - SMA 12 - 0.11
-MeanDeviatio - Momentum 16 - 0.09
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 20 - 0.05
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.09
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
+MeanDeviation 14 - Momentum 16 - 0.09
+MeanDeviation 10 - Momentum 18 - 0.05
+MeanDeviation 12 - Momentum 18 - 0.09
+MeanDeviation 14 - Momentum 18 - 0.09
+MeanDeviation 18 - Momentum 20 - 0.10
+MeanDeviation 2 - Momentum 20 - 0.05
+MeanDeviation 18 - Momentum 22 - 0.10
+MeanDeviation 6 - Momentum 22 - 0.09
+MeanDeviation 8 - Momentum 22 - 0.10
+MeanDeviation 18 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 24 - 0.11
+MeanDeviation 8 - Momentum 24 - 0.11
+MeanDeviation 12 - Momentum 26 - 0.11
+MeanDeviation 14 - Momentum 26 - 0.11
+MeanDeviation 20 - Momentum 26 - 0.11
+MeanDeviation 24 - Momentum 26 - 0.11
+MeanDeviation 10 - Momentum 28 - 0.11
+MeanDeviation 14 - Momentum 28 - 0.11
+MeanDeviation 20 - Momentum 28 - 0.11
+MeanDeviation 26 - Momentum 28 - 0.11
 Momentum 10 - Momentum 28 - 0.11
 Momentum 12 - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 8 - 0.01
+MeanDeviation 16 - Momentum 30 - 0.11
+MeanDeviation 28 - Momentum 30 - 0.11
+MeanDeviation 6 - Momentum 30 - 0.11
+MeanDeviation 10 - Momentum 32 - 0.11
+MeanDeviation 26 - Momentum 32 - 0.11
+MeanDeviation 16 - Momentum 34 - 0.11
+MeanDeviation 26 - Momentum 34 - 0.11
+MeanDeviation 18 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 38 - 0.11
+MeanDeviation 22 - Momentum 38 - 0.11
+MeanDeviation 4 - Momentum 38 - 0.11
+MeanDeviation 10 - Momentum 40 - 0.11
+MeanDeviation 14 - Momentum 40 - 0.11
+MeanDeviation 26 - Momentum 40 - 0.10
+MeanDeviation 30 - Momentum 40 - 0.10
+MeanDeviation 36 - Momentum 40 - 0.10
+MeanDeviation 6 - Momentum 40 - 0.11
+MeanDeviation 12 - Momentum 42 - 0.11
+MeanDeviation 14 - Momentum 42 - 0.11
+MeanDeviation 20 - Momentum 42 - 0.11
+MeanDeviation 24 - Momentum 42 - 0.11
+MeanDeviation 30 - Momentum 42 - 0.11
+MeanDeviation 32 - Momentum 42 - 0.11
+MeanDeviation 34 - Momentum 42 - 0.11
+MeanDeviation 10 - Momentum 44 - 0.11
+MeanDeviation 14 - Momentum 44 - 0.11
+MeanDeviation 20 - Momentum 44 - 0.11
+MeanDeviation 26 - Momentum 44 - 0.10
+MeanDeviation 30 - Momentum 44 - 0.11
+MeanDeviation 6 - Momentum 44 - 0.11
+MeanDeviation 2 - Momentum 46 - 0.11
+MeanDeviation 38 - Momentum 46 - 0.11
+MeanDeviation 40 - Momentum 46 - 0.11
+MeanDeviation 44 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 8 - 0.01
 SMA 8 - JMA 8 - 0.00
 SMMA 6 - JMA 8 - 0.09
 SMMA 14 - LinearReg 14 - 0.04
@@ -4274,62 +5054,62 @@ SMA 2 - LinearReg 6 - 0.00
 SMA 6 - LinearReg 6 - 0.03
 SMMA 4 - LinearReg 6 - 0.03
 SMMA 6 - LinearReg 6 - 0.03
-MeanDeviatio - Momentum 10 - 0.03
-MeanDeviatio - Momentum 12 - 0.03
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 16 - 0.09
+MeanDeviation 4 - Momentum 10 - 0.03
+MeanDeviation 2 - Momentum 12 - 0.03
+MeanDeviation 6 - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 16 - 0.09
 Momentum 12 - Momentum 16 - 0.10
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 2 - 0.06
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.10
-MeanDeviatio - Momentum 32 - 0.10
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.02
-MeanDeviatio - Momentum 8 - 0.02";
+MeanDeviation 2 - Momentum 18 - 0.05
+MeanDeviation 4 - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 2 - 0.06
+MeanDeviation 2 - Momentum 22 - 0.10
+MeanDeviation 22 - Momentum 22 - 0.10
+MeanDeviation 4 - Momentum 22 - 0.11
+MeanDeviation 16 - Momentum 24 - 0.11
+MeanDeviation 6 - Momentum 24 - 0.11
+MeanDeviation 10 - Momentum 26 - 0.11
+MeanDeviation 16 - Momentum 26 - 0.11
+MeanDeviation 26 - Momentum 26 - 0.11
+MeanDeviation 2 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 28 - 0.11
+MeanDeviation 4 - Momentum 28 - 0.10
+MeanDeviation 18 - Momentum 30 - 0.11
+MeanDeviation 2 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 30 - 0.11
+MeanDeviation 8 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 32 - 0.11
+MeanDeviation 32 - Momentum 32 - 0.10
+MeanDeviation 6 - Momentum 32 - 0.10
+MeanDeviation 10 - Momentum 34 - 0.11
+MeanDeviation 12 - Momentum 34 - 0.11
+MeanDeviation 14 - Momentum 34 - 0.11
+MeanDeviation 20 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 36 - 0.11
+MeanDeviation 24 - Momentum 36 - 0.11
+MeanDeviation 18 - Momentum 38 - 0.11
+MeanDeviation 28 - Momentum 38 - 0.11
+MeanDeviation 30 - Momentum 38 - 0.11
+MeanDeviation 32 - Momentum 38 - 0.11
+MeanDeviation 34 - Momentum 38 - 0.11
+MeanDeviation 6 - Momentum 38 - 0.11
+MeanDeviation 8 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 40 - 0.11
+MeanDeviation 34 - Momentum 40 - 0.10
+MeanDeviation 10 - Momentum 42 - 0.11
+MeanDeviation 16 - Momentum 42 - 0.10
+MeanDeviation 26 - Momentum 42 - 0.11
+MeanDeviation 6 - Momentum 42 - 0.11
+MeanDeviation 8 - Momentum 42 - 0.11
+MeanDeviation 22 - Momentum 44 - 0.11
+MeanDeviation 24 - Momentum 44 - 0.10
+MeanDeviation 40 - Momentum 44 - 0.11
+MeanDeviation 42 - Momentum 44 - 0.11
+MeanDeviation 44 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 46 - 0.11
+MeanDeviation 42 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 6 - 0.02
+MeanDeviation 2 - Momentum 8 - 0.02";
         #endregion
 
         #region
@@ -4780,10 +5560,10 @@ SMA 16 - LinearReg 38 - 0.11
 EMA 4 - LinearReg 4 - 0.03
 EMA 6 - LinearReg 6 - 0.03
 SMA 4 - LinearReg 6 - 0.03
-MeanDeviatio - Momentum 10 - 0.03
-MeanDeviatio - Momentum 10 - 0.01
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 6 - Momentum 10 - 0.03
+MeanDeviation 8 - Momentum 10 - 0.01
+MeanDeviation 12 - Momentum 14 - 0.10
+MeanDeviation 4 - Momentum 14 - 0.10
 SMA 14 - LinearReg 18 - 0.09
 SMA 16 - LinearReg 18 - 0.09
 SMA 2 - LinearReg 2 - 0.11
@@ -4804,38 +5584,38 @@ EMA 14 - LinearReg 14 - 0.09
 SMMA 10 - LinearReg 14 - 0.09
 SMMA 12 - LinearReg 16 - 0.09
 SMMA 6 - LinearReg 16 - 0.08
-MeanDeviatio - Momentum 16 - 0.10
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 16 - 0.10
+MeanDeviation 16 - Momentum 18 - 0.09
+MeanDeviation 6 - Momentum 18 - 0.05
 Momentum 6 - Momentum 18 - 0.10
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 20 - 0.09
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 26 - 0.10
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
+MeanDeviation 16 - Momentum 20 - 0.10
+MeanDeviation 6 - Momentum 20 - 0.09
+MeanDeviation 16 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 24 - 0.10
+MeanDeviation 22 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 26 - 0.10
+MeanDeviation 22 - Momentum 26 - 0.11
+MeanDeviation 4 - Momentum 26 - 0.11
+MeanDeviation 28 - Momentum 28 - 0.11
+MeanDeviation 6 - Momentum 28 - 0.10
+MeanDeviation 10 - Momentum 30 - 0.11
+MeanDeviation 12 - Momentum 30 - 0.11
+MeanDeviation 14 - Momentum 30 - 0.11
+MeanDeviation 20 - Momentum 30 - 0.11
+MeanDeviation 26 - Momentum 30 - 0.11
 Momentum 12 - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 14 - Momentum 32 - 0.11
+MeanDeviation 20 - Momentum 32 - 0.11
+MeanDeviation 18 - Momentum 34 - 0.11
+MeanDeviation 28 - Momentum 34 - 0.11
+MeanDeviation 30 - Momentum 34 - 0.11
+MeanDeviation 34 - Momentum 34 - 0.11
+MeanDeviation 6 - Momentum 34 - 0.11
+MeanDeviation 8 - Momentum 34 - 0.11
+MeanDeviation 16 - Momentum 36 - 0.11
+MeanDeviation 34 - Momentum 36 - 0.11
+MeanDeviation 6 - Momentum 36 - 0.11
+MeanDeviation 12 - Momentum 38 - 0.11
 SMA 22 - JMA 22 - 0.08
 SMA 6 - JMA 22 - 0.11
 SMA 8 - JMA 22 - 0.10
@@ -4879,23 +5659,23 @@ EMA 22 - LinearReg 24 - 0.10
 SMA 20 - LinearReg 24 - 0.11
 EMA 14 - LinearReg 26 - 0.11
 EMA 16 - LinearReg 26 - 0.10
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 4 - 0.02
+MeanDeviation 14 - Momentum 38 - 0.11
+MeanDeviation 20 - Momentum 38 - 0.11
+MeanDeviation 24 - Momentum 38 - 0.11
+MeanDeviation 38 - Momentum 38 - 0.11
+MeanDeviation 2 - Momentum 4 - 0.02
 Momentum 2 - Momentum 4 - 0.00
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.03
+MeanDeviation 22 - Momentum 40 - 0.10
+MeanDeviation 38 - Momentum 40 - 0.10
+MeanDeviation 22 - Momentum 42 - 0.11
+MeanDeviation 36 - Momentum 42 - 0.11
+MeanDeviation 42 - Momentum 42 - 0.11
+MeanDeviation 2 - Momentum 44 - 0.11
+MeanDeviation 32 - Momentum 44 - 0.11
+MeanDeviation 34 - Momentum 44 - 0.11
+MeanDeviation 46 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 46 - 0.11
+MeanDeviation 4 - Momentum 6 - 0.03
 SMMA 16 - JMA 28 - 0.11
 SMMA 20 - JMA 28 - 0.11
 Lowest 2 - JMA 30 - 0.11
@@ -4933,20 +5713,20 @@ EMA 2 - LinearReg 4 - 0.01
 SMA 22 - JMA 40 - 0.10
 SMA 30 - JMA 40 - 0.10
 SMA 30 - JMA 42 - 0.10
-MeanDeviatio - Momentum 10 - 0.01
-MeanDeviatio - Momentum 12 - 0.04
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 10 - 0.01
+MeanDeviation 10 - Momentum 12 - 0.04
+MeanDeviation 10 - Momentum 14 - 0.10
+MeanDeviation 14 - Momentum 14 - 0.10
 Momentum 12 - Momentum 14 - 0.11
-MeanDeviatio - Momentum 16 - 0.09
-MeanDeviatio - Momentum 18 - 0.07
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 20 - 0.09
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
+MeanDeviation 6 - Momentum 16 - 0.09
+MeanDeviation 18 - Momentum 18 - 0.07
+MeanDeviation 8 - Momentum 18 - 0.05
+MeanDeviation 10 - Momentum 20 - 0.09
+MeanDeviation 14 - Momentum 20 - 0.10
+MeanDeviation 10 - Momentum 22 - 0.10
+MeanDeviation 12 - Momentum 22 - 0.10
+MeanDeviation 14 - Momentum 22 - 0.10
+MeanDeviation 20 - Momentum 22 - 0.10
 SMA 28 - JMA 44 - 0.10
 EMA 4 - JMA 6 - 0.00
 LinearReg 4 - JMA 6 - 0.11
@@ -4960,107 +5740,107 @@ LinearReg 8 - JMA 8 - 0.10
 Lowest 2 - JMA 8 - 0.11
 Momentum 12 - Momentum 22 - 0.10
 Momentum 8 - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 10 - 0.02
-MeanDeviatio - Momentum 12 - 0.04
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 42 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 6 - 0.03
+MeanDeviation 10 - Momentum 24 - 0.10
+MeanDeviation 14 - Momentum 24 - 0.11
+MeanDeviation 18 - Momentum 26 - 0.11
+MeanDeviation 6 - Momentum 26 - 0.11
+MeanDeviation 8 - Momentum 26 - 0.11
+MeanDeviation 18 - Momentum 28 - 0.11
+MeanDeviation 8 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 30 - 0.11
+MeanDeviation 24 - Momentum 30 - 0.11
+MeanDeviation 4 - Momentum 30 - 0.11
+MeanDeviation 18 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 32 - 0.11
+MeanDeviation 22 - Momentum 32 - 0.11
+MeanDeviation 2 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 34 - 0.11
+MeanDeviation 24 - Momentum 34 - 0.11
+MeanDeviation 32 - Momentum 34 - 0.11
+MeanDeviation 4 - Momentum 34 - 0.11
+MeanDeviation 10 - Momentum 36 - 0.11
+MeanDeviation 14 - Momentum 36 - 0.11
+MeanDeviation 26 - Momentum 36 - 0.11
+MeanDeviation 30 - Momentum 36 - 0.11
+MeanDeviation 10 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 38 - 0.11
+MeanDeviation 26 - Momentum 38 - 0.11
+MeanDeviation 36 - Momentum 38 - 0.11
+MeanDeviation 18 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 10 - 0.02
+MeanDeviation 6 - Momentum 12 - 0.04
+MeanDeviation 2 - Momentum 14 - 0.10
+MeanDeviation 8 - Momentum 14 - 0.10
+MeanDeviation 18 - Momentum 42 - 0.10
+MeanDeviation 2 - Momentum 42 - 0.11
+MeanDeviation 28 - Momentum 42 - 0.11
+MeanDeviation 38 - Momentum 42 - 0.11
+MeanDeviation 4 - Momentum 42 - 0.11
+MeanDeviation 40 - Momentum 42 - 0.11
+MeanDeviation 18 - Momentum 44 - 0.10
+MeanDeviation 38 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 44 - 0.11
+MeanDeviation 2 - Momentum 6 - 0.03
 SMMA 12 - SMA 12 - 0.11
-MeanDeviatio - Momentum 16 - 0.09
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 18 - 0.09
-MeanDeviatio - Momentum 20 - 0.10
-MeanDeviatio - Momentum 20 - 0.05
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.09
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 24 - 0.10
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
+MeanDeviation 14 - Momentum 16 - 0.09
+MeanDeviation 10 - Momentum 18 - 0.05
+MeanDeviation 12 - Momentum 18 - 0.09
+MeanDeviation 14 - Momentum 18 - 0.09
+MeanDeviation 18 - Momentum 20 - 0.10
+MeanDeviation 2 - Momentum 20 - 0.05
+MeanDeviation 18 - Momentum 22 - 0.10
+MeanDeviation 6 - Momentum 22 - 0.09
+MeanDeviation 8 - Momentum 22 - 0.10
+MeanDeviation 18 - Momentum 24 - 0.10
+MeanDeviation 2 - Momentum 24 - 0.11
+MeanDeviation 8 - Momentum 24 - 0.11
+MeanDeviation 12 - Momentum 26 - 0.11
+MeanDeviation 14 - Momentum 26 - 0.11
+MeanDeviation 20 - Momentum 26 - 0.11
+MeanDeviation 24 - Momentum 26 - 0.11
+MeanDeviation 10 - Momentum 28 - 0.11
+MeanDeviation 14 - Momentum 28 - 0.11
+MeanDeviation 20 - Momentum 28 - 0.11
+MeanDeviation 26 - Momentum 28 - 0.11
 Momentum 10 - Momentum 28 - 0.11
 Momentum 12 - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 30 - 0.11
+MeanDeviation 28 - Momentum 30 - 0.11
+MeanDeviation 6 - Momentum 30 - 0.11
+MeanDeviation 10 - Momentum 32 - 0.11
+MeanDeviation 26 - Momentum 32 - 0.11
+MeanDeviation 16 - Momentum 34 - 0.11
+MeanDeviation 26 - Momentum 34 - 0.11
+MeanDeviation 18 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 36 - 0.11
+MeanDeviation 2 - Momentum 38 - 0.11
+MeanDeviation 22 - Momentum 38 - 0.11
+MeanDeviation 4 - Momentum 38 - 0.11
 Momentum 26 - Momentum 38 - 0.08
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 8 - 0.01
+MeanDeviation 10 - Momentum 40 - 0.11
+MeanDeviation 14 - Momentum 40 - 0.11
+MeanDeviation 26 - Momentum 40 - 0.10
+MeanDeviation 30 - Momentum 40 - 0.10
+MeanDeviation 36 - Momentum 40 - 0.10
+MeanDeviation 6 - Momentum 40 - 0.11
+MeanDeviation 12 - Momentum 42 - 0.11
+MeanDeviation 14 - Momentum 42 - 0.11
+MeanDeviation 20 - Momentum 42 - 0.11
+MeanDeviation 24 - Momentum 42 - 0.11
+MeanDeviation 30 - Momentum 42 - 0.11
+MeanDeviation 32 - Momentum 42 - 0.11
+MeanDeviation 34 - Momentum 42 - 0.11
+MeanDeviation 10 - Momentum 44 - 0.11
+MeanDeviation 14 - Momentum 44 - 0.11
+MeanDeviation 20 - Momentum 44 - 0.11
+MeanDeviation 26 - Momentum 44 - 0.10
+MeanDeviation 30 - Momentum 44 - 0.11
+MeanDeviation 6 - Momentum 44 - 0.11
+MeanDeviation 2 - Momentum 46 - 0.11
+MeanDeviation 38 - Momentum 46 - 0.11
+MeanDeviation 40 - Momentum 46 - 0.11
+MeanDeviation 44 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 8 - 0.01
 SMA 8 - JMA 8 - 0.00
 SMMA 6 - JMA 8 - 0.09
 SMMA 14 - LinearReg 14 - 0.04
@@ -5105,62 +5885,62 @@ SMA 2 - LinearReg 6 - 0.00
 SMA 6 - LinearReg 6 - 0.03
 SMMA 4 - LinearReg 6 - 0.03
 SMMA 6 - LinearReg 6 - 0.03
-MeanDeviatio - Momentum 10 - 0.03
-MeanDeviatio - Momentum 12 - 0.03
-MeanDeviatio - Momentum 14 - 0.10
-MeanDeviatio - Momentum 16 - 0.09
+MeanDeviation 4 - Momentum 10 - 0.03
+MeanDeviation 2 - Momentum 12 - 0.03
+MeanDeviation 6 - Momentum 14 - 0.10
+MeanDeviation 10 - Momentum 16 - 0.09
 Momentum 12 - Momentum 16 - 0.10
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 18 - 0.05
-MeanDeviatio - Momentum 2 - 0.06
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.10
-MeanDeviatio - Momentum 22 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 24 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 26 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.11
-MeanDeviatio - Momentum 28 - 0.10
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 30 - 0.11
-MeanDeviatio - Momentum 32 - 0.11
-MeanDeviatio - Momentum 32 - 0.10
-MeanDeviatio - Momentum 32 - 0.10
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 34 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 36 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 38 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.11
-MeanDeviatio - Momentum 40 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.10
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 42 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.10
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 44 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 46 - 0.11
-MeanDeviatio - Momentum 6 - 0.02
-MeanDeviatio - Momentum 8 - 0.02";
+MeanDeviation 2 - Momentum 18 - 0.05
+MeanDeviation 4 - Momentum 18 - 0.05
+MeanDeviation 2 - Momentum 2 - 0.06
+MeanDeviation 2 - Momentum 22 - 0.10
+MeanDeviation 22 - Momentum 22 - 0.10
+MeanDeviation 4 - Momentum 22 - 0.11
+MeanDeviation 16 - Momentum 24 - 0.11
+MeanDeviation 6 - Momentum 24 - 0.11
+MeanDeviation 10 - Momentum 26 - 0.11
+MeanDeviation 16 - Momentum 26 - 0.11
+MeanDeviation 26 - Momentum 26 - 0.11
+MeanDeviation 2 - Momentum 28 - 0.11
+MeanDeviation 22 - Momentum 28 - 0.11
+MeanDeviation 4 - Momentum 28 - 0.10
+MeanDeviation 18 - Momentum 30 - 0.11
+MeanDeviation 2 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 30 - 0.11
+MeanDeviation 8 - Momentum 30 - 0.11
+MeanDeviation 30 - Momentum 32 - 0.11
+MeanDeviation 32 - Momentum 32 - 0.10
+MeanDeviation 6 - Momentum 32 - 0.10
+MeanDeviation 10 - Momentum 34 - 0.11
+MeanDeviation 12 - Momentum 34 - 0.11
+MeanDeviation 14 - Momentum 34 - 0.11
+MeanDeviation 20 - Momentum 34 - 0.11
+MeanDeviation 22 - Momentum 36 - 0.11
+MeanDeviation 24 - Momentum 36 - 0.11
+MeanDeviation 18 - Momentum 38 - 0.11
+MeanDeviation 28 - Momentum 38 - 0.11
+MeanDeviation 30 - Momentum 38 - 0.11
+MeanDeviation 32 - Momentum 38 - 0.11
+MeanDeviation 34 - Momentum 38 - 0.11
+MeanDeviation 6 - Momentum 38 - 0.11
+MeanDeviation 8 - Momentum 38 - 0.11
+MeanDeviation 16 - Momentum 40 - 0.11
+MeanDeviation 2 - Momentum 40 - 0.11
+MeanDeviation 34 - Momentum 40 - 0.10
+MeanDeviation 10 - Momentum 42 - 0.11
+MeanDeviation 16 - Momentum 42 - 0.10
+MeanDeviation 26 - Momentum 42 - 0.11
+MeanDeviation 6 - Momentum 42 - 0.11
+MeanDeviation 8 - Momentum 42 - 0.11
+MeanDeviation 22 - Momentum 44 - 0.11
+MeanDeviation 24 - Momentum 44 - 0.10
+MeanDeviation 40 - Momentum 44 - 0.11
+MeanDeviation 42 - Momentum 44 - 0.11
+MeanDeviation 44 - Momentum 44 - 0.11
+MeanDeviation 4 - Momentum 46 - 0.11
+MeanDeviation 42 - Momentum 46 - 0.11
+MeanDeviation 6 - Momentum 6 - 0.02
+MeanDeviation 2 - Momentum 8 - 0.02";
         #endregion
         
     }

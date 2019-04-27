@@ -40,14 +40,15 @@ namespace RealLib
                 else
                 {
                     //TraderLib.SimulateStrategies("ALL", "3");
-                    //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
+                    TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
                     //TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.NewStrategies);
                     //TraderLib.SimulateStrategies();
                 }
                 //SimulateSaveOnStartAndOnExit();
             }
-            catch (ExecutionEngineException e)
-            //catch (Exception e)
+            //catch (ExecutionEngineException e)
+
+            catch (Exception e)
             {
                 List<string> list = new List<string>();
                 list.Add(e.ToString());

@@ -40,7 +40,7 @@ namespace StockSolution.ModelEntities.Models
             this.Connection = connection as AConnection;
             this.SecurityID = securityID;
             this.IndicatorPair = indicatorPair;
-            this.IsSellEnabled = true;
+            this.IsSellEnabled = false;
             this.IsBuyEnabled = true;
             this.Connection.InitializeSecurityID(securityID);
             this.IsDisabled = false;

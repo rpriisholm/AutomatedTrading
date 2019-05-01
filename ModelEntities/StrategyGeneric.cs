@@ -61,19 +61,19 @@ namespace StockSolution.ModelEntities.Models
 
             this.LastExecution = candle.CloseTime;
 
+            if (Connection.LoadOrders().ContainsKey(SecurityID))
+            {
+                //Change Price On Piece If Order Exists
+                if (Connection.LoadOrders()[SecurityID] != null)
+                {
+                    Connection.LoadOrders()[SecurityID].CurrentPieceValue = candle.ClosePrice;
+                }
+            }
+
             if (!this.IsDisabled)
             {
                 Order closeOrderSell = null;
                 Order closeOrderBuy = null;
-
-                if (Connection.LoadOrders().ContainsKey(SecurityID))
-                {
-                    //Change Price On Piece If Order Exists
-                    if (Connection.LoadOrders()[SecurityID] != null)
-                    {
-                        Connection.LoadOrders()[SecurityID].CurrentPieceValue = candle.ClosePrice;
-                    }
-                }
 
                 //Load candles
                 IndicatorPair.LongIndicator.Process(candle.ClosePrice, true);
@@ -113,7 +113,7 @@ namespace StockSolution.ModelEntities.Models
                             //decimal differenceBuyPct = (pieceValueShort / pieceValueLong) * 100 - 100;
                             //decimal differenceSellPct = 100 - (pieceValueShort / pieceValueLong) * 100;
 
-                            //Sell Orders - Margin?
+                            //Sell Current Active Orders - Margin?
                             closeOrderSell = Connection.CancelOrder(SecurityID, Sides.Sell, candle.ClosePrice);
                             closeOrderBuy  = Connection.CancelOrder(SecurityID, Sides.Buy, candle.ClosePrice);
 

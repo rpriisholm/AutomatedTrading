@@ -1,4 +1,5 @@
-﻿using AutomatedTradingV2.Models;
+﻿using AutomatedTradingV2.Custom;
+using AutomatedTradingV2.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,25 +8,20 @@ using System.Threading.Tasks;
 
 namespace AutomatedTradingV2.Services
 {
-    public static class CandleService 
+    public class DownloadService
     {
         public static DownloaderAbstract Downloader;
 
-        public static void DownloadAddCandles(List<string> symbols)
+        public static void DownloadAddCandles(List<Symbol> symbols)
         {
             bool isAddition = true;
             Downloader.DownloadCandles(symbols, isAddition);
         }
 
-        public static void DownloadAllCandles()
-        {
-            Downloader.DownloadCandles();
-        }
-
         /* Load Candles In Folder */
-        public static List<SimpleCandle> LoadCandles()
+        public static EnumeratorOnDemand<SimpleCandle, Symbol> CreateCandleLoader(string partialPath)
         {
-            return Downloader.LoadCandles();
+            return Downloader.CreateCandleLoader(partialPath);
         }
     }
 }

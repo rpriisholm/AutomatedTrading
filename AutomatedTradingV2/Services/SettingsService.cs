@@ -18,5 +18,11 @@ namespace AutomatedTradingV2.Services
         {
 
         }
+
+
+        public static Settings LoadSettings()
+        {
+            return null;
+        }
     }
 }

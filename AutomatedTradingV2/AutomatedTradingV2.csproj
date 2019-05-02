@@ -722,16 +722,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\SimpleCandle.cs" />
-    <Compile Include="Models\IndicatorPair.cs" />
     <Compile Include="Models\Portfolie.cs" />
     <Compile Include="Models\StrategyAbstract.cs" />
     <Compile Include="Models\StrategyGeneric.cs" />
+    <Compile Include="Models\Symbol.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CandleService.cs" />
     <Compile Include="Services\DownloadAbstract.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\StrategyService.cs" />
+    <Compile Include="Services\TradingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

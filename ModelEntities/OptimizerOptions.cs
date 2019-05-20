@@ -83,14 +83,14 @@ namespace StockSolution.ModelEntities.Models
                 case TickPeriod.Daily:
                     list = new List<OptimizerOptions>();
 
-                    // AvgIndicatorMin: 119 - MinResult: 20.00 - MinOrders: 12 - MaxOrders: 12 - LoseLimitMin: 0.00
+                    // AvgIndicatorMin: 21 - MinResult: 31.00 - MinOrders: 21 - MaxOrders: 21 - LoseLimitMin: -0.36
                     //AvgIndicatorMin 47%
                     int recursiveTests = 2;
                     int nrOfTestValues = 90;
-                    int minOrders = 12;
-                    int maxOrders = 12;
-                    int minProfitPct = 20;
-                    decimal loseLimitMin = 0.00m;
+                    int minOrders = 21;
+                    int maxOrders = 21;
+                    int minProfitPct = 31;
+                    decimal loseLimitMin = -0.36m;
                     OptimizerOptions optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
@@ -100,18 +100,18 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator119
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator21
                         );
 
                     list.Add(optimizerOptions);
 
-                    // AvgIndicatorMin: 58 - MinResult: 19.00 - MinOrders: 12 - MaxOrders: 12 - LoseLimitMin: 0.00
+                    // AvgIndicatorMin: 19 - MinResult: 44.00 - MinOrders: 17 - MaxOrders: 17 - LoseLimitMin: -0.16
                     recursiveTests = 2;
                     nrOfTestValues = 90;
-                    minOrders = 12;
-                    maxOrders = 12;
-                    minProfitPct = 19;
-                    loseLimitMin = 0.00m;
+                    minOrders = 17;
+                    maxOrders = 17;
+                    minProfitPct = 44;
+                    loseLimitMin = -0.16m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
@@ -121,18 +121,80 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator58
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator19
                         );
 
                     list.Add(optimizerOptions);
 
-                    // AvgIndicatorMin: 58 - MinResult: 19.00 - MinOrders: 20 - MaxOrders: 20 - LoseLimitMin: -0.14
-                    //AvgIndicatorMin 70%
+                    // AvgIndicatorMin: 21 - MinResult: 29.00 - MinOrders: 20 - MaxOrders: 20 - LoseLimitMin: -0.29
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 20;
                     maxOrders = 20;
-                    minProfitPct = 19;
+                    minProfitPct = 29;
+                    loseLimitMin = -0.29m;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator21
+                        );
+
+                    list.Add(optimizerOptions);
+
+                    // AvgIndicatorMin: 17 - MinResult: 83.00 - MinOrders: 5 - MaxOrders: 5 - LoseLimitMin: -0.20
+                    recursiveTests = 2;
+                    nrOfTestValues = 90;
+                    minOrders = 5;
+                    maxOrders = 5;
+                    minProfitPct = 83;
+                    loseLimitMin = -0.20m;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator17
+                        );
+
+                    list.Add(optimizerOptions);
+
+                    // AvgIndicatorMin: 19 - MinResult: 35.00 - MinOrders: 18 - MaxOrders: 18 - LoseLimitMin: -0.13
+                    recursiveTests = 2;
+                    nrOfTestValues = 90;
+                    minOrders = 18;
+                    maxOrders = 18;
+                    minProfitPct = 35;
+                    loseLimitMin = -0.13m;
+                    optimizerOptions = new OptimizerOptions(
+                        recursiveTests,
+                        nrOfTestValues,
+                        //IsSellEnabled,
+                        //IsBuyEnabled,
+                        minOrders,
+                        maxOrders,
+                        minProfitPct,
+                        loseLimitMin,
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator19
+                        );
+
+                    list.Add(optimizerOptions);
+
+                    // AvgIndicatorMin: 21 - MinResult: 30.00 - MinOrders: 23 - MaxOrders: 23 - LoseLimitMin: -0.14
+                    recursiveTests = 2;
+                    nrOfTestValues = 90;
+                    minOrders = 23;
+                    maxOrders = 23;
+                    minProfitPct = 30;
                     loseLimitMin = -0.14m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
@@ -143,19 +205,18 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator58
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator21
                         );
 
                     list.Add(optimizerOptions);
 
-                    // AvgIndicatorMin: 119 - MinResult: 16.00 - MinOrders: 12 - MaxOrders: 12 - LoseLimitMin: 0.00
-                    //AvgIndicatorMin 70%
+                    // AvgIndicatorMin: 19 - MinResult: 25.00 - MinOrders: 22 - MaxOrders: 22 - LoseLimitMin: -0.11
                     recursiveTests = 2;
                     nrOfTestValues = 90;
-                    minOrders = 12;
-                    maxOrders = 12;
-                    minProfitPct = 16;
-                    loseLimitMin = 0.00m;
+                    minOrders = 22;
+                    maxOrders = 22;
+                    minProfitPct = 25;
+                    loseLimitMin = -0.11m;
                     optimizerOptions = new OptimizerOptions(
                         recursiveTests,
                         nrOfTestValues,
@@ -165,11 +226,10 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator119
+                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator19
                         );
 
                     list.Add(optimizerOptions);
-
 
                     break;
             }

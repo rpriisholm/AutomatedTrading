@@ -13,11 +13,12 @@ namespace AutomatedTradingV2.Services
 
         public static void FindTradingStrategies()
         {
+            /*
             DownloadService.DownloadAllCandles();
             DownloadService.Downloader.PartialPath;
 
             List<SimpleCandle> candles = DownloadService.LoadCandles();
-
+            */
 
         }
 

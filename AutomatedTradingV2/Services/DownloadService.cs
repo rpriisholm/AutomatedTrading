@@ -1,5 +1,6 @@
 ﻿using AutomatedTradingV2.Custom;
 using AutomatedTradingV2.Models;
+using AutomatedTradingV2.Services.Downloaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +11,12 @@ namespace AutomatedTradingV2.Services
 {
     public class DownloadService
     {
-        public static DownloaderAbstract Downloader;
+        public static DownloadInterface Downloader;
 
         public static void DownloadAddCandles(List<Symbol> symbols)
         {
             bool isAddition = true;
-            Downloader.DownloadCandles(symbols, isAddition);
+            //Downloader.DownloadCandles(symbols, isAddition);
         }
 
         /* Load Candles In Folder */

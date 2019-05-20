@@ -412,10 +412,13 @@ namespace RealLib
                 bool currentDisabled = strategy.IsDisabled;
                 Sides currentDirection = strategy.GetDirection();
 
+                decimal pctProfit = strategy.ConnectionSecurityIDProfit() / strategy.Connection.CalcPayment();
+                string pctProfitString = pctProfit.ToString().Length >= 6 ? pctProfit.ToString().Substring(0,6) : pctProfit.ToString();
+
                 //No Change
                 if (!previousDisabled && !currentDisabled && previousDirection == currentDirection && strategy.IsStrategyExpiring == false)
                 {
-                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - (No Change) ID: {strategy.SecurityID}");
+                    TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - (No Change) ID: {strategy.SecurityID}  - LoseLimit:  {strategy.LoseLimitConstant} - Profit: {pctProfitString}");
                 }
 
                 //Create New Order And Cancel Old
@@ -423,12 +426,12 @@ namespace RealLib
                 {
                     if (currentDirection == Sides.Buy)
                     {
-                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Buy - Current Price: {candle.ClosePrice}");
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Buy - Current Price: {candle.ClosePrice}  - LoseLimit:  {strategy.LoseLimitConstant} - Profit: {pctProfitString}");
                     }
 
                     if (currentDirection == Sides.Sell)
                     {
-                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Sell - Current Price: {candle.ClosePrice}");
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Order Type: Sell - Current Price: {candle.ClosePrice}  - LoseLimit:  {strategy.LoseLimitConstant} - Profit: {pctProfitString}");
                     }
 
                     TradingLogWriter.Flush();
@@ -439,12 +442,12 @@ namespace RealLib
                 {
                     if (previousDirection == Sides.Buy)
                     {
-                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Buy)");
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Buy) - LoseLimit:  {strategy.LoseLimitConstant} - Profit: {pctProfitString}");
                     }
 
                     if (previousDirection == Sides.Sell)
                     {
-                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Sell)");
+                        TradingLogWriter.WriteLine($"{candle.CloseTime.ToString("yyyy-MM-dd hh-mm")} - ID: {strategy.SecurityID} - Cancel Orders (Order Type: Sell)  - LoseLimit:  {strategy.LoseLimitConstant} - Profit: {pctProfitString}");
                     }
 
                     //Discontinue state

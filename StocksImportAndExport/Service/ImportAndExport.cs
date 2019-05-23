@@ -90,7 +90,8 @@ namespace Stocks.Service
 
 
             // TODO //
-            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+            foreach(var symbol in symbols)
+            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 try
                 {
@@ -101,7 +102,7 @@ namespace Stocks.Service
                     failedDownloads.Add(symbol);
                 }
             }
-            );
+            //);
 
             foreach (string symbol in failedDownloads)
             {
@@ -145,6 +146,12 @@ namespace Stocks.Service
 
                 case TickPeriod.OneMin:
                     url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1m?format=csv";
+                    break;
+                case TickPeriod.OneDay:
+                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1d?format=csv";
+                    break;
+                case TickPeriod.Dynamic:
+                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/dynamic?format=csv";
                     break;
             }
 
@@ -279,6 +286,11 @@ namespace Stocks.Service
                             Debug.WriteLine(e.ToString());
                             Debug.WriteLine(e.Data.ToString());
                             hasArgumentException = true;
+                            Console.WriteLine(e.ToString());
+                            Console.WriteLine(e.Data.ToString());
+
+                            Console.WriteLine("Argument Invalied !!! - Press Enter To Continue");
+                            Console.ReadLine();
                         }
 
                         if (!hasArgumentException)
@@ -294,16 +306,27 @@ namespace Stocks.Service
 
 
                             //JSON TEST
-                            JObject jsonObj = JObject.Parse(Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote"));
+                            string output = Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote");
+                            JObject jsonObj = JObject.Parse(output);
+
+//                            string download = Other.Download(url);
+//                           JObject jsonObj = JObject.Parse(download);
                             Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
                             decimal closePrice = -1;
+                           
+                            if(symbol.Equals("DXR"))
+                            {
+                                string symbol2 = "DXR";
+                            }
+
+                            Dictionary<string, string> testValues = new Dictionary<string, string>();
 
                             foreach (string header in headerRow)
                             {
                                 bool isMatch = false;
                                 foreach (string header2 in dictObj.Keys)
                                 {
-                                    if (((header.Equals(header2) && !header2.Equals("date") && !header2.Equals("close")) || (header.Equals("date") && header2.Equals("extendedPriceTime")) || (header.Equals("close") && header2.Equals("latestPrice"))) && dictObj[header2] != null)
+                                    if (((header.Equals(header2) && !header2.Equals("date") && !header2.Equals("close")) || (header.Equals("date") && header2.Equals("latestUpdate")) || (header.Equals("close") && header2.Equals("latestPrice"))) && dictObj[header2] != null)
                                     {
                                         string field = dictObj[header2].ToString();
 
@@ -326,9 +349,9 @@ namespace Stocks.Service
                                         }
                                         */
 
-                                        if (header2.Equals("extendedPriceTime"))
+                                        if (header2.Equals("latestUpdate"))
                                         {
-                                            field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
+                                            field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd HH:MM");
                                         }
 
                                         isMatch = true;
@@ -338,20 +361,26 @@ namespace Stocks.Service
                                         {
                                             closePrice = decimal.Parse(field);
                                         }
-                                        */
+                                        
 
                                         if (header2.Equals("latestPrice"))
                                         {
                                             closePrice = decimal.Parse(field);
-                                        }
+                                        }*/
+
+                                        testValues[header] = field.ToString();
                                     }
                                 }
 
                                 if (!isMatch)
                                 {
                                     csvWriter.WriteField("");
+                                    testValues[header] = "";
                                 }
                             }
+
+                            testValues = testValues;
+
                             csvWriter.NextRecord();
                             csvWriter.Flush();
                             streamWriter.Flush();

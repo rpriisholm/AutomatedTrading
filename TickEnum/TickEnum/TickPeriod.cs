@@ -13,6 +13,8 @@ namespace TickEnum
         DailySimulation,
         SixMin,
         ThreeMin,
-        OneMin
+        OneMin,
+        OneDay,
+        Dynamic
     }
 }

@@ -29,6 +29,7 @@ namespace RealLib
 
                     if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
                     {
+                        //TickPeriod.Daily seems inderpendent when using continue
                         TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
                     }
 

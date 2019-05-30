@@ -129,7 +129,28 @@ namespace RealLib
                 }
             }
 
-            File.WriteAllLines($"{partialPath}\\TradingLog", noDuplicates);
+            List<string> dirtyResultList = new List<string>();
+            List<string> temp = new List<string>();
+
+            foreach(string s in noDuplicates)
+            {
+                if(s.Contains(" - Duplicate"))
+                {
+                    dirtyResultList.Add(s);
+                }
+                else
+                {
+                    temp.Add(s);
+                }
+            }
+
+            foreach(string s in temp)
+            {
+                dirtyResultList.Add(s);
+            }
+
+            File.WriteAllLines($"{partialPath}\\TradingLog", dirtyResultList);
+            //File.WriteAllLines($"{partialPath}\\TradingLog", noDuplicates);
         }
 
         private static StreamWriter _ErrorWriter = null;
@@ -215,7 +236,7 @@ namespace RealLib
                     List<string> symbols = ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "CurrentStrategies.csv");
                     symbols.AddRange(ImportAndExport.LoadStrategiesSymbols(CollectorLib.DataLocation, "ExpiringStrategies.csv"));
 
-                    ImportAndExport.CollectData(TickPeriod.OneDay, symbols, true, true);
+                    ImportAndExport.CollectData(tickPeriod, symbols, true, true);
                 }
             }
 

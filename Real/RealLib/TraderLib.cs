@@ -136,11 +136,11 @@ namespace RealLib
             {
                 if(s.Contains(" - Duplicate"))
                 {
-                    dirtyResultList.Add(s);
+                    temp.Add(s);
                 }
                 else
                 {
-                    temp.Add(s);
+                    dirtyResultList.Add(s);
                 }
             }
 

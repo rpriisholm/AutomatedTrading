@@ -190,8 +190,8 @@ namespace RealLib
         {
             ImportAndExport.MinStockPrice = 2m;
             //TODO
-            //bool isDownloadEnabled = false;
-            bool isDownloadEnabled = true;
+            bool isDownloadEnabled = false;
+            //bool isDownloadEnabled = true;
 
             OnStart(@"C:\StockHistory\Real", tickPeriod, tradingEnum, isDownloadEnabled);
 

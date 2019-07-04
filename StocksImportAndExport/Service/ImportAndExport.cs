@@ -491,13 +491,20 @@ namespace Stocks.Service
             for (int i = 0; i < CSV["symbol"].Count; i++)
             {
                 //Crypto is Disabled
-                if (!CSV["isEnabled"][i].Equals("false") && !CSV["type"][i].Equals("crypto"))
+                if (SymbolFilter(CSV, i))
                 {
                     filteredSymbols.Add(CSV["symbol"][i]);
                 }
             }
 
             return filteredSymbols;
+        }
+
+        public static bool SymbolFilter(CsvContainer csvContainer, int index)
+        {
+            // CSV["symbol"][i]
+            // Filter with saxo stocks/symbols compare name and price
+            return !csvContainer["isEnabled"][index].Equals("false") && !csvContainer["type"][index].Equals("crypto");
         }
 
         public static string GetFullPath(TickPeriod tickPeriod)

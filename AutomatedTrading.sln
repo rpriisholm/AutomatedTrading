@@ -53,6 +53,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueCollections", "ValueCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedTradingV2", "AutomatedTradingV2\AutomatedTradingV2.csproj", "{67A3C90E-C85B-4AAF-A4CB-812FCD523D2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1_saxo", "ConsoleApp1_saxo\ConsoleApp1_saxo.csproj", "{B49CD541-D89B-4576-9586-DF37BB269203}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,14 @@ Global
 		{67A3C90E-C85B-4AAF-A4CB-812FCD523D2C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67A3C90E-C85B-4AAF-A4CB-812FCD523D2C}.Release|x64.ActiveCfg = Release|x64
 		{67A3C90E-C85B-4AAF-A4CB-812FCD523D2C}.Release|x64.Build.0 = Release|x64
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Debug|x64.Build.0 = Debug|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Release|x64.ActiveCfg = Release|Any CPU
+		{B49CD541-D89B-4576-9586-DF37BB269203}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

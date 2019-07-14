@@ -41,6 +41,27 @@ namespace Stocks.Service
         }
         
         */
+
+        public static Dictionary<string, decimal> UnitPrices = new Dictionary<string, decimal>();
+        //Day-Month-Year - dd-MM-yyyy  
+        public static decimal GetUnitPrice(string date)
+        {
+            if (UnitPrices.Count == 0)
+            {
+                // Download And Load All UnitPrices
+            }
+            else
+            {
+                if(UnitPrices.ContainsKey(date))
+                {
+                    // Download And Load Missing UnitPrice
+                }
+            }
+
+            return UnitPrices[date];
+        }
+
+
         public static void ClearDataFolder(TickPeriod tickPeriod, List<string> excludeList)
         {
             //string size = "full";

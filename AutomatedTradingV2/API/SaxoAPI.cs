@@ -11,6 +11,7 @@ namespace AutomatedTradingV2.API
 {
     public class SaxoAPI
     {
+        /*
         public List<string> GenerateTokenRequest(l)
         {
             return "";
@@ -45,6 +46,6 @@ namespace AutomatedTradingV2.API
                 }
                 return false;
             }
-        }
+        }*/
     }
 }

@@ -475,19 +475,12 @@ namespace Stocks.Service
         {
             List<string> symbols = new List<string>();
 
+            /* Legacy Download 
             CsvContainer CSV = Other.DownloadCSV("https://api.iextrading.com/1.0/ref-data/symbols?format=csv");
 
-            /* Legacy (very simpel)
-            StreamReader streamReader = new StreamReader(@"C:\StockHistory\StockList");
-            while (streamReader.Peek() >= 0)
-            {
-                symbols.Add(streamReader.ReadLine().Trim());
-            }
-            */
-
-            List<string> filteredSymbols = new List<string>();
-
             //Filter Symbols
+            List<string> filteredSymbols = new List<string>();
+            
             for (int i = 0; i < CSV["symbol"].Count; i++)
             {
                 //Crypto is Disabled
@@ -496,6 +489,35 @@ namespace Stocks.Service
                     filteredSymbols.Add(CSV["symbol"][i]);
                 }
             }
+
+            return filteredSymbols;
+            */
+
+            /* Legacy (simpel) - From https://www.home.saxo/da-dk/rates-and-conditions/equities-and-etfs/stocks-available */
+            StreamReader streamReader = new StreamReader(@"C:\OneDrive\ALL STOCKS SAXO.txt");
+            while (streamReader.Peek() >= 0)
+            {
+                symbols.Add(streamReader.ReadLine().Trim());
+            }
+
+            List<string> filteredSymbols = new List<string>();
+            CsvContainer CSV = Other.DownloadCSV("https://api.iextrading.com/1.0/ref-data/symbols?format=csv");
+            for (int i = 0; i < CSV["symbol"].Count; i++)
+            {
+                //Crypto is Disabled
+                if (SymbolFilter(CSV, i))
+                {
+                    foreach(string symbol in symbols)
+                    {
+                        if(CSV["symbol"][i].CompareTo(symbol) == 0)
+                        {
+                            filteredSymbols.Add(symbol);
+                            break;
+                        }
+                    }
+                }
+            }
+
 
             return filteredSymbols;
         }

@@ -27,16 +27,28 @@ namespace Stocks.Import
 
         public static CsvContainer DownloadCSV(string url)
         {
+            return DownloadCSV(url, ',');
+        }
+
+        public static CsvContainer DownloadCSV(string url, char splitChar)
+        {
             WebClient client = new WebClient();
             string data = client.DownloadString(url);
-            return new CsvContainer(data);
+            return new CsvContainer(data, splitChar);
+        }
+
+        public static CsvContainer DownloadCSV(string url, char splitChar, char extraTrim)
+        {
+            WebClient client = new WebClient();
+            string data = client.DownloadString(url);
+            return new CsvContainer(data, splitChar, extraTrim);
         }
 
         public static string Download(string url)
         {
             WebClient client = new WebClient();
             string download = client.DownloadString(url);
-            return download;
+            return client.DownloadString(url); ;
         }
 
         public static CsvContainer JsonUrlToCSV(string url)
@@ -66,31 +78,66 @@ namespace Stocks.Import
                 }
             }
 
-            public CsvContainer(string data)
+            public CsvContainer(string data) : this(data, ',') { }
+
+            public CsvContainer(string data, char splitChar, char extraTrim) : this(data, splitChar)
+            {
+                foreach(string header in this.Headers)
+                {
+                    for(int i = 0; i < this[header].Count; i++)
+                    {
+                        this[header][i] = this[header][i].Trim(extraTrim);
+                    }
+                }
+            }
+
+            public CsvContainer(string data, char splitChar)
             {
                 string[] rows = data.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
                 List<string> headers = new List<string>();
-                foreach (string header in rows[0].Split(','))
+                int startIndex = 0;
+                foreach (string row in rows)
                 {
-                    headers.Add(header);
-                    this.HeaderAndRows[header.ToLower()] = new List<string>();
-                }
-                this.Headers = headers;
-
-                for (int i = 1; i < rows.Length; i++)
-                {
-                    string[] cells = rows[i].Split(',');
-
-                    //Add Row
-                    for (int j = 0; j < headers.Count; j++)
+                    string[] rowsArr = row.Split(splitChar);
+                    
+                    if(rowsArr.Length > 1)
                     {
-                        this.HeaderAndRows[headers[j].ToLower()].Add(cells[j]);
+                        foreach (string header in rowsArr)
+                        {
+                            if (header != null && header.Length != 0)
+                            {
+                                headers.Add(header);
+                                this.HeaderAndRows[header.ToLower()] = new List<string>();
+                                this.Headers.Add(header.ToLower());
+                            }
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        startIndex += 1;
                     }
                 }
+                //this.Headers = headers;
 
+                for (int i = startIndex + 1; i < rows.Length; i++)
+                {
+                    string[] cells = rows[i].Split(splitChar);
+
+                    if(cells.Length == headers.Count)
+                    {
+                        //Add Row
+                        for (int j = 0; j < headers.Count; j++)
+                        {
+                            this.HeaderAndRows[headers[j].ToLower()].Add(cells[j]);
+                        }
+                    }
+                }
             }
         }
+
+
 
         public static StreamReader GetStreamReader(string url)
         {

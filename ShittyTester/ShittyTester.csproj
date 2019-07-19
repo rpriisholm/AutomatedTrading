@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AutomatedTradingV2\AutomatedTradingV2.csproj" />
+    <ProjectReference Include="..\Calculator\Calculator.csproj" />
+    <ProjectReference Include="..\GenericTypes\GenericTypes.csproj" />
+    <ProjectReference Include="..\JSonTester\JSonTester.csproj" />
+    <ProjectReference Include="..\MigrationDemo\MigrationDemo.csproj" />
+    <ProjectReference Include="..\ModelEntities\ModelEntities.csproj" />
+    <ProjectReference Include="..\Models\Models\Models.csproj" />
+    <ProjectReference Include="..\Real\RealLib\RealLib.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\SidesEnum\SidesEnum.csproj" />
+    <ProjectReference Include="..\StocksImportAndExport\StocksImportAndExport.csproj" />
+    <ProjectReference Include="..\SymbolExtractorEtoro_Test\SymbolExtractorEtoro_Test.csproj" />
+    <ProjectReference Include="..\TickEnum\TickEnum\TickEnum.csproj" />
+    <ProjectReference Include="..\ValueCollections\ValueCollections.csproj" />
+  </ItemGroup>
+
+</Project>

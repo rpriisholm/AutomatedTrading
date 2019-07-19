@@ -44,21 +44,31 @@ namespace Stocks.Service
 
         public static Dictionary<string, decimal> UnitPrices = new Dictionary<string, decimal>();
         //Day-Month-Year - dd-MM-yyyy  
-        public static decimal GetUnitPrice(string date)
+        public static CsvContainer GetUnitPrice()
+        //public static decimal GetUnitPrice(string date)
         {
+            CsvContainer csv = null;
+            string symbol = "USD";
+
             if (UnitPrices.Count == 0)
             {
+
+                // http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=EUR
+                // http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=USD
+                // https://iexcloud.io/docs/api/#forex-currencies
                 // Download And Load All UnitPrices
+                csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
             }
             else
             {
-                if(UnitPrices.ContainsKey(date))
+                //if(UnitPrices.ContainsKey(date))
                 {
-                    // Download And Load Missing UnitPrice
+                    csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
                 }
             }
 
-            return UnitPrices[date];
+            //return UnitPrices[date];
+            return csv;
         }
 
 

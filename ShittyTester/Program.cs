@@ -8,34 +8,12 @@ namespace ShittyTester
     {
         public static void Main(string[] args)
         {
-            CsvContainer csv = ImportAndExport.GetUnitPrice();
-            Console.WriteLine(csv.ToString());
+            decimal unitPrice = ImportAndExport.GetUsdUnitPrice("01-01-2019");
+            Console.WriteLine(unitPrice.ToString());
 
             string[] headers = new string[2];
-            int count = 0;
-            for (int i = 0; i < csv.Headers.Count; i++)
-            {
-                headers[i] = csv.Headers[i];
-                count = csv[headers[i]].Count;
+            Console.WriteLine(unitPrice);
 
-                if(i != 0)
-                {
-                    Console.Write(" - ");
-                }
-                Console.Write(headers[i]);
-            }
-            Console.WriteLine();
-
-            for (int i = 0; i < csv[csv.Headers[0]].Count; i++)
-            {
-                string s = "";
-                foreach(string header in headers)
-                {
-                    s += csv[header][i] + " - ";
-                }
-
-                Console.WriteLine(s.Trim().TrimEnd('-'));
-            }
 
             Console.ReadLine();
         }

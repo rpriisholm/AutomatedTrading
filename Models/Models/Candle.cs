@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stocks.Service;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -83,9 +84,8 @@ namespace StockSolution.Entity.Models
         {
             get
             {
-                return UnitPrice_ ?? throw new ArgumentNullException();
+                return ImportAndExport.GetUsdUnitPrice(CloseTime.ToString("dd-MM-yyyy"));
             }
-            set { UnitPrice_ = value; }
         }
 
         public int CompareTo(object other)

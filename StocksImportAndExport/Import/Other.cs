@@ -135,7 +135,28 @@ namespace Stocks.Import
                     }
                 }
             }
+
+            public T GetCell<T>(string headerSearch, string keySearch, string headerResult) where T : new()
+            {
+                T result = default(T);
+                int index = 0;
+                foreach(string key in this[headerSearch])
+                {
+                    if(key.Equals(keySearch))
+                    {
+                        result = (T)Convert.ChangeType(key, typeof(T));
+                        break;
+                    }
+                    else
+                    {
+                        index += 1;
+                    }
+                }
+
+                return result;
+            }
         }
+
 
 
 

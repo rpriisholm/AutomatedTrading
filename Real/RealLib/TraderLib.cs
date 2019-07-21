@@ -315,6 +315,7 @@ namespace RealLib
                             bool isNewerThanLastExecution = strategies[symbol].LastExecution.CompareTo(candle.CloseTime) < 0;
                             if (isNewerThanLastExecution)
                             {
+
                                 //Simulate Real Values
                                 strategies[symbol] = AddCandleToStrategy(strategies[symbol], candle);
                             }

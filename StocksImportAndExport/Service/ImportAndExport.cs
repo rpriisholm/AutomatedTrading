@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using TickEnum;
 using static Stocks.Import.Other;
 
@@ -18,7 +17,9 @@ namespace Stocks.Service
     public static class ImportAndExport
     {
         public static string PartialPath = @"C:\StockHistory\Active\";
+        public static string UsdPath = @"C:\StockHistory\Real\USD.csv";
         public static decimal MinStockPrice = -1;
+        public static Dictionary<string, decimal> UnitPrices = new Dictionary<string, decimal>();
 
         /*
         public static void CSVToMySQL_Excel(string url, string path)
@@ -42,33 +43,82 @@ namespace Stocks.Service
         
         */
 
-        public static Dictionary<string, decimal> UnitPrices = new Dictionary<string, decimal>();
+
+
+
+
         //Day-Month-Year - dd-MM-yyyy  
-        public static CsvContainer GetUnitPrice()
-        //public static decimal GetUnitPrice(string date)
+        public static decimal GetUsdUnitPrice(string date)
         {
-            CsvContainer csv = null;
+
+            decimal result = 0.0m;
             string symbol = "USD";
 
             if (UnitPrices.Count == 0)
             {
+                StreamReader stream_Append = new StreamReader(UsdPath);
+                CachedCsvReader csvReader = new CachedCsvReader(stream_Append);
 
-                // http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=EUR
-                // http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=USD
-                // https://iexcloud.io/docs/api/#forex-currencies
-                // Download And Load All UnitPrices
-                csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
+                while (csvReader.ReadNextRecord())
+                {
+                    UnitPrices[csvReader[0]] = decimal.Parse(csvReader[1], new System.Globalization.CultureInfo("en-US"));
+                }
+                stream_Append.Close();
+
+
+                CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
+                for (int i = 0; i < csv["Date"].Count; i++)
+                {
+                    if (!UnitPrices.ContainsKey(csv["Date"][i]))
+                    {
+                        UnitPrices[csv["Date"][i]] = decimal.Parse(csv["US dollars"][i], new System.Globalization.CultureInfo("en-US"));
+                    }
+                }
+
+
+                StreamWriter streamWriter = new StreamWriter(UsdPath);
+                char cellSeperator = ',';
+                streamWriter.WriteLine("Date" + cellSeperator + "US dollars");
+                for (int i = 0; i < csv["Date"].Count; i++)
+                {
+                    streamWriter.WriteLine(csvReader[0] + cellSeperator + csvReader[1]);
+                }
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
+
+
+            if (!UnitPrices.ContainsKey(date))
+            {
+                DateTime nearThis = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                string lastKey = null;
+                foreach (string key in UnitPrices.Keys)
+                {
+                    DateTime currentDate = DateTime.ParseExact(key, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    var t = UnitPrices.Keys;
+
+                    if (currentDate > nearThis)
+                    {
+                        result = UnitPrices[lastKey];
+                        break;
+                    }
+
+                    lastKey = key;
+                }
             }
             else
             {
-                //if(UnitPrices.ContainsKey(date))
-                {
-                    csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
-                }
+                result = UnitPrices[date];
+            }
+
+
+            if (result <= 0.0m)
+            {
+                throw new Exception("No Unit Price Found");
             }
 
             //return UnitPrices[date];
-            return csv;
+            return result;
         }
 
 
@@ -121,7 +171,7 @@ namespace Stocks.Service
 
 
             // TODO //
-            foreach(var symbol in symbols)
+            foreach (var symbol in symbols)
             //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 try
@@ -141,7 +191,7 @@ namespace Stocks.Service
                 {
                     CollectChoosenData(symbol, tickPeriod, appendSymbols);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.WriteLine(e.ToString());
                     Debug.WriteLine(e.Data.ToString());
@@ -340,15 +390,17 @@ namespace Stocks.Service
                             string output = Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote");
                             JObject jsonObj = JObject.Parse(output);
 
-//                            string download = Other.Download(url);
-//                           JObject jsonObj = JObject.Parse(download);
+                            //                            string download = Other.Download(url);
+                            //                           JObject jsonObj = JObject.Parse(download);
                             Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
                             decimal closePrice = -1;
-                           
+
+                            /*
                             if(symbol.Equals("DXR"))
                             {
                                 string symbol2 = "DXR";
                             }
+                            */
 
                             Dictionary<string, string> testValues = new Dictionary<string, string>();
 
@@ -410,7 +462,7 @@ namespace Stocks.Service
                                 }
                             }
 
-                            testValues = testValues;
+                            //testValues = testValues;
 
                             csvWriter.NextRecord();
                             csvWriter.Flush();
@@ -538,9 +590,9 @@ namespace Stocks.Service
                 //Crypto is Disabled
                 if (SymbolFilter(CSV, i))
                 {
-                    foreach(string symbol in symbols)
+                    foreach (string symbol in symbols)
                     {
-                        if(CSV["symbol"][i].CompareTo(symbol) == 0)
+                        if (CSV["symbol"][i].CompareTo(symbol) == 0)
                         {
                             filteredSymbols.Add(symbol);
                             break;

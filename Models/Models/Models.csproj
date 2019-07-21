@@ -879,6 +879,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\StocksImportAndExport\StocksImportAndExport.csproj">
+      <Project>{0B13D134-C814-4429-AFD6-DCD80E4C58DD}</Project>
+      <Name>StocksImportAndExport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TickEnum\TickEnum\TickEnum.csproj">
       <Project>{64c1cffd-b40d-4f65-ba6e-5f74bd3274b2}</Project>
       <Name>TickEnum</Name>

@@ -16,6 +16,7 @@ namespace Stocks.Service
 {
     public static class ImportAndExport
     {
+        public static string SecretToken = Environment.GetEnvironmentVariable("SecretToken");
         public static string PartialPath = @"C:\StockHistory\Active\";
         public static string UsdPath = @"C:\StockHistory\Real\USD.csv";
         public static decimal MinStockPrice = -1;
@@ -209,30 +210,30 @@ namespace Stocks.Service
 
             // Get Information About Stock
             // https://api.iextrading.com/1.0/stock/aapl/quote
-            //-----/ /-----/ /-----/ /-----/  
+            //-----/ /-----/ /-----/ /-----/ SecretToken  
 
             switch (tickPeriod)
             {
                 case TickPeriod.Daily:
-                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/5y?format=csv";
+                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/5y?token={SecretToken}&format=csv";
                     break;
 
                 case TickPeriod.SixMin:
-                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/6m?format=csv";
+                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/6m?token={SecretToken}&format=csv";
                     break;
 
                 case TickPeriod.ThreeMin:
-                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/3m?format=csv";
+                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/3m?token={SecretToken}&format=csv";
                     break;
 
                 case TickPeriod.OneMin:
-                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1m?format=csv";
+                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/1m?token={SecretToken}&format=csv";
                     break;
                 case TickPeriod.OneDay:
-                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/1d?format=csv";
+                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/1d?token={SecretToken}&format=csv";
                     break;
                 case TickPeriod.Dynamic:
-                    url = "https://api.iextrading.com/1.0/stock/" + $"{symbol}/chart/dynamic?format=csv";
+                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/dynamic?token={SecretToken}&format=csv";
                     break;
             }
 

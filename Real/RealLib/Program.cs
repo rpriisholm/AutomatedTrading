@@ -10,7 +10,7 @@ namespace RealLib
         static void Main(string[] args)
         {
             //CollectorLib.DataLocation = @"c:\StockHistory\Real";
-            try
+            //try
             {
                 #region Empty Console  
                 TextWriter outTextWriter = Console.Out;
@@ -35,7 +35,9 @@ namespace RealLib
 
                     if (args[0].ToLower().Equals("AddSimulationToDatabase".ToLower()))
                     {
-                        TraderLib.SimulateStrategies("ALL", args[1].ToString());
+                        //COLLECT ALL .csv files before start
+                    //Se Strings
+                        TraderLib.SimulateStrategies("ALL", "SQL_Inserts");
                     }
                 }
                 else
@@ -48,7 +50,7 @@ namespace RealLib
                 //SimulateSaveOnStartAndOnExit();
             }
             //catch (ExecutionEngineException e)
-
+            /*
             catch (Exception e)
             {
                 List<string> list = new List<string>();
@@ -61,6 +63,7 @@ namespace RealLib
                 Console.WriteLine("Press Enter To Continue...");
                 Console.ReadLine();
             }
+            */
         }
 
 

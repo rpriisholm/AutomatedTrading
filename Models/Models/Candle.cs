@@ -77,7 +77,6 @@ namespace StockSolution.Entity.Models
             set;
         }
 
-        private decimal? UnitPrice_ = null;
         /* Unconverted ex. US = 6.5 or EUR = 7.5 */
         [Required]
         public decimal UnitPrice

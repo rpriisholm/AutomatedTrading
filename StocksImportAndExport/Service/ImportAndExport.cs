@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using TickEnum;
 using static Stocks.Import.Other;
 
@@ -185,17 +186,21 @@ namespace Stocks.Service
                 }
             }
             //);
-
-            foreach (string symbol in failedDownloads)
+            Thread.Sleep(15000);
+            for (int i = 0; i < 10; i++)
             {
-                try
+                Thread.Sleep(1000);
+                foreach (string symbol in failedDownloads)
                 {
-                    CollectChoosenData(symbol, tickPeriod, appendSymbols);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    Debug.WriteLine(e.Data.ToString());
+                    try
+                    {
+                        CollectChoosenData(symbol, tickPeriod, appendSymbols);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Data.ToString());
+                    }
                 }
             }
 
@@ -205,8 +210,13 @@ namespace Stocks.Service
 
         public static void CollectChoosenData(string symbol, TickPeriod tickPeriod, bool append)
         {
+            CollectChoosenData(symbol, $"{GetFullPath(TickPeriod.Daily)}", tickPeriod, append);
+        }
+
+        public static void CollectChoosenData(string symbol, string folderPath, TickPeriod tickPeriod, bool append)
+        {
             string url = null;
-            string path = $"{GetFullPath(TickPeriod.Daily)}\\{symbol}.csv";
+            string path = $"{folderPath}\\{symbol}.csv";
 
             // Get Information About Stock
             // https://api.iextrading.com/1.0/stock/aapl/quote

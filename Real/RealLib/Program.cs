@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stocks.Service;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TickEnum;
@@ -29,6 +30,7 @@ namespace RealLib
 
                     if (args[0].ToLower().Equals("ContinueTrading".ToLower()))
                     {
+                        
                         //TickPeriod.Daily seems inderpendent when using continue
                         TraderLib.RunTradingProgram(TickPeriod.Daily, TradingEnum.ContinueTrading);
                     }
@@ -37,7 +39,9 @@ namespace RealLib
                     {
                         //COLLECT ALL .csv files before start
                     //Se Strings
-                        TraderLib.SimulateStrategies("ALL", "SQL_Inserts");
+                        ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+                        //TraderLib.SimulateStrategies("ALL", "SQL_Inserts");
+                        TraderLib.SimulateStrategies("DAILY", "SQL_Inserts");
                     }
                 }
                 else

@@ -174,8 +174,8 @@ namespace Stocks.Service
 
 
             // TODO //
-            //foreach (var symbol in symbols)
-            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+            foreach (var symbol in symbols)
+            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 try
                 {
@@ -186,7 +186,7 @@ namespace Stocks.Service
                    failedDownloads.Add(symbol);
                 }
             }
-            );
+            //);
             Thread.Sleep(15000);
             for (int i = 0; i < 10; i++)
             {

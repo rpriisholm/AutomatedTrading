@@ -18,7 +18,7 @@ namespace Stocks.Service
 {
     public static class ImportAndExport
     {
-        public static string SecretToken = Write(Environment.GetEnvironmentVariable("SecretToken", EnvironmentVariableTarget.Machine));
+        public static string SecretToken = Environment.GetEnvironmentVariable("SecretToken", EnvironmentVariableTarget.Machine);
         public static string PartialPath = @"C:\StockHistory\Active\";
         public static string UsdPath = @"C:\StockHistory\Real\USD.csv";
         public static decimal MinStockPrice = -1;
@@ -174,8 +174,8 @@ namespace Stocks.Service
 
 
             // TODO //
-            foreach (var symbol in symbols)
-            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+            //foreach (var symbol in symbols)
+            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 try
                 {
@@ -186,7 +186,7 @@ namespace Stocks.Service
                    failedDownloads.Add(symbol);
                 }
             }
-            //);
+            );
             Thread.Sleep(15000);
             for (int i = 0; i < 10; i++)
             {

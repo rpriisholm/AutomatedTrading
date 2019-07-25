@@ -176,13 +176,13 @@ namespace Stocks.Service
             foreach (var symbol in symbols)
             //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
-                try
+                //try
                 {
                     CollectChoosenData(symbol, tickPeriod, appendSymbols);
                 }
-                catch
+                //catch
                 {
-                    failedDownloads.Add(symbol);
+                    //failedDownloads.Add(symbol);
                 }
             }
             //);
@@ -248,7 +248,7 @@ namespace Stocks.Service
             }
 
             //Start Collecting
-            SingleDataCollector(path, url, symbol, append);
+            ImportAndExport.SingleDataCollector(path, url, symbol, append);
 
             // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb&types=quote,news,chart&range=1m&last=5
 
@@ -269,8 +269,9 @@ namespace Stocks.Service
          * */
         public static void SingleDataCollector(string path, string url, string symbol, bool append)
         {
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             bool isPathValied = true;
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+            
 
             try
             {

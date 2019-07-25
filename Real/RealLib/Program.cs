@@ -54,8 +54,8 @@ namespace RealLib
                 //SimulateSaveOnStartAndOnExit();
             }
             //catch (ExecutionEngineException e)
-            /*
-            catch (Exception e)
+            
+            /*catch (Exception e)
             {
                 List<string> list = new List<string>();
                 list.Add(e.ToString());
@@ -66,8 +66,8 @@ namespace RealLib
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("Press Enter To Continue...");
                 Console.ReadLine();
-            }
-            */
+            }*/
+            
         }
 
 

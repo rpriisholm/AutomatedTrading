@@ -600,8 +600,8 @@
     <Reference Include="NetProtocol, Version=4.0.1900.1900, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.16\lib\net45\NetProtocol.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\StockSharp.4.4.16\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Northwoods.GoWPF, Version=2.1.1.4, Culture=neutral, PublicKeyToken=616e2dc80068a33d, processorArchitecture=MSIL">
       <HintPath>..\packages\StockSharp.4.4.16\lib\net45\Northwoods.GoWPF.dll</HintPath>

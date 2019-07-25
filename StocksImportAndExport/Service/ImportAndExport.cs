@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using TickEnum;
 using static Stocks.Import.Other;
 
@@ -17,7 +18,7 @@ namespace Stocks.Service
 {
     public static class ImportAndExport
     {
-        public static string SecretToken = Environment.GetEnvironmentVariable("SecretToken");
+        public static string SecretToken = Write(Environment.GetEnvironmentVariable("SecretToken", EnvironmentVariableTarget.Machine));
         public static string PartialPath = @"C:\StockHistory\Active\";
         public static string UsdPath = @"C:\StockHistory\Real\USD.csv";
         public static decimal MinStockPrice = -1;
@@ -176,13 +177,13 @@ namespace Stocks.Service
             foreach (var symbol in symbols)
             //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
-                //try
+                try
                 {
                     CollectChoosenData(symbol, tickPeriod, appendSymbols);
                 }
-                //catch
+                catch
                 {
-                    //failedDownloads.Add(symbol);
+                   failedDownloads.Add(symbol);
                 }
             }
             //);

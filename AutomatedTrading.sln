@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShittyTester", "ShittyTeste
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{FC34CCFF-5361-4C0C-921A-6DAB098EE095}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YahooFinanceAPI", "YahooFinanceAPI\YahooFinanceAPI.csproj", "{9F664C6A-6D24-45EF-9A9C-3324292E1C46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -185,6 +187,14 @@ Global
 		{63930866-718D-4E83-B4B3-1A882FA32C58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63930866-718D-4E83-B4B3-1A882FA32C58}.Release|x64.ActiveCfg = Release|Any CPU
 		{63930866-718D-4E83-B4B3-1A882FA32C58}.Release|x64.Build.0 = Release|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Debug|x64.Build.0 = Debug|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Release|x64.ActiveCfg = Release|Any CPU
+		{9F664C6A-6D24-45EF-9A9C-3324292E1C46}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

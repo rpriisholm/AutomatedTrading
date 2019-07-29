@@ -226,26 +226,36 @@ namespace Stocks.Service
             switch (tickPeriod)
             {
                 case TickPeriod.Daily:
-                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/5y?token={SecretToken}&format=csv";
+                    url = null;
                     break;
 
-                case TickPeriod.SixMin:
-                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/6m?token={SecretToken}&format=csv";
+                    /* 
+                     * alphavantage
+                    url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + $"{symbol}&apikey=11EJMYL88Q4DW5BT&datatype=csv";
                     break;
+                     * cloud.iexapis
+                    case TickPeriod.Daily:
+                        url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/5y?token={SecretToken}&format=csv";
+                        break;
 
-                case TickPeriod.ThreeMin:
-                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/3m?token={SecretToken}&format=csv";
-                    break;
+                    case TickPeriod.SixMin:
+                        url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/6m?token={SecretToken}&format=csv";
+                        break;
 
-                case TickPeriod.OneMin:
-                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/1m?token={SecretToken}&format=csv";
-                    break;
-                case TickPeriod.OneDay:
-                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/1d?token={SecretToken}&format=csv";
-                    break;
-                case TickPeriod.Dynamic:
-                    url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/dynamic?token={SecretToken}&format=csv";
-                    break;
+                    case TickPeriod.ThreeMin:
+                        url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/3m?token={SecretToken}&format=csv";
+                        break;
+
+                    case TickPeriod.OneMin:
+                        url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/1m?token={SecretToken}&format=csv";
+                        break;
+                    case TickPeriod.OneDay:
+                        url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/1d?token={SecretToken}&format=csv";
+                        break;
+                    case TickPeriod.Dynamic:
+                        url = "https://cloud.iexapis.com/stable/stock/" + $"{symbol}/chart/dynamic?token={SecretToken}&format=csv";
+                        break;
+                    */
             }
 
             //Start Collecting
@@ -299,7 +309,15 @@ namespace Stocks.Service
                     int tries = 20;
                     while (!hasCompleted && count < tries)
                     {
-                        csvContent = Other.Download(url);
+                        if(url != null)
+                        {
+                            csvContent = Other.Download(url);
+                        }
+                        else
+                        {
+                            csvContent = YahooFinanceAPI.Historical.GetRawAsync(symbol, new DateTime(2010, 1, 1), DateTime.Now).Result;
+                        }
+                        
 
                         if (!string.IsNullOrWhiteSpace(csvContent))
                         {
@@ -395,18 +413,23 @@ namespace Stocks.Service
                             string lastPriceUrl = @"https://api.iextrading.com/1.0/stock/" + symbol + @"/chart/1d?chartReset=true&changeFromClose=true&chartSimplify=true&chartLast=1&format=csv";
                             string lastPriceCsv = Other.Download(lastPriceUrl);
                             */
+                            /*
                             StreamWriter streamWriter = new StreamWriter(path, true);
                             CsvWriter csvWriter = new CsvWriter(streamWriter);
+                            */
 
-
+                            
                             //JSON TEST
-                            string output = Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote");
-                            JObject jsonObj = JObject.Parse(output);
+                            //string output = Other.Download(@"https://api.iextrading.com/1.0/stock/" + symbol + "/quote");
+                            //JObject jsonObj = JObject.Parse(output);
+
+
 
                             //                            string download = Other.Download(url);
                             //                           JObject jsonObj = JObject.Parse(download);
-                            Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
-                            decimal closePrice = -1;
+                            //Dictionary<string, object> dictObj = jsonObj.ToObject<Dictionary<string, object>>();
+
+                            //decimal closePrice = -1;
 
                             /*
                             if(symbol.Equals("DXR"))
@@ -415,8 +438,10 @@ namespace Stocks.Service
                             }
                             */
 
+                            /*
                             Dictionary<string, string> testValues = new Dictionary<string, string>();
 
+                            
                             foreach (string header in headerRow)
                             {
                                 bool isMatch = false;
@@ -438,13 +463,6 @@ namespace Stocks.Service
                                         }
                                         catch { }
 
-                                        /*
-                                        if (header2.Equals("closeTime"))
-                                        {
-                                            field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd");
-                                        }
-                                        */
-
                                         if (header2.Equals("latestUpdate"))
                                         {
                                             field = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(long.Parse(field)).ToString(@"yyyy-MM-dd HH:MM");
@@ -452,17 +470,6 @@ namespace Stocks.Service
 
                                         isMatch = true;
                                         csvWriter.WriteField(field);
-                                        /*
-                                        if (header2.Equals("close"))
-                                        {
-                                            closePrice = decimal.Parse(field);
-                                        }
-                                        
-
-                                        if (header2.Equals("latestPrice"))
-                                        {
-                                            closePrice = decimal.Parse(field);
-                                        }*/
 
                                         testValues[header] = field.ToString();
                                     }
@@ -474,19 +481,24 @@ namespace Stocks.Service
                                     testValues[header] = "";
                                 }
                             }
+                            */
 
                             //testValues = testValues;
 
+                            /*
                             csvWriter.NextRecord();
                             csvWriter.Flush();
                             streamWriter.Flush();
                             stringReader.Close();
                             streamWriter.Close();
+                            */
 
+                            /*
                             if (closePrice < MinStockPrice && append == false)
                             {
                                 File.Delete(path);
                             }
+                            */
                         }
 
                         if (File.Exists(path))

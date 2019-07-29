@@ -72,7 +72,7 @@ namespace Stocks.Service
                 }
 
 
-                CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
+                CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ',', '"');
                 for (int i = 0; i < csv["Date"].Count; i++)
                 {
                     if (!UnitPrices.ContainsKey(csv["Date"][i]))

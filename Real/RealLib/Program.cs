@@ -40,8 +40,7 @@ namespace RealLib
                         //COLLECT ALL .csv files before start
                     //Se Strings
                         ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
-                        //TraderLib.SimulateStrategies("ALL", "SQL_Inserts");
-                        TraderLib.SimulateStrategies("DAILY", "SQL_Inserts");
+                        TraderLib.SimulateStrategies(TickPeriod.Daily, "SQL_Inserts");
                     }
                 }
                 else

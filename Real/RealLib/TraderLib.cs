@@ -709,10 +709,9 @@ namespace RealLib
             return null;
         }
 
-        public static void SimulateStrategies(string allHistPath, string subPath)
+        public static void SimulateStrategies(TickPeriod tickPeriod, string subPath)
         {
-            ImportAndExport.PartialPath = @"C:\StockHistory\Testing\" + allHistPath + @"\";
-            string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+            string storagePath = ImportAndExport.GetFullPath(tickPeriod);
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
             //importAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
             int nrOfTestValues = 90;
@@ -758,11 +757,15 @@ namespace RealLib
                     connection.Open();
                     SqlCommand commandInOrder = new SqlCommand(insertSecurity, connection);
                     commandInOrder.ExecuteNonQuery();
-                    connection.Close();
                 }
                 catch (Exception e)
                 {
-
+                    Console.WriteLine(e.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                    Console.WriteLine("Tried adding symbol: " + securityID + " to DB");
                 }
                 #endregion
             }
@@ -798,20 +801,19 @@ namespace RealLib
 
             securityIDs.Clear();
 
-            SimulateStrategies(subPath, nrOfTestValues, maxNrIterations);
+            SimulateStrategies(tickPeriod, nrOfTestValues, maxNrIterations);
         }
 
-        public static void SimulateStrategies(string subPath, int nrOfTestValues, int iterations)
+        public static void SimulateStrategies(TickPeriod tickPeriod,  int nrOfTestValues, int iterations)
         {
-            ImportAndExport.PartialPath = @"C:\StockHistory\Testing\" + subPath + @"\";
-            string storagePath = ImportAndExport.GetFullPath(TickPeriod.Daily);
+            string storagePath = ImportAndExport.GetFullPath(tickPeriod);
             IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
 
             //First Round
             bool isFirst = true;
-
+            System.IO.Directory.GetParent(storagePath);
             // Create or Append File
-            StreamWriter stream = new StreamWriter(@"C:\StockHistory\Testing\" + subPath + @"\Inserts.txt", true);
+            StreamWriter stream = new StreamWriter(System.IO.Directory.GetParent(storagePath) + @"\Inserts.txt", true);
 
 
             //Run Simulation

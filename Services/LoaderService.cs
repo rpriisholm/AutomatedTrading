@@ -81,88 +81,159 @@ namespace StockSolution.Services
 
             //Candles
             StreamReader streamReader = new StreamReader($"{filePath}\\{securityID}.csv");
-            CachedCsvReader csvReader = new CachedCsvReader(streamReader, true);
-
-            //Language Standard
-            CultureInfo cultureInfo = CultureInfo.InvariantCulture;
-
-            /*try
-            { */
-            // Generate Candles
-            while (csvReader.ReadNextRecord())
+            try
             {
-                DateTime openTime = new DateTime();
-                try
+                CachedCsvReader csvReader = new CachedCsvReader(streamReader, true);
+
+                //Language Standard
+                CultureInfo cultureInfo = CultureInfo.InvariantCulture;
+
+                /*try
+                { */
+                // Generate Candles
+                while (csvReader.ReadNextRecord())
                 {
-                    if (csvReader.HasHeader("timestamp"))
+                    DateTime openTime = new DateTime();
+                    try
                     {
-                        //openTime = DateTime.Parse(csvReader["timestamp"]);
-                        string ds = csvReader["timestamp"];
-                        openTime = DateTime.Parse(ds, cultureInfo);
+                        if (csvReader.HasHeader("Date"))
+                        {
+                            if (csvReader.HasHeader("Date"))
+                            {
+                                //openTime = DateTime.Parse(csvReader["timestamp"]);
+                                string ds = csvReader["Date"];
+                                openTime = DateTime.ParseExact(ds, "yyyy-MM-dd", cultureInfo);
+                            }
+                            else
+                            {
+                                if (csvReader.HasHeader("date"))
+                                {
+                                    //openTime = DateTime.Parse(csvReader["date"]);
+                                    string ds = csvReader["date"];
+                                    openTime = DateTime.Parse(ds, cultureInfo);
+                                }
+                            }
+                        }
+                    }
+                    catch (System.FormatException e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        Console.WriteLine("At Candles To CSV");
+
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Data.ToString());
+                    }
+
+                    Candle candle = new Candle();
+                    candle.TimeFrame = timeFrame;
+                    candle.OpenTime = openTime;
+                    candle.CloseTime = openTime.Add(timeFrame);
+
+
+                    if (csvReader.HasHeader("Close"))
+                    {
+                        try
+                        {
+                            cultureInfo = new CultureInfo("en-US", false);
+                            string value = csvReader["Close"];
+                            candle.ClosePrice = decimal.Parse(value, cultureInfo);
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                            throw e;
+                        }
                     }
                     else
                     {
-                        if (csvReader.HasHeader("date"))
+                        candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
+                    }
+
+                    try
+                    {
+                        if (csvReader.HasHeader("Open"))
                         {
-                            //openTime = DateTime.Parse(csvReader["date"]);
-                            string ds = csvReader["date"];
-                            openTime = DateTime.Parse(ds, cultureInfo);
+                            candle.OpenPrice = decimal.Parse(csvReader["Open"], cultureInfo);
+                        }
+                        else
+                        {
+                            candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
                         }
                     }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        throw e;
+                    }
+
+                    try
+                    {
+                        if (csvReader.HasHeader("High"))
+                        {
+                            candle.HighPrice = decimal.Parse(csvReader["High"], cultureInfo);
+                        }
+                        else
+                        {
+                            candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        throw e;
+                    }
+
+                    try
+                    {
+                        if (csvReader.HasHeader("High"))
+                        {
+                            candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
+                        }
+                        else
+                        {
+                            candle.LowPrice = decimal.Parse(csvReader["Low"], cultureInfo);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        throw e;
+                    }
+                    //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
+
+
+                    if (candle.ClosePrice_ > 0m)
+                    {
+                        securityInfo.Candles.Add(candle);
+                    }
                 }
-                catch (System.FormatException e)
-                {
-                    Console.WriteLine(e);
-                    Console.WriteLine("At Candles To CSV");
 
-                    Debug.WriteLine(e.ToString());
-                    Debug.WriteLine(e.Data.ToString());
-                }
+                securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
 
-                Candle candle = new Candle();
-                candle.TimeFrame = timeFrame;
-                candle.OpenTime = openTime;
-                candle.CloseTime = openTime.Add(timeFrame);
+                /* 
+             }
 
-                candle.ClosePrice = decimal.Parse(csvReader["close"], cultureInfo);
-
-                try
-                {
-                    candle.OpenPrice = decimal.Parse(csvReader["open"], cultureInfo);
-                }
-                catch { }
-
-                try
-                {
-                    candle.HighPrice = decimal.Parse(csvReader["high"], cultureInfo);
-                }
-                catch { }
-
-                try
-                {
-                    candle.LowPrice = decimal.Parse(csvReader["low"], cultureInfo);
-                }
-                catch { }
-                //TotalVolume = decimal.Parse(csvReader["volume"], cultureInfo)
-
-
-                if(candle.ClosePrice > 0m)
-                {
-                    securityInfo.Candles.Add(candle);
-                }
+             catch(System.FormatException e)
+             {
+                 securityInfo.Candles = null;
+             }
+             */
             }
-
-            securityInfo.Candles = (List<Candle>)SortingAlgorithm.MergeSort(securityInfo.Candles);
-
-            /* 
-         }
-
-         catch(System.FormatException e)
-         {
-             securityInfo.Candles = null;
-         }
-         */
-            streamReader.Close();
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                var st = new StackTrace(e, true);
+                Console.WriteLine(st);
+                var frame = st.GetFrame(0);
+                Console.WriteLine(frame);
+                var line = frame.GetFileLineNumber();
+                Console.WriteLine(line);
+                throw e;
+            }
+            finally
+            {
+                streamReader.Close();
+            }
             return securityInfo;
         }
     }

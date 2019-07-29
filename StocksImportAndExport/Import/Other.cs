@@ -41,7 +41,8 @@ namespace Stocks.Import
         {
             WebClient client = new WebClient();
             string data = client.DownloadString(url);
-            return new CsvContainer(data, splitChar, extraTrim);
+            CsvContainer csv = new CsvContainer(data, splitChar, extraTrim);
+            return csv;
         }
 
         public static string Download(string url)
@@ -74,6 +75,7 @@ namespace Stocks.Import
 
                 set
                 {
+                    this.HeaderAndRows[header.ToLower()] = new List<string>();
                     this.HeaderAndRows[header.ToLower()] = value;
                 }
             }

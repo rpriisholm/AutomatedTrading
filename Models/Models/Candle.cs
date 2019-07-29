@@ -19,14 +19,14 @@ namespace StockSolution.Entity.Models
         [Required]
         public DateTime OpenTime { get; set; }
 
-        private decimal ClosePrice_;
+        public decimal ClosePrice_;
         [Required]
         public decimal ClosePrice
         {
-            get { return this.ClosePrice_; }
+            get { return this.ClosePrice_ * this.UnitPrice; }
             set
             {
-                this.ClosePrice_ = this.UnitPrice * value;
+                this.ClosePrice_ = value;
             }
         }
         /* In Wanted Currency, Only works when UnitPrice is set */
@@ -34,40 +34,40 @@ namespace StockSolution.Entity.Models
         private decimal OpenPrice_;
         [Required]
         public decimal OpenPrice {
-            get { return this.OpenPrice_; }
+            get { return this.OpenPrice_ * this.UnitPrice; }
             set
             {
-                this.OpenPrice_ = this.UnitPrice * value;
+                this.OpenPrice_ = value;
             }
         }
 
         private decimal LowPrice_;
         public decimal LowPrice
         {
-            get { return this.LowPrice_; }
+            get { return this.LowPrice_ * this.UnitPrice; }
             set
             {
-                this.LowPrice_ = this.UnitPrice * value;
+                this.LowPrice_ = value;
             }
         }
 
         private decimal HighPrice_;
         public decimal HighPrice
         {
-            get { return this.HighPrice_; }
+            get { return this.HighPrice_ * this.UnitPrice; }
             set
             {
-                this.HighPrice_ = this.UnitPrice * value;
+                this.HighPrice_ = value;
             }
         }
 
         private decimal AvgPrice_;
         public decimal AvgPrice
         {
-            get { return this.AvgPrice_; }
+            get { return this.AvgPrice_ * this.UnitPrice; }
             set
             {
-                this.AvgPrice_ = this.UnitPrice * value;
+                this.AvgPrice_ = value;
             }
         }
 

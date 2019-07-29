@@ -59,14 +59,17 @@ namespace Stocks.Service
 
             if (UnitPrices.Count == 0)
             {
-                StreamReader stream_Append = new StreamReader(UsdPath);
-                CachedCsvReader csvReader = new CachedCsvReader(stream_Append);
-
-                while (csvReader.ReadNextRecord())
+                if (File.Exists(UsdPath))
                 {
-                    UnitPrices[csvReader[0]] = decimal.Parse(csvReader[1], new System.Globalization.CultureInfo("en-US"));
+                    StreamReader stream_Append = new StreamReader(UsdPath);
+                    CachedCsvReader csvReader = new CachedCsvReader(stream_Append);
+
+                    while (csvReader.ReadNextRecord())
+                    {
+                        UnitPrices[csvReader[0]] = decimal.Parse(csvReader[1], new System.Globalization.CultureInfo("en-US"));
+                    }
+                    stream_Append.Close();
                 }
-                stream_Append.Close();
 
 
                 CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"');
@@ -84,7 +87,8 @@ namespace Stocks.Service
                 streamWriter.WriteLine("Date" + cellSeperator + "US dollars");
                 for (int i = 0; i < csv["Date"].Count; i++)
                 {
-                    streamWriter.WriteLine(csvReader[0] + cellSeperator + csvReader[1]);
+                    streamWriter.WriteLine(csv["Date"][i] + cellSeperator + csv["US dollars"][i]);
+                    i += i + 1;
                 }
                 streamWriter.Flush();
                 streamWriter.Close();
@@ -315,7 +319,9 @@ namespace Stocks.Service
                         }
                         else
                         {
-                            csvContent = YahooFinanceAPI.Historical.GetRawAsync(symbol, new DateTime(2010, 1, 1), DateTime.Now).Result;
+                            var task = YahooFinanceAPI.Historical.GetRawAsync(symbol, new DateTime(2010, 1, 1), DateTime.Now);
+                            task.Wait();
+                            csvContent = task.Result;
                         }
                         
 

@@ -37,10 +37,11 @@ namespace Stocks.Import
             return new CsvContainer(data, splitChar);
         }
 
-        public static CsvContainer DownloadCSV(string url, char splitChar, char extraTrim)
+        public static CsvContainer DownloadCSV(string url, char splitChar, char extraTrim, int skipLines)
         {
             WebClient client = new WebClient();
             string data = client.DownloadString(url);
+            data = DeleteLines(data, skipLines);
             CsvContainer csv = new CsvContainer(data, splitChar, extraTrim);
             return csv;
         }
@@ -50,6 +51,14 @@ namespace Stocks.Import
             WebClient client = new WebClient();
             string download = client.DownloadString(url);
             return client.DownloadString(url); ;
+        }
+
+        private static string DeleteLines(string s, int linesToRemove)
+        {
+            return s.Split(Environment.NewLine.ToCharArray(),
+                           linesToRemove + 1
+                ).Skip(linesToRemove)
+                .FirstOrDefault();
         }
 
         public static CsvContainer JsonUrlToCSV(string url)
@@ -70,12 +79,12 @@ namespace Stocks.Import
             {
                 get
                 {
-                    return this.HeaderAndRows[header.ToLower()];
+                    string header2 = header.ToLower();
+                    return this.HeaderAndRows[header2];
                 }
 
                 set
                 {
-                    this.HeaderAndRows[header.ToLower()] = new List<string>();
                     this.HeaderAndRows[header.ToLower()] = value;
                 }
             }
@@ -84,12 +93,19 @@ namespace Stocks.Import
 
             public CsvContainer(string data, char splitChar, char extraTrim) : this(data, splitChar)
             {
-                foreach(string header in this.Headers)
+                int keyCount = this.Headers.Count;
+
+                for (int i = 0; i < keyCount; i++)
                 {
-                    for(int i = 0; i < this[header].Count; i++)
+                    this.HeaderAndRows[Headers[0].Trim(extraTrim)] = new List<string>();
+
+                    for(int j = 0; j < this[Headers[0]].Count; j++)
                     {
-                        this[header][i] = this[header][i].Trim(extraTrim);
+                        this.HeaderAndRows[this.Headers[0].Trim(extraTrim)].Add(this.HeaderAndRows[this.Headers[0]][j].Trim(extraTrim));
+
                     }
+                    this.HeaderAndRows.Remove(this.Headers[0]);
+                    this.Headers.RemoveAt(0);
                 }
             }
 

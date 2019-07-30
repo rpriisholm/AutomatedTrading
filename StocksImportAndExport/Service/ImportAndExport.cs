@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TickEnum;
@@ -72,7 +73,7 @@ namespace Stocks.Service
                 }
 
 
-                CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ',', '"');
+                CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"', 5);
                 for (int i = 0; i < csv["Date"].Count; i++)
                 {
                     if (!UnitPrices.ContainsKey(csv["Date"][i]))
@@ -99,18 +100,33 @@ namespace Stocks.Service
             {
                 DateTime nearThis = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
                 string lastKey = null;
-                foreach (string key in UnitPrices.Keys)
-                {
-                    DateTime currentDate = DateTime.ParseExact(key, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                    var t = UnitPrices.Keys;
 
-                    if (currentDate > nearThis)
+                var keys = UnitPrices.Keys.ToArray();
+
+                int min = 0;
+                int max = UnitPrices.Keys.Count;
+                int index = -1;
+                bool isRunning = true;
+
+                while(isRunning)
+                {
+                    index = max - ((max-min) / 2);
+                    DateTime currentDate = DateTime.ParseExact(keys[index], "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+                    if (nearThis.CompareTo(currentDate) < 0)
                     {
-                        result = UnitPrices[lastKey];
-                        break;
+                        min = index;
+                    }
+                    else
+                    {
+                        max = index;
                     }
 
-                    lastKey = key;
+                    if(max - min <= 1)
+                    {
+                        result = UnitPrices[keys[index]];
+                        isRunning = false;
+                    }
                 }
             }
             else

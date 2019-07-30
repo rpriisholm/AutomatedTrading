@@ -23,6 +23,7 @@ namespace Stocks.Service
         public static string PartialPath = @"C:\StockHistory\Active\";
         public static string UsdPath = @"C:\StockHistory\Real\USD.csv";
         public static decimal MinStockPrice = -1;
+        private static string[] UsdKeys = null;
         public static Dictionary<string, decimal> UnitPrices = new Dictionary<string, decimal>();
 
         /*
@@ -99,9 +100,10 @@ namespace Stocks.Service
             if (!UnitPrices.ContainsKey(date))
             {
                 DateTime nearThis = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                string lastKey = null;
-
-                var keys = UnitPrices.Keys.ToArray();
+                if(!(UsdKeys != null))
+                {
+                    UsdKeys = UnitPrices.Keys.ToArray();
+                }
 
                 int min = 0;
                 int max = UnitPrices.Keys.Count;
@@ -111,20 +113,20 @@ namespace Stocks.Service
                 while(isRunning)
                 {
                     index = max - ((max-min) / 2);
-                    DateTime currentDate = DateTime.ParseExact(keys[index], "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    DateTime currentDate = DateTime.ParseExact(UsdKeys[index], "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
                     if (nearThis.CompareTo(currentDate) < 0)
                     {
-                        min = index;
+                        max = index;
                     }
                     else
                     {
-                        max = index;
+                        min = index;
                     }
 
                     if(max - min <= 1)
                     {
-                        result = UnitPrices[keys[index]];
+                        result = UnitPrices[UsdKeys[index]];
                         isRunning = false;
                     }
                 }

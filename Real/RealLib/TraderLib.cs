@@ -1116,15 +1116,20 @@ namespace RealLib
 
             for (int i = 0; i < MaxJobs; i++)
             {
-                string insertPath = System.IO.Directory.GetParent(storagePath) + @"\Inserts" + i + ".sql";
-                FileInfo file = new FileInfo(insertPath);
+                string folderPath = System.IO.Directory.GetParent(storagePath).FullName;
+                string filename = "Inserts" + i + ".sql";
 
-                Process RunSQLScript = new Process();
-                RunSQLScript.StartInfo.FileName = "sqlcmd.exe";
+                Process process = new Process();
+                process.StartInfo.FileName = "sqlcmd.exe";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.WorkingDirectory = folderPath;
                 //Ex. -U user -P password -S 192.168.8.108 -d StockHistDB -i 
-                string args = mssqlArgs + '"' + insertPath + '"';
-                RunSQLScript.StartInfo.Arguments = "-U rpriisholm -P Kodenerny01! -S 192.168.8.108 -d StockHistDB -i c:\test.sql";
-                RunSQLScript.Start();
+                string args = mssqlArgs + filename;
+                process.StartInfo.Arguments = args;
+                process.Start();
+                process.WaitForExit();
+                Console.Out.Write(process.StandardOutput.ReadToEnd());
             }
         }
     }

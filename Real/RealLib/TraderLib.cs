@@ -32,7 +32,7 @@ namespace RealLib
     {
         //Fx. public static string connectionString = @"Data Source=192.168.x.xxx;Initial Catalog=StockHistDB; User ID=myUsername;Password=myPassword;Integrated Security=True;";
         //Fx. public static string connectionString = @"Data Source=localhost;Initial Catalog=StockHistDB;Integrated Security=True;";
-        public static string connectionString =  = Environment.GetEnvironmentVariable("MSSQL_Connection_String", EnvironmentVariableTarget.Machine);
+        public static string connectionString = Environment.GetEnvironmentVariable("MSSQL_Connection_String", EnvironmentVariableTarget.Machine);
         public static IConnection emulationConnection = new EmulationConnection(1000000, OrderLimitType.Value, 5000, 5, 100);
         public static Dictionary<string, StrategyGeneric> Strategies = new Dictionary<string, StrategyGeneric>();
         public static Dictionary<string, StrategyGeneric> ExpiringStrategies = new Dictionary<string, StrategyGeneric>();

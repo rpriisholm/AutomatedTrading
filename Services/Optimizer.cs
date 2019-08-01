@@ -528,139 +528,144 @@ namespace StockSolution.Services
         }
         */
 
+        private static readonly object _lock = new object();
+
         public static List<IndicatorPair> CreateIndicatorPairs(List<Candle> initialCandles, string enabledPairs)
         {
-            List<IndicatorPair> indicatorPairs = new List<IndicatorPair>();
-
-            //Singleton
-            if (_ShortIndicators.Count <= 0)
+            lock (_lock)
             {
-                StringReader strReader = new StringReader(enabledPairs);
+                List<IndicatorPair> indicatorPairs = new List<IndicatorPair>();
 
-                while (strReader.Peek() >= 0)
+                //Singleton
+                if (_ShortIndicators.Count <= 0)
                 {
-                    string enabledIndicatorPair = strReader.ReadLine();
+                    StringReader strReader = new StringReader(enabledPairs);
 
-                    if (enabledIndicatorPair.Length > 0)
+                    while (strReader.Peek() >= 0)
                     {
-                        string[] indicators = enabledIndicatorPair.Split('-');
+                        string enabledIndicatorPair = strReader.ReadLine();
 
-                        indicators[0] = indicators[0].TrimEnd();
-                        indicators[1] = indicators[1].TrimStart();
-
-                        LengthIndicator<decimal> shortIndicator = null;
-                        LengthIndicator<decimal> longIndicator = null;
-                        decimal loseLimit = 0;
-
-                        string[] indicator = indicators[0].Split(' ');
-
-                        switch (indicator[0])
+                        if (enabledIndicatorPair.Length > 0)
                         {
-                            case "SMA":
-                                shortIndicator = new SimpleMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "SMMA":
-                                shortIndicator = new SmoothedMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "EMA":
-                                shortIndicator = new ExponentialMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "Highest":
-                                shortIndicator = new Highest() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "HMA":
-                                shortIndicator = new HullMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "JMA":
-                                shortIndicator = new JurikMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "KAMA":
-                                shortIndicator = new KaufmannAdaptiveMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "LinearReg":
-                                shortIndicator = new LinearReg() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "Lowest":
-                                shortIndicator = new Lowest() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "MeanDeviation":
-                                shortIndicator = new MeanDeviation() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "Momentum":
-                                shortIndicator = new Momentum() { Length = int.Parse(indicator[1]) };
-                                break;
+                            string[] indicators = enabledIndicatorPair.Split('-');
+
+                            indicators[0] = indicators[0].TrimEnd();
+                            indicators[1] = indicators[1].TrimStart();
+
+                            LengthIndicator<decimal> shortIndicator = null;
+                            LengthIndicator<decimal> longIndicator = null;
+                            decimal loseLimit = 0;
+
+                            string[] indicator = indicators[0].Split(' ');
+
+                            switch (indicator[0])
+                            {
+                                case "SMA":
+                                    shortIndicator = new SimpleMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "SMMA":
+                                    shortIndicator = new SmoothedMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "EMA":
+                                    shortIndicator = new ExponentialMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "Highest":
+                                    shortIndicator = new Highest() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "HMA":
+                                    shortIndicator = new HullMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "JMA":
+                                    shortIndicator = new JurikMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "KAMA":
+                                    shortIndicator = new KaufmannAdaptiveMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "LinearReg":
+                                    shortIndicator = new LinearReg() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "Lowest":
+                                    shortIndicator = new Lowest() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "MeanDeviation":
+                                    shortIndicator = new MeanDeviation() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "Momentum":
+                                    shortIndicator = new Momentum() { Length = int.Parse(indicator[1]) };
+                                    break;
+                            }
+
+                            indicator = indicators[1].Split(' ');
+                            switch (indicator[0])
+                            {
+                                case "SMA":
+                                    longIndicator = new SimpleMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "SMMA":
+                                    longIndicator = new SmoothedMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "EMA":
+                                    longIndicator = new ExponentialMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "Highest":
+                                    longIndicator = new Highest() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "HMA":
+                                    longIndicator = new HullMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "JMA":
+                                    longIndicator = new JurikMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "KAMA":
+                                    longIndicator = new KaufmannAdaptiveMovingAverage() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "LinearReg":
+                                    longIndicator = new LinearReg() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "Lowest":
+                                    longIndicator = new Lowest() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "MeanDeviation":
+                                    longIndicator = new MeanDeviation() { Length = int.Parse(indicator[1]) };
+                                    break;
+                                case "Momentum":
+                                    longIndicator = new Momentum() { Length = int.Parse(indicator[1]) };
+                                    break;
+                            }
+
+                            loseLimit = -(decimal.Parse(indicators[2], new CultureInfo("en-US")));
+
+                            if (!(shortIndicator != null))
+                            {
+                                throw new ArgumentNullException();
+                            }
+
+                            if (!(longIndicator != null))
+                            {
+                                throw new ArgumentNullException();
+                            }
+
+                            /*
+                            if (loseLimit == 0)
+                            {
+                                throw new ArgumentNullException();
+                            }*/
+
+                            _LoseLimits.Add(loseLimit);
+                            _ShortIndicators.Add(shortIndicator);
+                            _LongIndicators.Add(longIndicator);
                         }
-
-                        indicator = indicators[1].Split(' ');
-                        switch (indicator[0])
-                        {
-                            case "SMA":
-                                longIndicator = new SimpleMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "SMMA":
-                                longIndicator = new SmoothedMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "EMA":
-                                longIndicator = new ExponentialMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "Highest":
-                                longIndicator = new Highest() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "HMA":
-                                longIndicator = new HullMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "JMA":
-                                longIndicator = new JurikMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "KAMA":
-                                longIndicator = new KaufmannAdaptiveMovingAverage() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "LinearReg":
-                                longIndicator = new LinearReg() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "Lowest":
-                                longIndicator = new Lowest() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "MeanDeviation":
-                                longIndicator = new MeanDeviation() { Length = int.Parse(indicator[1]) };
-                                break;
-                            case "Momentum":
-                                longIndicator = new Momentum() { Length = int.Parse(indicator[1]) };
-                                break;
-                        }
-
-                        loseLimit = -(decimal.Parse(indicators[2], new CultureInfo("en-US")));
-
-                        if (!(shortIndicator != null))
-                        {
-                            throw new ArgumentNullException();
-                        }
-
-                        if (!(longIndicator != null))
-                        {
-                            throw new ArgumentNullException();
-                        }
-
-                        /*
-                        if (loseLimit == 0)
-                        {
-                            throw new ArgumentNullException();
-                        }*/
-
-                        _LoseLimits.Add(loseLimit);
-                        _ShortIndicators.Add(shortIndicator);
-                        _LongIndicators.Add(longIndicator);
                     }
                 }
-            }
 
-            bool isLocked = false;
-            // Clone Empty Indicators And Create Pairs
-            //Parallel.For(0, _ShortIndicators.Count, i => 
-            for (int i = 0; i < _ShortIndicators.Count; i++)
-            {
-                /*try
-                {*/
+
+                bool isLocked = false;
+                // Clone Empty Indicators And Create Pairs
+                //Parallel.For(0, _ShortIndicators.Count, i => 
+                for (int i = 0; i < _ShortIndicators.Count; i++)
+                {
+                    /*try
+                    {*/
                     LengthIndicator<decimal> shortIndicatorClone = _ShortIndicators[i].Clone() as LengthIndicator<decimal>;
                     LengthIndicator<decimal> longIndicatorClone = _LongIndicators[i].Clone() as LengthIndicator<decimal>;
                     Entity.Models.LengthIndicator shortIndicatorAdapter = new LengthIndicator(shortIndicatorClone);
@@ -681,33 +686,34 @@ namespace StockSolution.Services
                     }
 
 
-                    
-                    while(isLocked){ }
+
+                    while (isLocked) { }
                     isLocked = true;
                     decimal loseLimit = _LoseLimits[i];
                     indicatorPairs.Add(new IndicatorPair(shortIndicatorAdapter, longIndicatorAdapter, loseLimit));
 
-                    if(indicatorPairs[indicatorPairs.Count-1] != null)
+                    if (indicatorPairs[indicatorPairs.Count - 1] != null)
                     {
                         isLocked = false;
                     }
                     else
                     {
-                        indicatorPairs.RemoveAt(indicatorPairs.Count-1);
+                        indicatorPairs.RemoveAt(indicatorPairs.Count - 1);
                         isLocked = false;
                     }
 
-                /*}
-                catch(Exception e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    Debug.WriteLine(e.Data.ToString());
-                    throw e;
-                }*/
-            }
-            //);
+                    /*}
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        Debug.WriteLine(e.Data.ToString());
+                        throw e;
+                    }*/
+                }
+                //);
 
-            return indicatorPairs;
+                return indicatorPairs;
+            }
         }
 
 

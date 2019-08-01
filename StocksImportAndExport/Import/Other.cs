@@ -98,11 +98,12 @@ namespace Stocks.Import
                 for (int i = 0; i < keyCount; i++)
                 {
                     this.HeaderAndRows[Headers[0].Trim(extraTrim)] = new List<string>();
+                    this.Headers.Add(Headers[0].Trim(extraTrim));
 
                     for(int j = 0; j < this[Headers[0]].Count; j++)
                     {
                         this.HeaderAndRows[this.Headers[0].Trim(extraTrim)].Add(this.HeaderAndRows[this.Headers[0]][j].Trim(extraTrim));
-
+                        
                     }
                     this.HeaderAndRows.Remove(this.Headers[0]);
                     this.Headers.RemoveAt(0);

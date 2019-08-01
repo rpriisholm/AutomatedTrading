@@ -846,8 +846,8 @@ namespace RealLib
                     if (index < dictSecurityIDs[path].Count)
                     {
                         Task t = Task.Run(() => SimulateStrategy(dictSecurityIDs[path][index], path, tickPeriod, nrOfTestValues, iterations));
-                        i += 1;
                         tasks[i] = t;
+                        i += 1;
                     }
                 }
 

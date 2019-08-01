@@ -51,51 +51,51 @@ namespace Stocks.Service
 
 
 
-
+        private static readonly object _Lock = new object();
         //Day-Month-Year - dd-MM-yyyy  
         public static decimal GetUsdUnitPrice(string date)
         {
-
             decimal result = 0.0m;
             string symbol = "USD";
 
-            if (UnitPrices.Count == 0)
+            lock (_Lock)
             {
-                if (File.Exists(UsdPath))
+                if (UnitPrices.Count == 0)
                 {
-                    StreamReader stream_Append = new StreamReader(UsdPath);
-                    CachedCsvReader csvReader = new CachedCsvReader(stream_Append);
-
-                    while (csvReader.ReadNextRecord())
+                    if (File.Exists(UsdPath))
                     {
-                        UnitPrices[csvReader[0]] = decimal.Parse(csvReader[1], new System.Globalization.CultureInfo("en-US"));
+                        StreamReader stream_Append = new StreamReader(UsdPath);
+                        CachedCsvReader csvReader = new CachedCsvReader(stream_Append);
+
+                        while (csvReader.ReadNextRecord())
+                        {
+                            UnitPrices[csvReader[0]] = decimal.Parse(csvReader[1], new System.Globalization.CultureInfo("en-US"));
+                        }
+                        stream_Append.Close();
                     }
-                    stream_Append.Close();
-                }
 
 
-                CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"', 5);
-                for (int i = 0; i < csv["Date"].Count; i++)
-                {
-                    if (!UnitPrices.ContainsKey(csv["Date"][i]))
+                    CsvContainer csv = DownloadCSV("http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRateCSV?lang=en&iso=" + $"{symbol}", ';', '"', 5);
+                    for (int i = 0; i < csv["Date"].Count; i++)
                     {
-                        UnitPrices[csv["Date"][i]] = decimal.Parse(csv["US dollars"][i], new System.Globalization.CultureInfo("en-US"));
+                        if (!UnitPrices.ContainsKey(csv["Date"][i]))
+                        {
+                            UnitPrices[csv["Date"][i]] = decimal.Parse(csv["US dollars"][i], new System.Globalization.CultureInfo("en-US"));
+                        }
                     }
-                }
 
 
-                StreamWriter streamWriter = new StreamWriter(UsdPath);
-                char cellSeperator = ',';
-                streamWriter.WriteLine("Date" + cellSeperator + "US dollars");
-                for (int i = 0; i < csv["Date"].Count; i++)
-                {
-                    streamWriter.WriteLine(csv["Date"][i] + cellSeperator + csv["US dollars"][i]);
-                    i += i + 1;
+                    StreamWriter streamWriter = new StreamWriter(UsdPath);
+                    char cellSeperator = ',';
+                    streamWriter.WriteLine("Date" + cellSeperator + "US dollars");
+                    for (int i = 0; i < csv["Date"].Count; i++)
+                    {
+                        streamWriter.WriteLine(csv["Date"][i] + cellSeperator + csv["US dollars"][i]);
+                        streamWriter.Flush();
+                    }
+                    streamWriter.Close();
                 }
-                streamWriter.Flush();
-                streamWriter.Close();
             }
-
 
             if (!UnitPrices.ContainsKey(date))
             {

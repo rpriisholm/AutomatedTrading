@@ -38,8 +38,19 @@ namespace RealLib
                     if (args[0].ToLower().Equals("AddSimulationToDatabase".ToLower()))
                     {
                         //COLLECT ALL .csv files before start
-                    //Se Strings
-                        ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+                        //Se Strings
+                        if (args.Length > 1 )
+                        {
+                            if (!(args[1].ToLower().Equals("NoDownload".ToLower())))
+                            {
+                                ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+                            }
+                        }
+                        else
+                        {
+                            ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+                        }
+
                         TraderLib.SimulateStrategies(TickPeriod.Daily, "SQL_Inserts");
                     }
                 }

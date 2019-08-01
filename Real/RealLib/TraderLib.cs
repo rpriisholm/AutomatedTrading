@@ -38,7 +38,7 @@ namespace RealLib
         public static Dictionary<string, StrategyGeneric> Strategies = new Dictionary<string, StrategyGeneric>();
         public static Dictionary<string, StrategyGeneric> ExpiringStrategies = new Dictionary<string, StrategyGeneric>();
         public static bool RaceCondition = false;
-
+        private static readonly int MaxJobs = 16;
 
         private static StreamWriter _TradingLogWriter = null;
         private static StreamWriter TradingLogWriter
@@ -712,7 +712,7 @@ namespace RealLib
             return null;
         }
 
-        public static void SimulateStrategies(TickPeriod tickPeriod, string subPath)
+        public static void SimulateStrategies(TickPeriod tickPeriod)
         {
             string storagePath = ImportAndExport.GetFullPath(tickPeriod);
             Dictionary<string, StrategyGeneric> newStrategies = new Dictionary<string, StrategyGeneric>();
@@ -815,8 +815,7 @@ namespace RealLib
             // Create or Append File
             Dictionary<string, List<string>> dictSecurityIDs = new Dictionary<string, List<string>>();
 
-            int maxJobs = 16;
-            for(int i = 0; i < maxJobs; i++)
+            for(int i = 0; i < MaxJobs; i++)
             {
                 string insertPath = System.IO.Directory.GetParent(storagePath) + @"\Inserts" + i + ".sql";
                 dictSecurityIDs[insertPath] = new List<string>();
@@ -835,7 +834,7 @@ namespace RealLib
             {
                 dictSecurityIDs[dictKeys[currKeyIndex]].Add(securityID);
 
-                if (currKeyIndex + 1 >= maxJobs)
+                if (currKeyIndex + 1 >= MaxJobs)
                 {
                     currKeyIndex = 0;
                 }
@@ -848,7 +847,7 @@ namespace RealLib
             //Run Simulation
             for(int index = 0; index < dictSecurityIDs[dictSecurityIDs.Keys.First()].Count; index++)
             {
-                Task[] tasks = new Task[maxJobs];
+                Task[] tasks = new Task[MaxJobs];
                 int i = 0;
                 foreach (string path in dictSecurityIDs.Keys)
                 {
@@ -1107,6 +1106,26 @@ namespace RealLib
             Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             FileInfo fi1 = new FileInfo(storagePath + '\\' + securityID + ".csv");
             fi1.Delete();
+        }
+
+        public static void SqlRunInserts(TickPeriod tickPeriod)
+        {
+            string storagePath = ImportAndExport.GetFullPath(tickPeriod);
+            IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
+
+            for (int i = 0; i < MaxJobs; i++)
+            {
+                string insertPath = System.IO.Directory.GetParent(storagePath) + @"\Inserts" + i + ".sql";
+                FileInfo file = new FileInfo(insertPath);
+                
+                SqlConnection connection = new SqlConnection(connectionString);
+                string script = file.OpenText().ReadToEnd();
+
+                connection.Open();
+                SqlCommand commandInOrder = new SqlCommand(script, connection);
+                commandInOrder.ExecuteNonQuery();
+                connection.Close();
+            }
         }
     }
 }

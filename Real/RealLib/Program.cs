@@ -51,7 +51,13 @@ namespace RealLib
                             ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
                         }
 
-                        TraderLib.SimulateStrategies(TickPeriod.Daily, "SQL_Inserts");
+                        TraderLib.SimulateStrategies(TickPeriod.Daily);
+                        TraderLib.SqlRunInserts(TickPeriod.Daily);
+                    }
+
+                    if(args[0].ToLower().Equals("InsertSQL".ToLower()))
+                    {
+                        TraderLib.SqlRunInserts(TickPeriod.Daily);
                     }
                 }
                 else

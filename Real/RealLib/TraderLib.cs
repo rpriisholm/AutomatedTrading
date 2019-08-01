@@ -828,11 +828,20 @@ namespace RealLib
                 catch { }
             }
 
+            string[] dictKeys = dictSecurityIDs.Keys.ToArray();
+
+            int currKeyIndex = 0;
             foreach (string securityID in securityIDs)
             {
-                foreach (string key in dictSecurityIDs.Keys)
+                dictSecurityIDs[dictKeys[currKeyIndex]].Add(securityID);
+
+                if (maxJobs < currKeyIndex + 1)
                 {
-                    dictSecurityIDs[key].Add(securityID);
+                    currKeyIndex = 0;
+                }
+                else
+                {
+                    currKeyIndex += 1;
                 }
             }
 

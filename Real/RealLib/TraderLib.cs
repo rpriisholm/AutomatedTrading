@@ -835,7 +835,7 @@ namespace RealLib
             {
                 dictSecurityIDs[dictKeys[currKeyIndex]].Add(securityID);
 
-                if (maxJobs < currKeyIndex + 1)
+                if (currKeyIndex + 1 >= maxJobs)
                 {
                     currKeyIndex = 0;
                 }

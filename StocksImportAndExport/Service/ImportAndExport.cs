@@ -419,6 +419,8 @@ namespace Stocks.Service
                         }
                         catch (System.ArgumentException e)
                         {
+                            Console.WriteLine("Failing symbol: " + symbol);
+                            Console.WriteLine("Path: " + path);
                             Debug.WriteLine(e.ToString());
                             Debug.WriteLine(e.Data.ToString());
                             hasArgumentException = true;

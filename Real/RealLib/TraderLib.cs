@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using TickEnum;
 
 namespace RealLib
@@ -52,13 +53,13 @@ namespace RealLib
                         Directory.CreateDirectory(partialPath);
                         _TradingLogWriter = new StreamWriter($"{partialPath}\\TradingLog", true);
                     }
-                   /* catch (Exception e)
-                    {
-                        Debug.WriteLine(e.ToString());
-                        Debug.WriteLine(e.Message);
-                        Debug.WriteLine(e.Data.ToString());
-                    }
-                    */
+                    /* catch (Exception e)
+                     {
+                         Debug.WriteLine(e.ToString());
+                         Debug.WriteLine(e.Message);
+                         Debug.WriteLine(e.Data.ToString());
+                     }
+                     */
                 }
 
                 return _TradingLogWriter;
@@ -134,9 +135,9 @@ namespace RealLib
             List<string> dirtyResultList = new List<string>();
             List<string> temp = new List<string>();
 
-            foreach(string s in noDuplicates)
+            foreach (string s in noDuplicates)
             {
-                if(s.Contains(" - Duplicate"))
+                if (s.Contains(" - Duplicate"))
                 {
                     temp.Add(s);
                 }
@@ -146,7 +147,7 @@ namespace RealLib
                 }
             }
 
-            foreach(string s in temp)
+            foreach (string s in temp)
             {
                 dirtyResultList.Add(s);
             }
@@ -437,7 +438,7 @@ namespace RealLib
                 Sides currentDirection = strategy.GetDirection();
 
                 decimal pctProfit = strategy.ConnectionSecurityIDProfit() / strategy.Connection.CalcPayment();
-                string pctProfitString = pctProfit.ToString().Length >= 6 ? pctProfit.ToString().Substring(0,6) : pctProfit.ToString();
+                string pctProfitString = pctProfit.ToString().Length >= 6 ? pctProfit.ToString().Substring(0, 6) : pctProfit.ToString();
 
                 //No Change
                 if (!previousDisabled && !currentDisabled && previousDirection == currentDirection && strategy.IsStrategyExpiring == false)
@@ -806,28 +807,112 @@ namespace RealLib
             SimulateStrategies(tickPeriod, nrOfTestValues, maxNrIterations);
         }
 
-        public static void SimulateStrategies(TickPeriod tickPeriod,  int nrOfTestValues, int iterations)
+        public static void SimulateStrategies(TickPeriod tickPeriod, int nrOfTestValues, int iterations)
         {
             string storagePath = ImportAndExport.GetFullPath(tickPeriod);
             IList<string> securityIDs = LoaderService.GetSecurityIDs(storagePath);
 
-            //First Round
-            bool isFirst = true;
-            System.IO.Directory.GetParent(storagePath);
             // Create or Append File
-            StreamWriter stream = new StreamWriter(System.IO.Directory.GetParent(storagePath) + @"\Inserts.txt", true);
+            Dictionary<string, List<string>> dictSecurityIDs = new Dictionary<string, List<string>>();
 
+            int maxJobs = 16;
+            for(int i = 0; i < maxJobs; i++)
+            {
+                string insertPath = System.IO.Directory.GetParent(storagePath) + @"\Inserts" + i + ".sql";
+                dictSecurityIDs[insertPath] = new List<string>();
 
-            //Run Simulation
+                try
+                {
+                    System.IO.File.Delete(insertPath);
+                }
+                catch { }
+            }
+
             foreach (string securityID in securityIDs)
             {
+                foreach (string key in dictSecurityIDs.Keys)
+                {
+                    dictSecurityIDs[key].Add(securityID);
+                }
+            }
+
+            //Run Simulation
+            for(int index = 0; index < dictSecurityIDs[dictSecurityIDs.Keys.First()].Count; index++)
+            {
+                Task[] tasks = new Task[maxJobs];
+                int i = 0;
+                foreach (string path in dictSecurityIDs.Keys)
+                {
+                    if (index < dictSecurityIDs[path].Count)
+                    {
+                        Task t = Task.Run(() => SimulateStrategy(dictSecurityIDs[path][index], path, tickPeriod, nrOfTestValues, iterations));
+                        i += 1;
+                        tasks[i] = t;
+                    }
+                }
+
+                Task.WaitAll(tasks);
+            }
+            #endregion
+
+            /*
+            catch (Exception e)
+            {
+                while (RaceCondition) { Thread.Sleep(5); }
+                RaceCondition = true;
+                try
+                {
+                    ErrorWriter.WriteLineAsync(e.ToString()).Wait();
+                    ErrorWriter.WriteLineAsync(e.Message).Wait();
+                    ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
+                    ErrorWriter.FlushAsync().Wait();
+                    Debug.WriteLine(e.ToString());
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.Data.ToString()); ;
+                }
+                catch (Exception ei)
+                {
+                    Debug.WriteLine(ei.ToString());
+                    Debug.WriteLine(ei.Message);
+                    Debug.WriteLine(ei.Data.ToString());
+                }
+                finally { RaceCondition = false; }
+            }
+
+            finally { }
+            */
+
+            Console.WriteLine("Completed. Press Enter...");
+            Console.ReadLine();
+        }
+
+        public static void SimulateStrategy(string securityID, string streamPath, TickPeriod tickPeriod, int nrOfTestValues, int iterations)
+        {
+
+            string storagePath = ImportAndExport.GetFullPath(tickPeriod);
+            StreamWriter stream = new StreamWriter(streamPath, true);
+
+            try
+            {
+                
+
                 //string insert = "";
                 SecurityInfo securityInfo = null;
                 bool isCandlesValied = false;
                 try
                 {
-                    securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
-                    isCandlesValied = true;
+                    switch (tickPeriod)
+                    {
+                        case TickPeriod.Daily:
+                            if (tickPeriod == TickPeriod.Daily)
+                            {
+                                securityInfo = LoaderService.ConvertCsvToCandles(TimeSpan.FromDays(1), storagePath, securityID);
+                                isCandlesValied = true;
+                            }
+                            break;
+                        default:
+                            throw new InvalidDataException();
+                    }
                 }
                 catch { }
 
@@ -976,7 +1061,7 @@ namespace RealLib
                             SqlCommand command = new SqlCommand(insert, connection);
                             command.ExecuteNonQuery();
                             connection.Close();
-                            
+
 
                             stream.WriteLine(insert);
                             stream.WriteLine();
@@ -998,53 +1083,21 @@ namespace RealLib
                         //stream.WriteLine();
                         stream.Flush();
                     }
-
-                    isFirst = false;
-
                 }
-                /*
-                 stream.WriteLine(insert);
-                 stream.WriteLine();
-                 stream.Flush();
-                 * */
-
-                Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                FileInfo fi1 = new FileInfo(storagePath + '\\' + securityID + ".csv");
-                fi1.Delete();
             }
-            #endregion
-
-            try
+            finally
             {
-
+                stream.Close();
             }
-            catch (Exception e)
-            {
-                while (RaceCondition) { Thread.Sleep(5); }
-                RaceCondition = true;
-                try
-                {
-                    ErrorWriter.WriteLineAsync(e.ToString()).Wait();
-                    ErrorWriter.WriteLineAsync(e.Message).Wait();
-                    ErrorWriter.WriteLineAsync(e.Data.ToString()).Wait();
-                    ErrorWriter.FlushAsync().Wait();
-                    Debug.WriteLine(e.ToString());
-                    Debug.WriteLine(e.Message);
-                    Debug.WriteLine(e.Data.ToString()); ;
-                }
-                catch (Exception ei)
-                {
-                    Debug.WriteLine(ei.ToString());
-                    Debug.WriteLine(ei.Message);
-                    Debug.WriteLine(ei.Data.ToString());
-                }
-                finally { RaceCondition = false; }
-            }
+            /*
+             stream.WriteLine(insert);
+             stream.WriteLine();
+             stream.Flush();
+             * */
 
-            finally { }
-
-            Console.WriteLine("Completed. Press Enter...");
-            Console.ReadLine();
+            Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            FileInfo fi1 = new FileInfo(storagePath + '\\' + securityID + ".csv");
+            fi1.Delete();
         }
     }
 }

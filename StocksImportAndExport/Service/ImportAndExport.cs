@@ -428,6 +428,13 @@ namespace Stocks.Service
                             Console.WriteLine("Argument Invalied !!! - Press Enter To Continue");
                             Console.ReadLine();
                         }
+                        catch(System.IO.IOException e)
+                        {
+                            Console.WriteLine("Failing symbol: " + symbol);
+                            Console.WriteLine("Path: " + path);
+                            Console.WriteLine(e.ToString());
+                            hasArgumentException = true;
+                        }
 
                         if (!hasArgumentException)
                         {

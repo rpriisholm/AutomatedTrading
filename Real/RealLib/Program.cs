@@ -39,7 +39,7 @@ namespace RealLib
                     {
                         //COLLECT ALL .csv files before start
                     //Se Strings
-                        //ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
+                        ImportAndExport.CollectData(TickPeriod.Daily, ImportAndExport.GetAllSymbols(), false, true);
                         TraderLib.SimulateStrategies(TickPeriod.Daily, "SQL_Inserts");
                     }
                 }

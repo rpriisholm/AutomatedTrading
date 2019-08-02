@@ -816,7 +816,7 @@ namespace RealLib
             // Create or Append File
             Dictionary<string, List<string>> dictSecurityIDs = new Dictionary<string, List<string>>();
 
-            for(int i = 0; i < MaxJobs; i++)
+            for (int i = 0; i < MaxJobs; i++)
             {
                 string insertPath = System.IO.Directory.GetParent(storagePath) + @"\Inserts" + i + ".sql";
                 dictSecurityIDs[insertPath] = new List<string>();
@@ -846,7 +846,7 @@ namespace RealLib
             }
 
             //Run Simulation
-            for(int index = 0; index < dictSecurityIDs[dictSecurityIDs.Keys.First()].Count; index++)
+            for (int index = 0; index < dictSecurityIDs[dictSecurityIDs.Keys.First()].Count; index++)
             {
                 Task[] tasks = new Task[MaxJobs];
                 int i = 0;
@@ -903,7 +903,7 @@ namespace RealLib
 
             try
             {
-                
+
 
                 //string insert = "";
                 SecurityInfo securityInfo = null;
@@ -1116,9 +1116,9 @@ namespace RealLib
 
             for (int i = 0; i < MaxJobs; i++)
             {
-                string folderPath = System.IO.Directory.GetParent(storagePath).FullName;
-                string filename = "Inserts" + i + ".sql";
+                string insertPath = System.IO.Directory.GetParent(storagePath).FullName + '\\' + "Inserts" + i + ".sql";
 
+                /*
                 Process process = new Process();
                 process.StartInfo.FileName = "sqlcmd.exe";
                 process.StartInfo.UseShellExecute = false;
@@ -1130,6 +1130,51 @@ namespace RealLib
                 process.Start();
                 process.WaitForExit();
                 Console.Out.Write(process.StandardOutput.ReadToEnd());
+                */
+
+                string sqlInsertScript = "";
+                string line = "";
+
+                StreamReader stream = new StreamReader(insertPath);
+
+                try
+                {
+                    if ((line = stream.ReadLine()) != null)
+                    {
+                        sqlInsertScript += line + " ";
+                    }
+
+                    while ((line = stream.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("INSERT INTO"))
+                        {
+                            SqlConnection connection2 = new SqlConnection(connectionString);
+                            connection2.Open();
+                            SqlCommand commandInOrder2 = new SqlCommand(sqlInsertScript, connection2);
+                            commandInOrder2.ExecuteNonQuery();
+                            connection2.Close();
+
+                            sqlInsertScript = "";
+                            sqlInsertScript += line + " ";
+                        }
+                        else
+                        {
+                            sqlInsertScript += line + " ";
+                        }
+                    }
+
+                    SqlConnection connection = new SqlConnection(connectionString);
+                    connection.Open();
+                    SqlCommand commandInOrder = new SqlCommand(sqlInsertScript, connection);
+                    commandInOrder.ExecuteNonQuery();
+                    connection.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+
+                stream.Close();
             }
         }
     }

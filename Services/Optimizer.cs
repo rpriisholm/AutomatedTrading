@@ -724,7 +724,7 @@ namespace StockSolution.Services
          */
         //public static readonly string _EnabledPairs = ValueCollections.PermanentValues.EnabledPairs;
 
-        public static readonly string _TestPairs = ValueCollections.PermanentValues.TestPairs;
+        public static readonly string _TestPairs = Permanent.PermanentValues.TestPairs;
 
         public static readonly string _DisabledPairs = @"";
 

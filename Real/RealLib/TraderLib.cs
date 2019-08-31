@@ -202,7 +202,7 @@ namespace RealLib
             switch (tradingEnum)
             {
                 case TradingEnum.NewStrategies:
-                    NewStrategies();
+                    //NewStrategies();
                     break;
                 case TradingEnum.ContinueTrading:
                     ContinueTrading();

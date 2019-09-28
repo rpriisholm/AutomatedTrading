@@ -612,6 +612,10 @@
       <Project>{06B46620-C1F8-42D7-B3A7-A82FCFB6926E}</Project>
       <Name>Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Permanent\Permanent\Permanent.csproj">
+      <Project>{f32eefaf-8b24-407f-b709-98558f557d3b}</Project>
+      <Name>Permanent</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SidesEnum\SidesEnum.csproj">
       <Project>{2F3C18A2-6629-485B-B92C-03A2D137FC48}</Project>
       <Name>SidesEnum</Name>
@@ -619,10 +623,6 @@
     <ProjectReference Include="..\TickEnum\TickEnum\TickEnum.csproj">
       <Project>{64c1cffd-b40d-4f65-ba6e-5f74bd3274b2}</Project>
       <Name>TickEnum</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ValueCollections\ValueCollections.csproj">
-      <Project>{2e8cd0a4-b397-494f-8f1e-b6c6d31d7219}</Project>
-      <Name>ValueCollections</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

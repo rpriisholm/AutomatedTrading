@@ -166,7 +166,7 @@ namespace RealLib
                         List<Candle> initialCandles = new List<Candle>();
 
                         //Load Indicator
-                        indicatorPair = optimizer.FindIndicator(ValueCollections.PermanentValues.TestPairs, csvReader["Short Indicator"], csvReader["Long Indicator"], indicatorPair.LoseLimit, initialCandles);
+                        indicatorPair = optimizer.FindIndicator(Permanent.PermanentValues.TestPairs, csvReader["Short Indicator"], csvReader["Long Indicator"], indicatorPair.LoseLimit, initialCandles);
                         /* Initial Candles */                
                         foreach (Candle candle in securityInfo.Candles)
                         {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -20,7 +20,6 @@
     <ProjectReference Include="..\StocksImportAndExport\StocksImportAndExport.csproj" />
     <ProjectReference Include="..\SymbolExtractorEtoro_Test\SymbolExtractorEtoro_Test.csproj" />
     <ProjectReference Include="..\TickEnum\TickEnum\TickEnum.csproj" />
-    <ProjectReference Include="..\ValueCollections\ValueCollections.csproj" />
   </ItemGroup>
 
 </Project>

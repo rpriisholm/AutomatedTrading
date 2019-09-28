@@ -85,6 +85,7 @@ namespace StockSolution.ModelEntities.Models
 
                     // AvgIndicatorMin: 21 - MinResult: 31.00 - MinOrders: 21 - MaxOrders: 21 - LoseLimitMin: -0.36
                     //AvgIndicatorMin 47%
+                    /*
                     int recursiveTests = 2;
                     int nrOfTestValues = 90;
                     int minOrders = 21;
@@ -100,12 +101,14 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator21
+                        
+                        Permanent.PermanentValues.EnabledPairs_AvgIndicator21
                         );
 
                     list.Add(optimizerOptions);
-
+                    */
                     // AvgIndicatorMin: 19 - MinResult: 44.00 - MinOrders: 17 - MaxOrders: 17 - LoseLimitMin: -0.16
+                    /*
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 17;
@@ -121,12 +124,13 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator19
+                        Permanent.PermanentValues.EnabledPairs_AvgIndicator19
                         );
 
                     list.Add(optimizerOptions);
-
+                    */
                     // AvgIndicatorMin: 21 - MinResult: 29.00 - MinOrders: 20 - MaxOrders: 20 - LoseLimitMin: -0.29
+                    /*
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 20;
@@ -142,12 +146,13 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator21
+                        Values.PermanentValues.EnabledPairs_AvgIndicator21
                         );
 
                     list.Add(optimizerOptions);
-
+                    */
                     // AvgIndicatorMin: 17 - MinResult: 83.00 - MinOrders: 5 - MaxOrders: 5 - LoseLimitMin: -0.20
+                    /*
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 5;
@@ -163,12 +168,13 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator17
+                        Values.PermanentValues.EnabledPairs_AvgIndicator17
                         );
 
                     list.Add(optimizerOptions);
-
+*/
                     // AvgIndicatorMin: 19 - MinResult: 35.00 - MinOrders: 18 - MaxOrders: 18 - LoseLimitMin: -0.13
+                    /*
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 18;
@@ -184,12 +190,13 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator19
+                        Values.PermanentValues.EnabledPairs_AvgIndicator19
                         );
 
                     list.Add(optimizerOptions);
-
+                    */
                     // AvgIndicatorMin: 21 - MinResult: 30.00 - MinOrders: 23 - MaxOrders: 23 - LoseLimitMin: -0.14
+                    /*
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 23;
@@ -205,12 +212,13 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator21
+                        Values.PermanentValues.EnabledPairs_AvgIndicator21
                         );
 
                     list.Add(optimizerOptions);
-
+                    */
                     // AvgIndicatorMin: 19 - MinResult: 25.00 - MinOrders: 22 - MaxOrders: 22 - LoseLimitMin: -0.11
+                    /*
                     recursiveTests = 2;
                     nrOfTestValues = 90;
                     minOrders = 22;
@@ -226,11 +234,11 @@ namespace StockSolution.ModelEntities.Models
                         maxOrders,
                         minProfitPct,
                         loseLimitMin,
-                        ValueCollections.PermanentValues.EnabledPairs_AvgIndicator19
+                        Values.PermanentValues.EnabledPairs_AvgIndicator19
                         );
 
                     list.Add(optimizerOptions);
-
+*/
                     break;
             }
             

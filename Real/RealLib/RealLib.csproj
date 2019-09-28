@@ -855,6 +855,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SqlQueries.cs" />
     <Compile Include="TraderLib.cs" />
     <Compile Include="TradingEnum.cs" />
   </ItemGroup>

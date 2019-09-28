@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 //using Stocks.Export;
 using Stocks.Import;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -192,12 +193,13 @@ namespace Stocks.Service
                 }
             }
 
-            List<string> failedDownloads = new List<string>();
+            //List<string> failedDownloads = new List<string>();
+            ConcurrentBag<string> failedDownloads = new ConcurrentBag<string>();
 
 
             // TODO //
-            foreach (var symbol in symbols)
-            //Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
+            //foreach (var symbol in symbols)
+            Parallel.ForEach(symbols, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, symbol =>
             {
                 try
                 {
@@ -208,7 +210,7 @@ namespace Stocks.Service
                    failedDownloads.Add(symbol);
                 }
             }
-            //);
+            );
             Thread.Sleep(15000);
             for (int i = 0; i < 10; i++)
             {

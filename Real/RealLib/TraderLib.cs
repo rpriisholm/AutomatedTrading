@@ -22,7 +22,7 @@ namespace RealLib
     strategy.Start();
     //Candle Simulation Still Fake
     for (int i = 0; i < realCandles.Count; i++)
-    {
+    {SS
         strategy.ProcessCandle(realCandles[i]);
     }
     strategy.Stop();
@@ -39,7 +39,7 @@ namespace RealLib
         public static Dictionary<string, StrategyGeneric> Strategies = new Dictionary<string, StrategyGeneric>();
         public static Dictionary<string, StrategyGeneric> ExpiringStrategies = new Dictionary<string, StrategyGeneric>();
         public static bool RaceCondition = false;
-        private static readonly int MaxJobs = 16;
+        private static readonly int MaxJobs = 32;
 
         private static StreamWriter _TradingLogWriter = null;
         private static StreamWriter TradingLogWriter
@@ -202,7 +202,7 @@ namespace RealLib
             switch (tradingEnum)
             {
                 case TradingEnum.NewStrategies:
-                    //NewStrategies();
+                    NewStrategies();
                     break;
                 case TradingEnum.ContinueTrading:
                     ContinueTrading();
@@ -848,8 +848,10 @@ namespace RealLib
             //Run Simulation
             for (int index = 0; index < dictSecurityIDs[dictSecurityIDs.Keys.First()].Count; index++)
             {
+
                 Task[] tasks = new Task[MaxJobs];
                 int i = 0;
+                
                 foreach (string path in dictSecurityIDs.Keys)
                 {
                     if (index < dictSecurityIDs[path].Count)
@@ -860,8 +862,9 @@ namespace RealLib
                     }
                 }
 
-                Task.WaitAll(tasks);
+                Task.WaitAll(tasks);  
             }
+        
             #endregion
 
             /*
@@ -903,8 +906,6 @@ namespace RealLib
 
             try
             {
-
-
                 //string insert = "";
                 SecurityInfo securityInfo = null;
                 bool isCandlesValied = false;
@@ -937,8 +938,8 @@ namespace RealLib
                         {
                             initialCandles.Add(securityInfo.Candles[initialStart + j]);
                         }
-
-                        List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(initialCandles, Optimizer._TestPairs);
+                        Optimizer.CreateIndicatorPairsInstance = new Optimizer.CreateIndicatorPairsClass(Optimizer._TestPairs);
+                        List<IndicatorPair> indicatorPairs = Optimizer.CreateIndicatorPairs(initialCandles);
 
                         List<Candle> candles = new List<Candle>();
                         int startIndex = securityInfo.Candles.Count - (nrOfTestValues * i);
@@ -1107,6 +1108,11 @@ namespace RealLib
             Console.WriteLine(securityID + " - " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             FileInfo fi1 = new FileInfo(storagePath + '\\' + securityID + ".csv");
             fi1.Delete();
+        }
+
+        public static void SQLDropAndRebuildTables()
+        {
+
         }
 
         public static void SqlRunInserts(TickPeriod tickPeriod)

@@ -8,6 +8,21 @@ namespace RealLib
 {
     public static class SqlQueries
     {
+        public class SecuritySetting
+        {
+            public string ShortIndicator;
+            public string LongIndicator;
+            public int MinAndMaxOrders;
+            public decimal LoseLimit;
+
+
+            public override string ToString()
+            {
+                return "";
+            }
+        }
+
+        /* Works */
         public static string BeforeInserts = @"
 ALTER DATABASE [StockHistDB] SET QUERY_STORE = ON;  
 GO
@@ -105,7 +120,8 @@ GO
 DROP TABLE IF EXISTS [StockHistDB].[dbo].[AvgIndicatorResults] 
 
 ";
-
+        
+        /* Works */
         public static string AfterInserts = @"
 SELECT 
 	[ShortIndicator], 
@@ -153,7 +169,8 @@ CREATE TABLE [dbo].[AvgIndicatorResults3_NotForUse](
 	[LoseLimit] [decimal](38, 6) NULL
 ) ON [PRIMARY] 
 
-WHILE @i <= 20 BEGIN 
+WHILE @i <= 30 
+BEGIN 
 SET 
 	@loseLimit = 0.00 + @i * @loseLimitIncr;
 SET 
@@ -270,6 +287,7 @@ GROUP BY
 	t.[AvgResultPct] 
 ORDER BY 
 	t.AvgResultPct DESC 
+
 SELECT 
 	cb.ShortIndicator, 
 	cb.LongIndicator, 
@@ -294,7 +312,8 @@ SELECT
 		WHERE 
 			t.ShortIndicator = cb.ShortIndicator 
 			AND t.LongIndicator = cb.LongIndicator
-	) AS LoseLimit INTO [AvgIndicatorResults_Extended] 
+	) AS LoseLimit
+INTO [AvgIndicatorResults_Extended] 
 FROM 
 	[CombinationResult] cb 
 GROUP BY 
@@ -472,6 +491,7 @@ USE [StockHistDB] ALTER INDEX [combinationresult4_temp_index2] ON [dbo].[combina
 GO 
 ";
 
+        /* Works - Creating settingsresults */
         public static string FindOptimalValuesLatest = @"
 
 /* *********************************************** */
@@ -920,6 +940,7 @@ END
 PRINT Cast(Getdate() AS DATETIME2 (3)) 
 ";
 
+        /* TODO - Select Best Latest Settings - Use Prev Best (3 Nr) */
         public static string SelectBestSettingsLatest = @"
 TRUNCATE TABLE SettingsResults
 
@@ -1384,7 +1405,7 @@ CREATE TABLE BestSettings
 
 DECLARE @MixedOrdersCurrent int = 0
 DECLARE @MixedOrdersMax int = 3
-SET @MinCount = 30;
+SET @MinCount = 25;
 
 
 SELECT 
@@ -1402,7 +1423,7 @@ BEGIN
 	FROM 
 		[settingsresults] sr
 	WHERE 
-		/* [countnr] >= @MinCount AND */
+		[countnr] >= @MinCount AND
 		[Nr3]      = @CurrentNr AND
 		NOT EXISTS (
 			SELECT *
@@ -1416,6 +1437,478 @@ BEGIN
 END
 ";
 
+        /* TODO - Generate SELECT Settings (2 Values not future / for simulation) */
+        public static string GenerateSettings = @"
+/*
+GO 
+DROP TABLE IF EXISTS [SettingsResults] 
+
+GO 
+
+CREATE TABLE [dbo].[SettingsResults](
+	[AvgIndicatorMin] [int] NOT NULL, 
+	[MinResAvg] [decimal](18, 2) NOT NULL, 
+	[ResAvg] [decimal](18, 2) NOT NULL, 
+	[CountNr] [int] NOT NULL, 
+	[MinResult] [int] NOT NULL, 
+	[MinOrders] [int] NOT NULL, 
+	[MaxOrders] [int] NOT NULL, 
+	[LoseLimitMin] [decimal](18, 2) NOT NULL, 
+	[Nr2] [int] NOT NULL
+) ON [PRIMARY] 
+GO
+
+DROP TABLE IF EXISTS [#InvaliedSettings] 
+CREATE TABLE [#InvaliedSettings]
+(
+	[AvgResultPctMinCurrent] [int] NOT NULL, 
+	[LoseLimitMinCurrent] [decimal](18, 2) NOT NULL, 
+	[OrdersCountCurrent] [int] NOT NULL, 
+	[ResultMinCurrent] [int] NOT NULL, 
+	[Nr2] [int] NOT NULL, 
+	[MinCount] [int] NOT NULL
+) ON [PRIMARY] 
+
+DROP INDEX IF EXISTS CBRes2TempIndex 
+CREATE NONCLUSTERED INDEX CBRes2TempIndex
+ON [dbo].[CombinationResult2_TEMP] ([Nr2],[Result2])
+INCLUDE ([SecurityId],[ShortIndicator],[LongIndicator])
+GO
+*/
+
+
+
+/* *********************************************** */
+/* ************FIND OPTIMAL VALUES *************** */
+/* *********************************************** */
+/* **Runs Forever If No Values At MinNr And MaxNr* */
+/* *********************************************** */
+GO 
+
+SET NOCOUNT ON DECLARE @OutputString varchar(255) = Cast(Getdate() AS varchar(20));
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+/* Shouldn't Be Less Than 300 ??? */
+DECLARE @StartDateTime datetime = GETDATE() 
+DECLARE @EndDateTime datetime 
+DECLARE @SecondsFromStart int = 0 
+DECLARE @MinCount int = 200 
+DECLARE @Every1000 int = 0 
+DECLARE @Every100 int = 0 
+DECLARE @SkippedNr int = 0 
+DECLARE @CurrentCount int = -1 
+DECLARE @CurrentMinAvg [decimal](18, 2) = 0.0;
+DECLARE @CurrentAvgRes [decimal](18, 2) = 0.0;
+
+DECLARE @AvgResultPctMin TABLE (
+	avgResultPctMin int
+) 
+
+DECLARE @LoseLimitMin TABLE (
+	loseLimitMin decimal(11, 2)
+) 
+
+DECLARE @OrdersCount TABLE (
+	ordersCount int
+) 
+DECLARE @ResultMin TABLE(
+	resultMin int
+) 
+/* TESTED
+DECLARE @AvgResultPctMinStart int = 4 
+DECLARE @AvgResultPctMinEnd int = 100 
+DECLARE @AvgResultPctMinIncr int = 4 
+*/
+
+DECLARE @AvgResultPctMinStart int = 4 
+DECLARE @AvgResultPctMinEnd int = 28 
+DECLARE @AvgResultPctMinIncr int = 2 
+/* TESTED @LoseLimitMinStart=0.00*/
+DECLARE @LoseLimitMinStart decimal(11, 2) = -0.20 
+DECLARE @LoseLimitMinEnd decimal(11, 2) = -0.30 
+DECLARE @LoseLimitMinIncr decimal(11, 2) = 0.01 
+/*
+TESTED VALUES
+DECLARE @OrdersCountStart int = 4 
+DECLARE @OrdersCountEnd int = 30 
+*/
+DECLARE @OrdersCountStart int = 5 
+DECLARE @OrdersCountEnd int = 10 
+DECLARE @OrdersCountIncr int = 1 
+DECLARE @ResultMinStart int = 4 
+DECLARE @ResultMinEnd int = 70 
+DECLARE @ResultMinIncr int = 2 
+DECLARE @MinNr int;
+DECLARE @MaxNr int;
+DECLARE @CurrentNr int;
+SELECT 
+	@MinNr = Min(cb_tmp.Nr3), 
+	@MaxNr = MAX(cb_tmp.Nr3) 
+FROM 
+	combinationresult4_temp cb_tmp 
+
+DECLARE @AvgResultPctMinCurrent int = @AvgResultPctMinStart 
+
+WHILE (@AvgResultPctMinCurrent <= @AvgResultPctMinEnd) 
+BEGIN 
+	INSERT INTO @AvgResultPctMin VALUES(@AvgResultPctMinCurrent) 
+	SET @AvgResultPctMinCurrent = @AvgResultPctMinCurrent + @AvgResultPctMinIncr;
+END 
+
+DECLARE @LoseLimitMinCurrent decimal(11, 2) = @LoseLimitMinStart 
+
+WHILE (@LoseLimitMinCurrent >= @LoseLimitMinEnd) 
+BEGIN 
+	INSERT INTO @LoseLimitMin VALUES(@LoseLimitMinCurrent) 
+	SET @LoseLimitMinCurrent = @LoseLimitMinCurrent - @LoseLimitMinIncr;
+END 
+
+DECLARE @OrdersCountCurrent int = @OrdersCountStart 
+
+WHILE (@OrdersCountCurrent <= @OrdersCountEnd) 
+BEGIN INSERT INTO @OrdersCount 
+	VALUES (@OrdersCountCurrent) 
+	SET @OrdersCountCurrent = @OrdersCountCurrent + @OrdersCountIncr;
+END 
+
+DECLARE @ResultMinCurrent int = @ResultMinStart 
+
+WHILE (@ResultMinCurrent <= @ResultMinEnd) 
+BEGIN 
+	INSERT INTO @ResultMin VALUES (@ResultMinCurrent) 
+	SET @ResultMinCurrent = @ResultMinCurrent + @ResultMinIncr;
+END 
+
+PRINT Cast(Getdate() AS DATETIME2 (3)) 
+
+DECLARE @TestValuesAll TABLE (
+	avgResultPctMin int, 
+	loseLimitMin decimal(11, 2), 
+	ordersCount int, 
+	resultMin int, 
+	PRIMARY KEY (
+		resultMin, loseLimitMin, ordersCount, 
+		avgResultPctMin
+	)
+) 
+
+
+SET @OutputString = 'Add All Test values' + Cast(Getdate() AS varchar(20));
+
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+
+INSERT INTO @TestValuesAll 
+SELECT 
+	avgResultPctMin, 
+	loseLimitMin, 
+	ordersCount, 
+	resultMin 
+FROM 
+	@AvgResultPctMin, 
+	@LoseLimitMin, 
+	@OrdersCount, 
+	@ResultMin 
+
+DROP TABLE IF EXISTS #TestValues 
+CREATE TABLE #TestValues (
+	avgResultPctMin int, 
+	loseLimitMin decimal(11, 2), 
+	ordersCount int, 
+	resultMin int, 
+	PRIMARY KEY (resultMin, loseLimitMin, ordersCount,avgResultPctMin)
+) 
+
+CREATE NONCLUSTERED INDEX [InvaliedSettingsIndex]
+ON [#InvaliedSettings] ( [AvgResultPctMinCurrent] ASC, [LoseLimitMinCurrent] ASC, [OrdersCountCurrent] ASC, [ResultMinCurrent] ASC, [Nr2] ASC, [MinCount] ASC ) 
+
+SET @OutputString = 'Remove Existing Test Values ' + Cast(Getdate() AS varchar(20));
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+
+
+/* AvgIndicatorMin  = AvgResultPctMinCurrent */ 
+INSERT INTO #TestValues 
+SELECT 
+	a.avgResultPctMin, 
+	a.loseLimitMin, 
+	a.ordersCount, 
+	a.resultMin 
+FROM 
+	@TestValuesAll a 
+	/*
+	INSERT INTO #TestValues
+	SELECT a.avgResultPctMin, a.loseLimitMin, a.ordersCount, a.resultMin
+	FROM @TestValuesAll a
+	EXCEPT 
+	SELECT b.AvgIndicatorMin, b.LoseLimitMin, b.MaxOrders, b.MinResult
+	FROM SettingsResults b
+	*/
+	
+SET @OutputString = 'Begin Inserts' + Cast(	Getdate() AS varchar(20));
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+/*
+SELECT * 
+FROM #TestValues
+*/
+DECLARE @rows int = (SELECT COUNT(*) FROM #TestValues) 
+DECLARE @currentRows int = 0 
+
+SET @OutputString = 'Begin Inserting Values' + Cast(Getdate() AS varchar(20));
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+DECLARE @TestValuesAllCount int 
+DECLARE @TestValuesCount int 
+DECLARE @SettingsResultsCount int 
+DECLARE @TotalSettingsToTest int 
+DECLARE @TotalCount int 
+
+SELECT 	@TestValuesAllCount = COUNT(*) FROM @TestValuesAll 
+SELECT 	@TestValuesCount = COUNT(*) FROM #TestValues 
+SELECT 	@SettingsResultsCount = COUNT(*) FROM [settingsresults] 
+
+SET @TotalSettingsToTest = @TestValuesAllCount * (@maxNr - @MinNr + 1) 
+SET @TotalCount = 0 
+SET @OutputString = 'Nr3 Min: ' + Cast(@MinNr AS varchar(20)) + ' Nr3 Max: ' + Cast(@maxNr AS varchar(20)) 
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+SET @OutputString = 'Want To Insert: ' + Cast(@TotalSettingsToTest AS varchar(20)) + ' Values' 
+SET @OutputString = @OutputString + ' - Existing Total: ' + Cast(@SettingsResultsCount AS varchar(20)) + ' Values' 
+RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+
+DECLARE @TestValuesActive 
+TABLE (
+	avgResultPctMin int, 
+	loseLimitMin decimal(11, 2), 
+	ordersCount int, 
+	resultMin int, 
+	IsEnabled bit, 
+	nr3 int,
+	PRIMARY KEY (
+		resultMin, 
+		loseLimitMin, 
+		ordersCount, 
+		avgResultPctMin,
+		IsEnabled,
+		nr3
+	)
+)
+
+/* SKIP VALUES */
+DELETE 
+FROM #TestValues
+WHERE ordersCount = 8
+/*
+DECLARE @TestValuesActiveId TABLE (
+	Id int,
+	Nr3 int,
+	PRIMARY KEY 
+	(
+		Id, 
+		Nr3
+	)
+	Reffrence?
+)
+*/
+
+CREATE NONCLUSTERED INDEX [TestValuesIndex] ON #TestValues 
+(
+	avgResultPctMin ASC,
+	resultMin ASC, 
+	loseLimitMin ASC,
+	ordersCount
+)
+
+WHILE @currentRows < @rows 
+BEGIN 
+	SELECT 
+		@AvgResultPctMinCurrent = tv.avgResultPctMin, 
+		@LoseLimitMinCurrent = tv.loseLimitMin, 
+		@OrdersCountCurrent = tv.ordersCount, 
+		@ResultMinCurrent = tv.resultMin 
+	FROM 
+		#TestValues tv 
+	ORDER BY 
+		avgResultPctMin ASC,
+		resultMin ASC, 
+		loseLimitMin ASC, 
+		ordersCount
+		OFFSET @currentRows ROWS FETCH NEXT 1 ROWS ONLY;
+		
+	SET @CurrentNr = @MinNr 
+	WHILE @CurrentNr <= @maxNr 
+	BEGIN 
+		IF(NOT EXISTS (
+					
+					/*
+					SELECT tva.IsEnabled
+					FROM @TestValues tv, @TestValuesActive tva 
+					WHERE @AvgResultPctMinCurrent >= AvgResultPctMinCurrent 
+						AND @LoseLimitMinCurrent >= LoseLimitMinCurrent 
+						AND @OrdersCountCurrent = OrdersCountCurrent 
+						AND @ResultMinCurrent >= ResultMinCurrent 
+						AND @MinCount = MinCount 
+						AND @CurrentNr = Nr3
+					*/
+					SELECT 
+						Nr2 
+					FROM 
+						[#InvaliedSettings]
+					WHERE 
+						@AvgResultPctMinCurrent >= AvgResultPctMinCurrent 
+						AND @LoseLimitMinCurrent >= LoseLimitMinCurrent 
+						AND @OrdersCountCurrent = OrdersCountCurrent 
+						AND @ResultMinCurrent >= ResultMinCurrent 
+						AND @MinCount = MinCount 
+						AND @CurrentNr = Nr2
+				)
+			) 
+		BEGIN 
+			BEGIN TRY 
+				SET @CurrentCount = 0;
+				SET @CurrentMinAvg = 0.0;
+				SET @CurrentAvgRes = 0.0;
+				SELECT 
+					@CurrentMinAvg = MIN(results.AvgGroup), 
+					@CurrentAvgRes = COALESCE(SUM(results.SumRes)/ NULLIF(SUM(results.GroupCount), 0), 0), 
+					@CurrentCount = SUM(results.GroupCount) 
+				FROM (
+						SELECT 
+							bestRows.Nr2, 
+							AVG(bestRows.Result2) AS AvgGroup, 
+							SUM(bestRows.Result2) AS SumRes, 
+							COUNT(bestRows.Result2) AS GroupCount 
+						FROM (
+								SELECT 
+									cb_tmp2.Nr2, 
+									cb_tmp2.Result2, 
+									ROW_NUMBER() OVER (
+										PARTITION BY cb_tmp2.nr2, 
+										cb_tmp2.securityid, 
+										cb_tmp2.result2 
+										ORDER BY 
+											RAND()
+									) AS RowNum 
+								FROM 
+									CombinationResult2_TEMP cb_tmp2, 
+									[StockHistDB].[dbo].AvgIndicatorResults_Extended avg_res2 
+								WHERE 
+									(cb_tmp2.result2) IN (
+										SELECT 
+											MAX(cb_tmp.result2) AS result2 
+										FROM 
+											CombinationResult2_TEMP cb_tmp, 
+											[StockHistDB].[dbo].AvgIndicatorResults_Extended avg_res 
+										WHERE 
+											cb_tmp.result1 >= @ResultMinCurrent 
+											AND cb_tmp.result2 >= @ResultMinCurrent 
+											AND cb_tmp.result1 < 1200 
+											AND cb_tmp.result2 < 1200 
+											AND cb_tmp.LoseLimitMin1 >= @LoseLimitMinCurrent 
+											AND cb_tmp.LoseLimitMin2 >= @LoseLimitMinCurrent 
+											AND cb_tmp.orders1 = @OrdersCountCurrent 
+											AND cb_tmp.orders2 = cb_tmp.orders1 
+											AND avg_res.AvgResultPct >= @AvgResultPctMinCurrent 
+											AND cb_tmp.ShortIndicator = avg_res.ShortIndicator 
+											AND cb_tmp.LongIndicator = avg_res.LongIndicator 
+											AND cb_tmp.securityid = cb_tmp2.securityid 
+											AND cb_tmp.nr2 = cb_tmp2.nr2
+										GROUP BY cb_tmp.nr2, cb_tmp.securityid
+									) 
+									AND avg_res2.AvgResultPct >= @AvgResultPctMinCurrent 
+									AND cb_tmp2.ShortIndicator = avg_res2.ShortIndicator 
+									AND cb_tmp2.LongIndicator = avg_res2.LongIndicator 
+									AND cb_tmp2.Result2 < 1200 
+									AND cb_tmp2.nr2 = @currentNr
+							) bestRows 
+						WHERE 
+							bestRows.RowNum = 1 
+						GROUP BY bestRows.Nr2
+				) results 
+					
+					IF(@CurrentCount >= @MinCount) 
+					BEGIN 
+						INSERT INTO [dbo].[settingsresults] (
+							[AvgIndicatorMin], 
+							[MinResAvg], 
+							[resavg], 
+							[countnr], 
+							[minresult], 
+							[minorders], 
+							[maxorders], 
+							[loselimitmin], 
+							[Nr2]
+						) 
+						VALUES (
+							@AvgResultPctMinCurrent, 
+							@CurrentMinAvg, 
+							@CurrentAvgRes,
+							@CurrentCount, 
+							@ResultMinCurrent, 
+							@OrdersCountCurrent,
+							@OrdersCountCurrent, 
+							@LoseLimitMinCurrent,
+							@CurrentNr
+						)
+					END 
+				ELSE 
+				BEGIN 
+					THROW 51000, 'InvaliedSettings', 1 
+				END 
+				END TRY 
+			BEGIN CATCH 	
+				INSERT INTO [#InvaliedSettings]
+				VALUES 
+				(
+					@AvgResultPctMinCurrent, @LoseLimitMinCurrent, 
+					@OrdersCountCurrent, @ResultMinCurrent, 
+					@CurrentNr, @MinCount
+				) 
+			/*
+				INSERT INTO @TestValuesActive(avgResultPctMin, loseLimitMin, ordersCount, resultMin, IsEnabled, nr3)
+				SELECT avgResultPctMin, loseLimitMin, ordersCount, resultMin, 0, @CurrentNr
+				FROM #TestValues tv
+				WHERE avgResultPctMin >= @AvgResultPctMinCurrent 
+					AND loseLimitMin >= @LoseLimitMinCurrent
+					AND ordersCount = @OrdersCountCurrent
+					AND resultMin >= @ResultMinCurrent
+			*/
+			 
+			END CATCH 
+		END
+			/*
+			ELSE
+			BEGIN
+			SET @Every1000 = @Every1000 + 1
+			SET @SkippedNr = @SkippedNr + 1
+			END
+			*/
+		SET @TotalCount = @TotalCount + 1 
+		SET @Every100 = @Every100 + 1
+		SET @CurrentNr = @CurrentNr + 1 
+	END 
+	
+	/* About 5-10 Min */
+	IF(@Every100 >= 100000) 
+	BEGIN 
+		SELECT 
+			@SettingsResultsCount = COUNT(*) 
+		FROM 
+			[settingsresults] 
+		SET @Every100 = 0 
+		SET @OutputString = 'Want To Insert: ' + Cast(@TotalSettingsToTest AS varchar(20)) + ' Values' 
+		SET @OutputString = @OutputString + ' - Remaning: ' + Cast((@TotalSettingsToTest - @TotalCount) AS varchar(20)) + ' Values' 
+		SET @OutputString = @OutputString + ' - Existing Total: ' + Cast(@SettingsResultsCount AS varchar(20)) + ' Values' 
+		SET @OutputString = @OutputString + ' - Settings Tried: ' + Cast(@TotalCount AS varchar(20)) + ' Values' 
+		
+		SELECT @SecondsFromStart = DATEDIFF(SECOND, @StartDateTime, GETDATE()) 
+		
+		SET @EndDateTime = DATEADD(SECOND, ((@TotalSettingsToTest) /(@TotalCount / @SecondsFromStart)), @StartDateTime)
+		SET @OutputString = @OutputString + ' - Completes At: ' + convert(varchar, @EndDateTime, 0)
+		SET @OutputString = @OutputString + ' - Minutes Remaning: ' + Cast((DATEDIFF(MINUTE, @StartDateTime,  @EndDateTime)) AS varchar(20)) 
+		/*SET @OutputString = @OutputString + ' - Skipped Values Total: ' + Cast(@SkippedNr AS varchar(20)) + ' Values' */
+		RAISERROR (@OutputString, 0, 1) WITH NOWAIT 
+	END 
+	SET @currentRows = @currentRows + 1 
+END
+";
+
+        /* Temp - TODO*/
         public static string FindLatestSecuritySettings = @"
 GO
 DROP TABLE IF EXISTS CombinationResult_Choosen
@@ -1514,6 +2007,190 @@ FROM
 ORDER BY c.Result2 DESC
 ";
 
+        public static string CreateAllBestSettings = @"
+TRUNCATE TABLE BestSettings
+
+DECLARE @MinCount int = 25;
+
+DECLARE @CurrentNr int = 0;
+DECLARE @MaxNr int = (SELECT MAX(Nr3) FROM [settingsresults]);
+
+DECLARE @MixedOrdersCurrent int = 0;
+DECLARE @MixedOrdersMax int = 3;
+
+DECLARE @closePriceMin decimal(18, 2) = 2.0;
+WHILE @CurrentNr < @MaxNr
+BEGIN
+	WHILE @MixedOrdersCurrent < @MixedOrdersMax
+	BEGIN
+		INSERT INTO BestSettings([AvgIndicatorMin],[MinResAvg],[ResAvg],[CountNr],[MinResult],[MinOrders],[MaxOrders],[LoseLimitMin],[Nr3]) 
+		SELECT TOP(1) 
+			[AvgIndicatorMin],[MinResAvg],[ResAvg],[CountNr],[MinResult],
+			[MinOrders],[MaxOrders],[LoseLimitMin],[Nr3]
+		FROM 
+			[settingsresults] sr
+		WHERE 
+			[countnr] >= @MinCount AND
+			[Nr3]      = @CurrentNr AND
+			NOT EXISTS (
+				SELECT *
+				FROM BestSettings bs
+				WHERE bs.[MinOrders] = sr.[MinOrders] AND bs.[Nr3] = @CurrentNr 
+			)
+		ORDER BY 
+			[ResAvg] DESC, [MinResAvg] DESC, [loselimitmin] DESC, [minresult] DESC
+
+		SET @MixedOrdersCurrent = @MixedOrdersCurrent + 1;
+	END
+	SET @MixedOrdersCurrent = 0;
+	SET @CurrentNr = @CurrentNr + 1;
+END
+
+SELECT *
+FROM BestSettings bs
+ORDER BY Nr3
+";
+
+        /* Works - Simulate All Settings From BestSettings - For Testing */
+        public static string SimulateAllBestSettings = @"
+GO
+DROP TABLE IF EXISTS CombinationResult_Choosen
+GO
+CREATE TABLE CombinationResult_Choosen(
+	[SecurityId] [nvarchar](20) NOT NULL, 
+	[ShortIndicator] [nvarchar](30) NOT NULL, 
+	[LongIndicator] [nvarchar](30) NOT NULL, 
+	[Result1] [decimal](11, 2) NOT NULL, 
+	[Result2] [decimal](11, 2) NOT NULL, 
+	[Orders1] [int] NOT NULL,
+	[Orders2] [int] NOT NULL, 
+	[Nr1] [int] NOT NULL, 
+	[Nr2] [int] NOT NULL, 
+	[LoseLimitMin1] [decimal](11, 2) NOT NULL,
+	[LoseLimitMin2] [decimal](11, 2) NOT NULL,
+	[LoseLimit] [decimal](11, 2) NOT NULL,
+	[Nr3] [int], 
+	[Result3] [decimal](11, 2)
+) ON [PRIMARY] 
+GO
+
+DECLARE @rowsCount int = 0
+DECLARE @rowsCountEnd int = (SELECT COUNT(*) FROM BestSettings)
+
+DECLARE @avgIndicatorMin int;
+DECLARE @loseLimitMin [decimal](18, 2);
+DECLARE @minResult int;
+DECLARE @orders int;
+DECLARE @nr3 int;
+
+WHILE @rowsCount < @rowsCountEnd
+BEGIN
+	SELECT 
+		@avgIndicatorMin = bs.AvgIndicatorMin, 
+		@loseLimitMin = bs.LoseLimitMin, 
+		@minResult = bs.MinResult,
+		@orders = bs.MinOrders,
+		@nr3 = bs.Nr3
+	FROM 
+		BestSettings bs
+	ORDER BY 
+		ResAvg ASC,
+		AvgIndicatorMin ASC,
+		LoseLimitMin ASC, 
+		MinResult ASC
+		OFFSET @rowsCount ROWS FETCH NEXT 1 ROWS ONLY;
+
+
+	WHILE(EXISTS ( 
+			SELECT TOP 1  cr.*
+			FROM
+				CombinationResult2_TEMP cr,
+				AvgIndicatorResults_Extended avg_res
+			WHERE 
+				cr.Orders1 = @orders AND
+				cr.Orders2 = @orders AND
+				cr.LoseLimitMin1 >= @loseLimitMin AND
+				cr.LoseLimitMin2 >= @loseLimitMin AND
+				cr.Result1 >= @minResult AND
+				cr.Result2 >= @minResult AND
+				cr.result1 < 1200 AND
+				cr.result2 < 1200 AND 
+				cr.Nr2 = (@nr3-1) AND
+				avg_res.ShortIndicator = cr.ShortIndicator AND
+				avg_res.LongIndicator = cr.LongIndicator AND
+				avg_res.AvgResultPct >= @avgIndicatorMin AND
+				avg_res.LoseLimit = @loseLimitMin AND
+				NOT EXISTS (SELECT * FROM CombinationResult_Choosen crc WHERE crc.SecurityId = cr.SecurityId AND crc.Nr2 = cr.Nr2)
+		)
+	)
+	BEGIN
+		INSERT INTO CombinationResult_Choosen
+		SELECT TOP 1  cr.*, avg_res.LoseLimit, @nr3, null
+		FROM
+			CombinationResult2_TEMP cr,
+			AvgIndicatorResults_Extended avg_res
+		WHERE 
+			cr.Orders1 = @orders AND
+			cr.Orders2 = @orders AND
+			cr.LoseLimitMin1 >= @loseLimitMin AND
+			cr.LoseLimitMin2 >= @loseLimitMin AND
+			cr.Result1 >= @minResult AND
+			cr.Result2 >= @minResult AND
+			cr.result1 < 1200 AND
+			cr.result2 < 1200 AND 
+			cr.Nr2 = (@nr3-1) AND
+			avg_res.ShortIndicator = cr.ShortIndicator AND
+			avg_res.LongIndicator = cr.LongIndicator AND
+			avg_res.AvgResultPct >= @avgIndicatorMin AND
+			avg_res.LoseLimit = @loseLimitMin AND
+			NOT EXISTS (SELECT * FROM CombinationResult_Choosen crc WHERE crc.SecurityId = cr.SecurityId AND crc.Nr2 = cr.Nr2)
+		ORDER BY cr.Result2 DESC
+	END
+
+	SET @rowsCount = @rowsCount + 1;
+END
+
+/* TAKES Forever Without Index*/
+
+UPDATE CombinationResult_Choosen
+SET CombinationResult_Choosen.Result3 = (
+	SELECT (
+			CASE WHEN crt.LoseLimitMin < CombinationResult_Choosen.LoseLimit THEN (CombinationResult_Choosen.LoseLimit*100) 
+			ELSE crt.LastResult END
+			) AS LastResult
+	FROM CombinationResult crt
+	WHERE crt.[Nr] = CombinationResult_Choosen.Nr3 AND 
+			crt.SecurityId = CombinationResult_Choosen.SecurityId AND
+			crt.ShortIndicator = CombinationResult_Choosen.ShortIndicator AND
+			crt.LongIndicator = CombinationResult_Choosen.LongIndicator
+)
+
+
+SELECT crc.*, crt.LastResult, crt.LoseLimitMin
+FROM CombinationResult_Choosen crc, CombinationResult crt
+WHERE crt.[Nr] = crc.Nr3 AND 
+		crt.SecurityId = crc.SecurityId AND
+		crt.ShortIndicator = crc.ShortIndicator AND
+		crt.LongIndicator = crc.LongIndicator
+
+/*
+
+SELECT c.Nr3, AVG(Result3)
+FROM
+	CombinationResult_Choosen c
+Group By c.Nr3
+
+SELECT c.*
+FROM
+	CombinationResult_Choosen c
+
+SELECT c.SecurityId, COUNT(c.SecurityId)
+FROM
+	CombinationResult_Choosen c
+GROUP BY SecurityId
+*/
+";
+
         public static string SelectBestSecuritySettingsLatest(List<string> bestSettings)
         {
             string SelectBestSecuritySettingsLatestQuery = $"";
@@ -1523,7 +2200,6 @@ ORDER BY c.Result2 DESC
                 SelectBestSecuritySettingsLatestQuery += setting;
             }
             
-
             return SelectBestSecuritySettingsLatestQuery;
         }
     }

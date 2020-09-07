@@ -8,5 +8,6 @@ namespace TradingGraph
 {
     interface GraphI
     {
+
     }
 }
